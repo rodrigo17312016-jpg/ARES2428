@@ -896,7 +896,7 @@ async function guardarRegistro() {
         body: JSON.stringify(registro)
       });
       if (res.ok) showToast('✅', 'Registro guardado', `${area} · ${temp}°C · ${hora} → Supabase ✓`);
-      else showToast('⚠️', 'Guardado local', 'Error al enviar a Supabase. Revisa la configuración.');
+      else { const errText = await res.text(); showToast('⚠️', 'Error '+res.status, errText.slice(0,120)); console.error('Supabase error:', errText); }
     } catch (e) {
       showToast('⚠️', 'Guardado local', 'No se pudo conectar a Supabase');
     }
