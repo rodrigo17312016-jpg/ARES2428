@@ -1245,11 +1245,16 @@ function renderDashboard() {
     const regs = hoy.filter(r => r.area === area).sort((a,b) => b.hora.localeCompare(a.hora));
     const ultimo = regs[0];
     const color = ultimo ? (ultimo.estado==='CRITICO'?'critical':ultimo.estado==='ALERTA'?'ambient':cardColors[area]||'cold') : cardColors[area]||'cold';
+    const estadoColor = ultimo ? (ultimo.estado==='OK' ? 'var(--success)' : ultimo.estado==='ALERTA' ? 'var(--warn)' : 'var(--danger)') : 'var(--muted)';
+    const estadoBg   = ultimo ? (ultimo.estado==='OK' ? 'rgba(16,185,129,0.15)' : ultimo.estado==='ALERTA' ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)') : 'transparent';
+    const estadoLabel= ultimo ? (ultimo.estado==='OK' ? '✓ ÓPTIMO' : ultimo.estado==='ALERTA' ? '⚠ ALERTA' : '🚨 CRÍTICO') : '— Sin datos';
     return `<div class="dash-card ${color}">
       <div class="dash-area">${area}</div>
       <div class="dash-temp">${ultimo ? ultimo.temperatura : '—'}<span class="unit">°C</span></div>
       <div class="dash-last">${ultimo ? `Última: ${ultimo.hora}` : 'Sin datos hoy'}</div>
-      <div class="dash-person" style="color:${ultimo?'var(--text)':'var(--muted)'}">${ultimo?ultimo.operario:'Sin operario'}</div>
+      <div class="dash-person" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.5px;background:${estadoBg};color:${estadoColor};">${estadoLabel}</span>
+      </div>
     </div>`;
   }).join('');
 }
