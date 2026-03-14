@@ -366,7 +366,7 @@
   /* SQL panel */
   .code-block {
     background: #0d1117;
-    border: 1px solid var(--border);
+    border: 1px sccolid var(--border);
     border-radius: 12px;
     padding: 20px;
     font-family: 'DM Mono', monospace;
@@ -882,8 +882,7 @@ async function guardarRegistro() {
   }
 
   const estado = getEstado(area, temp);
-  const registro = { id: Date.now(), fecha, hora, area, temperatura: temp, estado, operario, turno, observaciones: obs, created_at: new Date().toISOString() };
-
+  const registro = { fecha, hora, area, temperatura: temp, estado, operario, turno, observaciones: obs };
   // Guardar local
   registros.push(registro);
   localStorage.setItem('temp_registros', JSON.stringify(registros));
