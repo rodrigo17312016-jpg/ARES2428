@@ -889,7 +889,15 @@
 <script>
 // ====== ESTADO ======
 let registros = [];
-let config = JSON.parse(localStorage.getItem('temp_config') || '{}');
+// Credenciales Supabase — fijas para todos los dispositivos
+let config = {
+  sbUrl: 'https://obnvrfvcujsrmifvlqni.supabase.co',
+  sbKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ibnZyZnZjdWpzcm1pZnZscW5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY3OTUsImV4cCI6MjA4OTA4Mjc5NX0.A7BilSrDzqe2rqz1Kh8fg5t-GVNxrLGYJK4IaMlVtBs'
+};
+// Sobrescribir con config local si existe
+const localConfig = JSON.parse(localStorage.getItem('temp_config') || '{}');
+if (localConfig.sbUrl) config.sbUrl = localConfig.sbUrl;
+if (localConfig.sbKey) config.sbKey = localConfig.sbKey;
 let chartAreas = null, chartHoras = null;
 
 // ====== CARGAR DESDE SUPABASE ======
