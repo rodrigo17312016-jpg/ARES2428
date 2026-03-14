@@ -433,7 +433,14 @@
     .form-grid { grid-template-columns: 1fr; }
     .form-grid.three { grid-template-columns: 1fr 1fr; }
     .dash-grid { grid-template-columns: 1fr 1fr; }
-    .main { padding: 16px; }
+    .main { padding: 12px; }
+  }
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-scroll table {
+    min-width: 680px;
   }
 
   /* MODAL EDITAR */
@@ -621,7 +628,7 @@
 
   <!-- Últimos registros -->
   <div class="section-title">Últimos registros de hoy</div>
-  <div class="table-wrap">
+  <div class="table-wrap table-scroll">
     <table>
       <thead>
         <tr>
@@ -629,7 +636,7 @@
           <th>Área</th>
           <th>Temp.</th>
           <th>Estado</th>
-          <th>Operario</th>
+          <th>Inspector</th>
           <th>Observación</th>
           <th>Acciones</th>
         </tr>
@@ -1180,15 +1187,15 @@ function renderTablaHoy() {
   if (hoy.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Sin registros aún hoy</td></tr>'; return; }
   tbody.innerHTML = hoy.map(r => `
     <tr>
-      <td style="font-family:'DM Mono',monospace;font-size:13px">${r.hora}</td>
-      <td style="font-size:13px">${r.area}</td>
-      <td><span class="temp-val temp-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}">${r.temperatura}°C</span></td>
-      <td><span class="status-badge status-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}"><span class="dot"></span>${r.estado}</span></td>
-      <td style="font-size:13px">${r.operario}</td>
-      <td style="font-size:12px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.observaciones||'—'}</td>
-      <td>
-        <button class="btn-icon" onclick="abrirEditar(${r.id})" title="Editar">✏️</button>
-        <button class="btn-icon del" onclick="confirmarEliminar(${r.id})" title="Eliminar">🗑</button>
+      <td style="font-family:'DM Mono',monospace;font-size:13px;white-space:nowrap">${r.hora}</td>
+      <td style="font-size:12px;white-space:nowrap">${r.area}</td>
+      <td style="white-space:nowrap"><span class="temp-val temp-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}">${r.temperatura}°C</span></td>
+      <td style="white-space:nowrap"><span class="status-badge status-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}"><span class="dot"></span>${r.estado}</span></td>
+      <td style="font-size:12px;white-space:nowrap">${r.operario}</td>
+      <td style="font-size:12px;color:var(--muted);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis">${r.observaciones||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-icon" onclick="abrirEditar('${r.id}')" title="Editar">✏️</button>
+        <button class="btn-icon del" onclick="confirmarEliminar('${r.id}')" title="Eliminar">🗑</button>
       </td>
     </tr>`).join('');
 }
@@ -1269,7 +1276,7 @@ function renderChartAreas() {
     },
     options: {
       responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y !== null ? ctx.parsed.y+'°C' : 'Sin datos'}` } } },
-      scales: { x: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#64748b', callback: v => v+'°C' }, grid: { color: 'rgba(255,255,255,0.07)' } } }
+      scales: { x: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#64748b', callback: v => parseFloat(v).toFixed(1)+'°C' }, grid: { color: 'rgba(255,255,255,0.07)' } } }
     }
   });
 }
@@ -1296,7 +1303,7 @@ function actualizarChartHoras() {
     },
     options: {
       responsive: true, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 12 } } } },
-      scales: { x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#64748b', callback: v => v+'°C' }, grid: { color: 'rgba(255,255,255,0.07)' } } }
+      scales: { x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#64748b', callback: v => parseFloat(v).toFixed(1)+'°C' }, grid: { color: 'rgba(255,255,255,0.07)' } } }
     }
   });
 }
@@ -1323,7 +1330,7 @@ function guardarConfig() {
 let editingId = null;
 
 function abrirEditar(id) {
-  const r = registros.find(x => x.id === id);
+  const r = registros.find(x => String(x.id) === String(id));
   if (!r) return;
   editingId = id;
   document.getElementById('editId').value = id;
@@ -1344,7 +1351,7 @@ function cerrarModal(e) {
 
 async function guardarEdicion() {
   if (editingId === null) return;
-  const idx = registros.findIndex(x => x.id === editingId);
+  const idx = registros.findIndex(x => String(x.id) === String(editingId));
   if (idx === -1) return;
   const area  = document.getElementById('editArea').value;
   const temp  = parseFloat(document.getElementById('editTemp').value);
@@ -1375,7 +1382,7 @@ async function guardarEdicion() {
 
 function confirmarEliminar(id) {
   editingId = id;
-  const r = registros.find(x => x.id === id);
+  const r = registros.find(x => String(x.id) === String(id));
   if (!r) return;
   // Open modal and scroll to delete button
   abrirEditar(id);
@@ -1384,7 +1391,7 @@ function confirmarEliminar(id) {
 
 async function eliminarRegistro() {
   if (editingId === null) return;
-  const r = registros.find(x => x.id === editingId);
+  const r = registros.find(x => String(x.id) === String(editingId));
   // Eliminar de Supabase si aplica
   if (r && config.sbUrl && config.sbKey && r.supabase_id) {
     fetch(`${config.sbUrl}/rest/v1/registros_temperatura?id=eq.${r.supabase_id}`, {
@@ -1392,7 +1399,7 @@ async function eliminarRegistro() {
       headers: { 'apikey': config.sbKey, 'Authorization': `Bearer ${config.sbKey}` }
     });
   }
-  registros = registros.filter(x => x.id !== editingId);
+  registros = registros.filter(x => String(x.id) !== String(editingId));
   localStorage.setItem('temp_registros', JSON.stringify(registros));
   document.getElementById('modalOverlay').classList.remove('open');
   editingId = null;
