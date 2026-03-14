@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Temperaturas · FrutaFría Export</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.08);
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --success: #10b981;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text { font-size: 15px; font-weight: 600; }
+  .logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .clock {
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  .date-text { font-size: 11px; color: var(--muted); text-align: right; }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 12px 24px 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-tab {
+    padding: 8px 18px;
+    border-radius: 8px 8px 0 0;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    border: 1px solid transparent;
+    border-bottom: none;
+    transition: all 0.2s;
+    background: transparent;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--surface2); }
+  .nav-tab.active {
+    color: var(--accent);
+    background: var(--bg);
+    border-color: var(--border);
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 28px 24px;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  input, select, textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,170,0.1);
+  }
+  select option { background: var(--surface2); }
+
+  .temp-input-wrap {
+    position: relative;
+  }
+  .temp-input-wrap input {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    text-align: center;
+    padding: 14px;
+    letter-spacing: 1px;
+  }
+  .temp-unit {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .temp-indicator {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 6px;
+    transition: all 0.3s;
+    background: var(--muted);
+  }
+
+  /* STATUS badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .status-ok { background: rgba(16,185,129,0.15); color: var(--success); }
+  .status-warn { background: rgba(245,158,11,0.15); color: var(--warn); }
+  .status-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* BTN */
+  .btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0f1e;
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+  .btn-primary:hover { background: #00eec0; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 999;
+    min-width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 22px; }
+  .toast-text { font-size: 14px; font-weight: 500; }
+  .toast-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .table-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-title { font-size: 14px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  td {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .temp-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .temp-ok { color: var(--success); }
+  .temp-warn { color: var(--warn); }
+  .temp-danger { color: var(--danger); }
+
+  /* DASHBOARD */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .dash-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .dash-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .dash-card.cold::before { background: var(--accent2); }
+  .dash-card.frozen::before { background: var(--accent); }
+  .dash-card.ambient::before { background: var(--warn); }
+  .dash-card.critical::before { background: var(--danger); }
+
+  .dash-area { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .dash-temp {
+    font-family: 'DM Mono', monospace;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .dash-temp .unit { font-size: 16px; color: var(--muted); }
+  .dash-last { font-size: 11px; color: var(--muted); }
+  .dash-person { font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+  /* AREA CONFIG */
+  .areas-list { display: flex; flex-direction: column; gap: 10px; }
+  .area-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .area-color { width: 10px; height: 36px; border-radius: 4px; flex-shrink: 0; }
+  .area-info { flex: 1; }
+  .area-name { font-size: 14px; font-weight: 500; }
+  .area-range { font-size: 12px; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+  /* SQL panel */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: #c9d1d9;
+    overflow-x: auto;
+    position: relative;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #79c0ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #6e7681; }
+  .copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  .info-box {
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #93c5fd;
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+  .info-box strong { color: #bfdbfe; }
+
+  /* CHART AREA */
+  .chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .chart-title { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.8px; }
+  canvas { width: 100% !important; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-bar select, .filter-bar input { width: auto; flex: 1; min-width: 140px; }
+
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid.three { grid-template-columns: 1fr 1fr; }
+    .dash-grid { grid-template-columns: 1fr 1fr; }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🧊</div>
+    <div>
+      <div class="logo-text">Control de Temperaturas</div>
+      <div class="logo-sub">Exportadora de frutas congeladas</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div>
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="date-text" id="dateText">--</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showPanel('registro')">📋 Registro</button>
+  <button class="nav-tab" onclick="showPanel('historial')">📊 Historial</button>
+  <button class="nav-tab" onclick="showPanel('dashboard')">🌡️ Dashboard</button>
+  <button class="nav-tab" onclick="showPanel('config')">⚙️ Config</button>
+  <button class="nav-tab" onclick="showPanel('exportar')">🗄️ Base de datos</button>
+</div>
+
+<!-- ============== PANEL: REGISTRO ============== -->
+<div class="main">
+<div id="panel-registro" class="panel active">
+  <div class="form-card">
+    <div class="section-title">Nuevo registro de temperatura</div>
+
+    <div class="form-grid three" style="margin-bottom:16px">
+      <div class="form-group">
+        <label>Área / Zona</label>
+        <select id="area" onchange="updateAreaInfo()">
+          <option value="">— Seleccionar —</option>
+          <option value="Cámara Frigorífica 1">Cámara Frigorífica 1</option>
+          <option value="Cámara Frigorífica 2">Cámara Frigorífica 2</option>
+          <option value="Túnel de Congelado">Túnel de Congelado</option>
+          <option value="Sala de Proceso">Sala de Proceso</option>
+          <option value="Área de Selección">Área de Selección</option>
+          <option value="Muelle de Carga">Muelle de Carga</option>
+          <option value="Almacén Materia Prima">Almacén Materia Prima</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Operario responsable</label>
+        <select id="operario">
+          <option value="">— Seleccionar —</option>
+          <option>Carlos Quispe</option>
+          <option>María Huanca</option>
+          <option>Luis Condori</option>
+          <option>Ana Torres</option>
+          <option>Jorge Mamani</option>
+          <option>Rosa Flores</option>
+          <option>Pedro Chávez</option>
+          <option>Elena Vargas</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Hora de medición</label>
+        <input type="time" id="hora" />
+      </div>
+    </div>
+
+    <div class="form-grid" style="margin-bottom:16px; align-items:start">
+      <div class="form-group">
+        <label>Temperatura registrada</label>
+        <div class="temp-input-wrap">
+          <input type="number" id="temperatura" placeholder="-18.0" step="0.1" min="-50" max="50" oninput="updateTempStatus()" />
+          <span class="temp-unit">°C</span>
+        </div>
+        <div class="temp-indicator" id="tempIndicator"></div>
+        <div id="tempStatus" style="margin-top:6px;min-height:24px"></div>
+        <div style="margin-top:6px; font-size:11px; color:var(--muted)" id="rangoInfo"></div>
+      </div>
+      <div class="form-group">
+        <label>Observaciones (opcional)</label>
+        <textarea id="observaciones" rows="4" placeholder="Ej: Puerta abierta 2 min. por ingreso de pallets. Equipo funcionando con normalidad..."></textarea>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" id="fecha" />
+      </div>
+      <div class="form-group">
+        <label>Turno</label>
+        <select id="turno">
+          <option value="Mañana (06:00–14:00)">Mañana (06:00–14:00)</option>
+          <option value="Tarde (14:00–22:00)">Tarde (14:00–22:00)</option>
+          <option value="Noche (22:00–06:00)">Noche (22:00–06:00)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="guardarRegistro()">✓ Guardar registro</button>
+  </div>
+
+  <!-- Últimos registros -->
+  <div class="section-title">Últimos registros de hoy</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th>Área</th>
+          <th>Temp.</th>
+          <th>Estado</th>
+          <th>Operario</th>
+          <th>Observación</th>
+        </tr>
+      </thead>
+      <tbody id="tablaRegistros">
+        <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Sin registros aún hoy</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============== PANEL: HISTORIAL ============== -->
+<div id="panel-historial" class="panel">
+  <div class="filter-bar">
+    <input type="date" id="filtroFecha" />
+    <select id="filtroArea">
+      <option value="">Todas las áreas</option>
+      <option>Cámara Frigorífica 1</option>
+      <option>Cámara Frigorífica 2</option>
+      <option>Túnel de Congelado</option>
+      <option>Sala de Proceso</option>
+      <option>Área de Selección</option>
+      <option>Muelle de Carga</option>
+      <option>Almacén Materia Prima</option>
+    </select>
+    <button class="btn btn-secondary" onclick="filtrarHistorial()">Filtrar</button>
+    <button class="btn btn-secondary" onclick="exportarCSV()">⬇ Exportar CSV</button>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-head">
+      <span class="table-title" id="historialTitle">Historial de registros</span>
+      <span class="date-text" id="historialCount"></span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Área</th>
+          <th>Temperatura</th>
+          <th>Estado</th>
+          <th>Turno</th>
+          <th>Operario</th>
+          <th>Observación</th>
+        </tr>
+      </thead>
+      <tbody id="tablaHistorial">
+        <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Agregue registros para ver historial</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============== PANEL: DASHBOARD ============== -->
+<div id="panel-dashboard" class="panel">
+  <div class="section-title">Estado actual por área</div>
+  <div class="dash-grid" id="dashCards">
+    <div class="dash-card frozen">
+      <div class="dash-area">Cámara Frigorífica 1</div>
+      <div class="dash-temp">—<span class="unit">°C</span></div>
+      <div class="dash-last">Sin datos</div>
+      <div class="dash-person" style="color:var(--muted)">Sin operario</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:8px">Temperatura por área · hoy</div>
+  <div class="chart-container">
+    <canvas id="chartAreas" height="220"></canvas>
+  </div>
+
+  <div class="section-title">Temperatura por hora · hoy</div>
+  <div style="margin-bottom:12px">
+    <select id="filtroAreaChart" onchange="actualizarChartHoras()" style="width:auto;min-width:200px">
+      <option value="">Todas las áreas (promedio)</option>
+      <option>Cámara Frigorífica 1</option>
+      <option>Cámara Frigorífica 2</option>
+      <option>Túnel de Congelado</option>
+      <option>Sala de Proceso</option>
+      <option>Área de Selección</option>
+      <option>Muelle de Carga</option>
+      <option>Almacén Materia Prima</option>
+    </select>
+  </div>
+  <div class="chart-container">
+    <canvas id="chartHoras" height="220"></canvas>
+  </div>
+</div>
+
+<!-- ============== PANEL: CONFIG ============== -->
+<div id="panel-config" class="panel">
+  <div class="section-title">Rangos de temperatura por área</div>
+  <div class="info-box">
+    <strong>Rangos recomendados para exportación de frutas congeladas (HACCP).</strong><br>
+    Los registros fuera de rango se marcan automáticamente como alerta o crítico.
+  </div>
+  <div class="areas-list">
+    <div class="area-item">
+      <div class="area-color" style="background:#3b82f6"></div>
+      <div class="area-info">
+        <div class="area-name">Cámara Frigorífica 1 y 2</div>
+        <div class="area-range">Óptimo: -18°C a -22°C &nbsp;|&nbsp; Alerta: &gt; -15°C &nbsp;|&nbsp; Crítico: &gt; -10°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>IQF Fruta</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#00d4aa"></div>
+      <div class="area-info">
+        <div class="area-name">Túnel de Congelado</div>
+        <div class="area-range">Óptimo: -30°C a -40°C &nbsp;|&nbsp; Alerta: &gt; -25°C &nbsp;|&nbsp; Crítico: &gt; -20°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Congelado rápido</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#f59e0b"></div>
+      <div class="area-info">
+        <div class="area-name">Sala de Proceso</div>
+        <div class="area-range">Óptimo: 4°C a 8°C &nbsp;|&nbsp; Alerta: &gt; 10°C &nbsp;|&nbsp; Crítico: &gt; 15°C</div>
+      </div>
+      <span class="status-badge status-warn"><span class="dot"></span>Proceso frío</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#8b5cf6"></div>
+      <div class="area-info">
+        <div class="area-name">Área de Selección</div>
+        <div class="area-range">Óptimo: 10°C a 15°C &nbsp;|&nbsp; Alerta: &gt; 18°C &nbsp;|&nbsp; Crítico: &gt; 22°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Zona fresca</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#ef4444"></div>
+      <div class="area-info">
+        <div class="area-name">Muelle de Carga</div>
+        <div class="area-range">Óptimo: -18°C a -20°C &nbsp;|&nbsp; Alerta: &gt; -15°C &nbsp;|&nbsp; Crítico: &gt; -10°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Zona carga</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#10b981"></div>
+      <div class="area-info">
+        <div class="area-name">Almacén Materia Prima</div>
+        <div class="area-range">Óptimo: 2°C a 6°C &nbsp;|&nbsp; Alerta: &gt; 8°C &nbsp;|&nbsp; Crítico: &gt; 12°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Pre-frío</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANEL: EXPORTAR / BASE DE DATOS ============== -->
+<div id="panel-exportar" class="panel">
+  <div class="section-title">Conexión a Supabase (base de datos)</div>
+  <div class="info-box">
+    <strong>¿Cómo conectar a tu base de datos real?</strong><br>
+    1. Crea una cuenta gratuita en <strong>supabase.com</strong><br>
+    2. Crea un proyecto y ejecuta el SQL de abajo<br>
+    3. Reemplaza la URL y la API KEY en este archivo<br>
+    4. Los registros se enviarán directamente a tu base de datos PostgreSQL
+  </div>
+
+  <div style="margin-bottom:16px">
+    <div class="section-title">1. SQL para crear la tabla en Supabase</div>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copiarSQL()">Copiar</button>
+      <span id="sqlCode"><span class="kw">CREATE TABLE</span> <span class="fn">registros_temperatura</span> (<br>
+&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">uuid</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">DEFAULT</span> <span class="fn">gen_random_uuid</span>() <span class="kw">PRIMARY KEY</span>,<br>
+&nbsp;&nbsp;fecha&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">date</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">NOT NULL</span>,<br>
+&nbsp;&nbsp;hora&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">time</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">NOT NULL</span>,<br>
+&nbsp;&nbsp;area&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">varchar</span>(<span class="str">100</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">NOT NULL</span>,<br>
+&nbsp;&nbsp;temperatura&nbsp;&nbsp;<span class="fn">numeric</span>(<span class="str">5,1</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">NOT NULL</span>,<br>
+&nbsp;&nbsp;estado&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">varchar</span>(<span class="str">20</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">CHECK</span>(estado <span class="kw">IN</span> (<span class="str">'OK'</span>,<span class="str">'ALERTA'</span>,<span class="str">'CRITICO'</span>)),<br>
+&nbsp;&nbsp;operario&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">varchar</span>(<span class="str">100</span>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">NOT NULL</span>,<br>
+&nbsp;&nbsp;turno&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">varchar</span>(<span class="str">50</span>),<br>
+&nbsp;&nbsp;observaciones <span class="fn">text</span>,<br>
+&nbsp;&nbsp;created_at&nbsp;&nbsp;&nbsp;<span class="fn">timestamptz</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">DEFAULT</span> <span class="fn">now</span>()<br>
+);<br><br>
+<span class="cm">-- Habilitar acceso público de lectura para Power BI</span><br>
+<span class="kw">ALTER TABLE</span> registros_temperatura <span class="kw">ENABLE ROW LEVEL SECURITY</span>;<br>
+<span class="kw">CREATE POLICY</span> <span class="str">"allow_all"</span> <span class="kw">ON</span> registros_temperatura <span class="kw">FOR ALL USING</span> (<span class="kw">true</span>);</span>
+    </div>
+  </div>
+
+  <div style="margin-bottom:16px">
+    <div class="section-title">2. Configuración de conexión</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Supabase URL</label>
+        <input type="text" id="sbUrl" placeholder="https://xxxx.supabase.co" />
+      </div>
+      <div class="form-group">
+        <label>API Key (anon/public)</label>
+        <input type="text" id="sbKey" placeholder="eyJhbGciOiJI..." />
+      </div>
+    </div>
+    <button class="btn btn-secondary" onclick="guardarConfig()" style="margin-top:12px">Guardar configuración</button>
+  </div>
+
+  <div>
+    <div class="section-title">3. Conexión Power BI / Looker Studio</div>
+    <div class="code-block" style="margin-bottom:8px">
+      <span class="cm">-- URL de la API REST de Supabase para Power BI (PostgreSQL connector)</span><br>
+      <span class="cm">-- Host:    db.XXXX.supabase.co</span><br>
+      <span class="cm">-- Puerto:  5432</span><br>
+      <span class="cm">-- DB:      postgres</span><br>
+      <span class="cm">-- User:    postgres</span><br>
+      <span class="cm">-- Pass:    (la que configuraste en Supabase)</span><br><br>
+      <span class="cm">-- Query base para gráfico por área en Power BI:</span><br>
+      <span class="kw">SELECT</span> fecha, area, <span class="fn">AVG</span>(temperatura) <span class="kw">as</span> temp_promedio,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">MIN</span>(temperatura) <span class="kw">as</span> temp_min, <span class="fn">MAX</span>(temperatura) <span class="kw">as</span> temp_max,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">COUNT</span>(*) <span class="kw">as</span> total_registros<br>
+      <span class="kw">FROM</span> registros_temperatura<br>
+      <span class="kw">GROUP BY</span> fecha, area <span class="kw">ORDER BY</span> fecha <span class="kw">DESC</span>;
+    </div>
+    <div class="info-box">
+      <strong>Para Looker Studio (Google):</strong> Usa el conector PostgreSQL con las mismas credenciales. Crea un origen de datos y arrastra los campos al lienzo.<br><br>
+      <strong>Para Power BI Desktop:</strong> Obtener datos → PostgreSQL → pega las credenciales de Supabase → elige la tabla registros_temperatura.
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <div>
+    <div class="toast-text" id="toastText">Registro guardado</div>
+    <div class="toast-sub" id="toastSub">Los datos se enviaron correctamente</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ====== ESTADO ======
+let registros = JSON.parse(localStorage.getItem('temp_registros') || '[]');
+let config = JSON.parse(localStorage.getItem('temp_config') || '{}');
+let chartAreas = null, chartHoras = null;
+
+// ====== RANGOS POR ÁREA ======
+const rangos = {
+  'Cámara Frigorífica 1':  { min: -22, max: -18, alerta: -15, critico: -10 },
+  'Cámara Frigorífica 2':  { min: -22, max: -18, alerta: -15, critico: -10 },
+  'Túnel de Congelado':    { min: -40, max: -30, alerta: -25, critico: -20 },
+  'Sala de Proceso':       { min: 4,   max: 8,   alerta: 10,  critico: 15  },
+  'Área de Selección':     { min: 10,  max: 15,  alerta: 18,  critico: 22  },
+  'Muelle de Carga':       { min: -20, max: -18, alerta: -15, critico: -10 },
+  'Almacén Materia Prima': { min: 2,   max: 6,   alerta: 8,   critico: 12  },
+};
+
+function getEstado(area, temp) {
+  const r = rangos[area];
+  if (!r) return 'OK';
+  if (temp > r.critico) return 'CRITICO';
+  if (temp > r.alerta)  return 'ALERTA';
+  return 'OK';
+}
+
+// ====== RELOJ ======
+function actualizarReloj() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('es-PE');
+  document.getElementById('dateText').textContent = now.toLocaleDateString('es-PE', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+setInterval(actualizarReloj, 1000);
+actualizarReloj();
+
+// ====== INIT ======
+window.onload = () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fecha').value = today;
+  const now = new Date();
+  document.getElementById('hora').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  if (config.sbUrl) document.getElementById('sbUrl').value = config.sbUrl;
+  if (config.sbKey) document.getElementById('sbKey').value = config.sbKey;
+  renderTablaHoy();
+  renderDashboard();
+};
+
+// ====== TABS ======
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'dashboard') { setTimeout(() => { renderChartAreas(); renderChartHoras(); }, 100); }
+  if (id === 'historial') renderHistorial();
+}
+
+// ====== UPDATE TEMP STATUS ======
+function updateAreaInfo() {
+  const area = document.getElementById('area').value;
+  const r = rangos[area];
+  if (r) {
+    document.getElementById('rangoInfo').textContent = `Rango óptimo: ${r.min}°C a ${r.max}°C`;
+  } else {
+    document.getElementById('rangoInfo').textContent = '';
+  }
+  updateTempStatus();
+}
+
+function updateTempStatus() {
+  const val = parseFloat(document.getElementById('temperatura').value);
+  const area = document.getElementById('area').value;
+  const indicator = document.getElementById('tempIndicator');
+  const statusEl = document.getElementById('tempStatus');
+  if (isNaN(val) || !area) { indicator.style.background = 'var(--muted)'; statusEl.innerHTML = ''; return; }
+  const estado = getEstado(area, val);
+  if (estado === 'OK') {
+    indicator.style.background = 'var(--success)';
+    statusEl.innerHTML = '<span class="status-badge status-ok"><span class="dot"></span>Temperatura correcta</span>';
+  } else if (estado === 'ALERTA') {
+    indicator.style.background = 'var(--warn)';
+    statusEl.innerHTML = '<span class="status-badge status-warn"><span class="dot"></span>⚠ Fuera de rango — registrar observación</span>';
+  } else {
+    indicator.style.background = 'var(--danger)';
+    statusEl.innerHTML = '<span class="status-badge status-danger"><span class="dot"></span>🚨 Temperatura CRÍTICA</span>';
+  }
+}
+
+// ====== GUARDAR REGISTRO ======
+async function guardarRegistro() {
+  const area = document.getElementById('area').value;
+  const operario = document.getElementById('operario').value;
+  const temp = parseFloat(document.getElementById('temperatura').value);
+  const hora = document.getElementById('hora').value;
+  const fecha = document.getElementById('fecha').value;
+  const obs = document.getElementById('observaciones').value;
+  const turno = document.getElementById('turno').value;
+
+  if (!area || !operario || isNaN(temp) || !hora || !fecha) {
+    showToast('❌', 'Campos incompletos', 'Completa área, operario, temperatura y hora', 'danger');
+    return;
+  }
+
+  const estado = getEstado(area, temp);
+  const registro = { id: Date.now(), fecha, hora, area, temperatura: temp, estado, operario, turno, observaciones: obs, created_at: new Date().toISOString() };
+
+  // Guardar local
+  registros.push(registro);
+  localStorage.setItem('temp_registros', JSON.stringify(registros));
+
+  // Enviar a Supabase si está configurado
+  if (config.sbUrl && config.sbKey) {
+    try {
+      const res = await fetch(`${config.sbUrl}/rest/v1/registros_temperatura`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': config.sbKey, 'Authorization': `Bearer ${config.sbKey}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify(registro)
+      });
+      if (res.ok) showToast('✅', 'Registro guardado', `${area} · ${temp}°C · ${hora} → Supabase ✓`);
+      else showToast('⚠️', 'Guardado local', 'Error al enviar a Supabase. Revisa la configuración.');
+    } catch (e) {
+      showToast('⚠️', 'Guardado local', 'No se pudo conectar a Supabase');
+    }
+  } else {
+    showToast('✅', 'Registro guardado localmente', `${area} · ${temp}°C · ${hora}`);
+  }
+
+  // Reset temp y obs
+  document.getElementById('temperatura').value = '';
+  document.getElementById('observaciones').value = '';
+  document.getElementById('tempStatus').innerHTML = '';
+  document.getElementById('tempIndicator').style.background = 'var(--muted)';
+  // Auto-actualizar hora
+  const now = new Date();
+  document.getElementById('hora').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  renderTablaHoy();
+  renderDashboard();
+}
+
+// ====== TABLA HOY ======
+function renderTablaHoy() {
+  const today = new Date().toISOString().split('T')[0];
+  const hoy = registros.filter(r => r.fecha === today).sort((a,b) => b.hora.localeCompare(a.hora));
+  const tbody = document.getElementById('tablaRegistros');
+  if (hoy.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Sin registros aún hoy</td></tr>'; return; }
+  tbody.innerHTML = hoy.map(r => `
+    <tr>
+      <td style="font-family:'DM Mono',monospace;font-size:13px">${r.hora}</td>
+      <td style="font-size:13px">${r.area}</td>
+      <td><span class="temp-val temp-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}">${r.temperatura}°C</span></td>
+      <td><span class="status-badge status-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}"><span class="dot"></span>${r.estado}</span></td>
+      <td style="font-size:13px">${r.operario}</td>
+      <td style="font-size:12px;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.observaciones||'—'}</td>
+    </tr>`).join('');
+}
+
+// ====== HISTORIAL ======
+function renderHistorial(filtro = {}) {
+  let data = [...registros].sort((a,b) => (b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+  if (filtro.fecha) data = data.filter(r => r.fecha === filtro.fecha);
+  if (filtro.area)  data = data.filter(r => r.area === filtro.area);
+  document.getElementById('historialCount').textContent = `${data.length} registros`;
+  const tbody = document.getElementById('tablaHistorial');
+  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Sin registros con ese filtro</td></tr>'; return; }
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td style="font-size:12px;font-family:'DM Mono',monospace">${r.fecha}</td>
+      <td style="font-size:12px;font-family:'DM Mono',monospace">${r.hora}</td>
+      <td style="font-size:13px">${r.area}</td>
+      <td><span class="temp-val temp-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}">${r.temperatura}°C</span></td>
+      <td><span class="status-badge status-${r.estado==='OK'?'ok':r.estado==='ALERTA'?'warn':'danger'}"><span class="dot"></span>${r.estado}</span></td>
+      <td style="font-size:12px">${r.turno||'—'}</td>
+      <td style="font-size:12px">${r.operario}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.observaciones||'—'}</td>
+    </tr>`).join('');
+}
+function filtrarHistorial() {
+  renderHistorial({ fecha: document.getElementById('filtroFecha').value, area: document.getElementById('filtroArea').value });
+}
+
+// ====== EXPORT CSV ======
+function exportarCSV() {
+  const headers = ['id','fecha','hora','area','temperatura','estado','operario','turno','observaciones','created_at'];
+  const rows = registros.map(r => headers.map(h => `"${(r[h]||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `temperaturas_${new Date().toISOString().split('T')[0]}.csv`; a.click();
+}
+
+// ====== DASHBOARD ======
+function renderDashboard() {
+  const today = new Date().toISOString().split('T')[0];
+  const hoy = registros.filter(r => r.fecha === today);
+  const areas = Object.keys(rangos);
+  const cardColors = { 'Cámara Frigorífica 1':'frozen','Cámara Frigorífica 2':'frozen','Túnel de Congelado':'frozen','Sala de Proceso':'ambient','Área de Selección':'ambient','Muelle de Carga':'cold','Almacén Materia Prima':'cold' };
+  const container = document.getElementById('dashCards');
+  container.innerHTML = areas.map(area => {
+    const regs = hoy.filter(r => r.area === area).sort((a,b) => b.hora.localeCompare(a.hora));
+    const ultimo = regs[0];
+    const color = ultimo ? (ultimo.estado==='CRITICO'?'critical':ultimo.estado==='ALERTA'?'ambient':cardColors[area]||'cold') : cardColors[area]||'cold';
+    return `<div class="dash-card ${color}">
+      <div class="dash-area">${area}</div>
+      <div class="dash-temp">${ultimo ? ultimo.temperatura : '—'}<span class="unit">°C</span></div>
+      <div class="dash-last">${ultimo ? `Última: ${ultimo.hora}` : 'Sin datos hoy'}</div>
+      <div class="dash-person" style="color:${ultimo?'var(--text)':'var(--muted)'}">${ultimo?ultimo.operario:'Sin operario'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ====== CHARTS ======
+const AREA_COLORS = ['#00d4aa','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#10b981','#06b6d4'];
+
+function renderChartAreas() {
+  const today = new Date().toISOString().split('T')[0];
+  const hoy = registros.filter(r => r.fecha === today);
+  const areas = Object.keys(rangos);
+  const promedios = areas.map(a => {
+    const regs = hoy.filter(r => r.area === a);
+    return regs.length ? (regs.reduce((s,r) => s+r.temperatura, 0)/regs.length).toFixed(1) : null;
+  });
+  const ctx = document.getElementById('chartAreas').getContext('2d');
+  if (chartAreas) chartAreas.destroy();
+  chartAreas = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: areas.map(a => a.replace('Cámara Frigorífica', 'Cám. F.')),
+      datasets: [{ label: 'Temp. promedio (°C)', data: promedios, backgroundColor: AREA_COLORS.map(c => c+'99'), borderColor: AREA_COLORS, borderWidth: 2, borderRadius: 6 }]
+    },
+    options: {
+      responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y !== null ? ctx.parsed.y+'°C' : 'Sin datos'}` } } },
+      scales: { x: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#64748b', callback: v => v+'°C' }, grid: { color: 'rgba(255,255,255,0.07)' } } }
+    }
+  });
+}
+
+function renderChartHoras() { actualizarChartHoras(); }
+
+function actualizarChartHoras() {
+  const today = new Date().toISOString().split('T')[0];
+  const areaFiltro = document.getElementById('filtroAreaChart').value;
+  let data = registros.filter(r => r.fecha === today);
+  if (areaFiltro) data = data.filter(r => r.area === areaFiltro);
+  const horas = Array.from({length: 24}, (_,i) => `${String(i).padStart(2,'0')}:00`);
+  const puntos = horas.map(h => {
+    const regs = data.filter(r => r.hora.startsWith(h.slice(0,2)));
+    return regs.length ? (regs.reduce((s,r) => s+r.temperatura, 0)/regs.length).toFixed(1) : null;
+  });
+  const ctx = document.getElementById('chartHoras').getContext('2d');
+  if (chartHoras) chartHoras.destroy();
+  chartHoras = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: horas,
+      datasets: [{ label: areaFiltro || 'Promedio todas las áreas', data: puntos, borderColor: '#00d4aa', backgroundColor: 'rgba(0,212,170,0.08)', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#00d4aa', tension: 0.3, spanGaps: true }]
+    },
+    options: {
+      responsive: true, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 12 } } } },
+      scales: { x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#64748b', callback: v => v+'°C' }, grid: { color: 'rgba(255,255,255,0.07)' } } }
+    }
+  });
+}
+
+// ====== TOAST ======
+function showToast(icon, text, sub, type='success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastText').textContent = text;
+  document.getElementById('toastSub').textContent = sub;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ====== CONFIG ======
+function guardarConfig() {
+  config.sbUrl = document.getElementById('sbUrl').value.trim().replace(/\/$/, '');
+  config.sbKey = document.getElementById('sbKey').value.trim();
+  localStorage.setItem('temp_config', JSON.stringify(config));
+  showToast('✅', 'Configuración guardada', 'Se usará Supabase para nuevos registros');
+}
+
+// ====== SQL COPY ======
+function copiarSQL() {
+  const sql = `CREATE TABLE registros_temperatura (
+  id            uuid             DEFAULT gen_random_uuid() PRIMARY KEY,
+  fecha         date             NOT NULL,
+  hora          time             NOT NULL,
+  area          varchar(100)     NOT NULL,
+  temperatura   numeric(5,1)     NOT NULL,
+  estado        varchar(20)      CHECK(estado IN ('OK','ALERTA','CRITICO')),
+  operario      varchar(100)     NOT NULL,
+  turno         varchar(50),
+  observaciones text,
+  created_at    timestamptz      DEFAULT now()
+);
+ALTER TABLE registros_temperatura ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "allow_all" ON registros_temperatura FOR ALL USING (true);`;
+  navigator.clipboard.writeText(sql).then(() => showToast('📋', 'SQL copiado', 'Pégalo en el editor SQL de Supabase'));
+}
+</script>
+</body>
+</html>
