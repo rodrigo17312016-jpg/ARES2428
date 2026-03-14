@@ -535,7 +535,7 @@
   <button class="nav-tab active" onclick="showPanel('registro')">📋 Registro</button>
   <button class="nav-tab" onclick="showPanel('historial')">📊 Historial</button>
   <button class="nav-tab" onclick="showPanel('dashboard')">🌡️ Dashboard</button>
-  <button class="nav-tab" onclick="showPanel('config')">⚙️ Config</button>
+  <button class="nav-tab" onclick="showPanel('config')">⚙️ Detalles</button>
 
 </div>
 
@@ -726,10 +726,7 @@
 <!-- ============== PANEL: CONFIG ============== -->
 <div id="panel-config" class="panel">
   <div class="section-title">Rangos de temperatura por área</div>
-  <div class="info-box">
-    <strong>Rangos recomendados para exportación de frutas congeladas (HACCP).</strong><br>
-    Los registros fuera de rango se marcan automáticamente como alerta o crítico.
-  </div>
+
   <div class="areas-list">
     <div class="area-item">
       <div class="area-color" style="background:#10b981"></div>
@@ -891,9 +888,81 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 // ====== ESTADO ======
-let registros = JSON.parse(localStorage.getItem('temp_registros') || '[]');
+let registros = [];
 let config = JSON.parse(localStorage.getItem('temp_config') || '{}');
 let chartAreas = null, chartHoras = null;
+
+// ====== CARGAR DESDE SUPABASE ======
+async function cargarRegistrosSupabase() {
+  if (!config.sbUrl || !config.sbKey) {
+    // Sin Supabase: cargar local
+    registros = JSON.parse(localStorage.getItem('temp_registros') || '[]');
+    renderTablaHoy();
+    renderDashboard();
+    return;
+  }
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const res = await fetch(
+      `${config.sbUrl}/rest/v1/registros_temperatura?fecha=eq.${today}&order=hora.desc`,
+      { headers: { 'apikey': config.sbKey, 'Authorization': `Bearer ${config.sbKey}` } }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      // Mapear campos de Supabase al formato local
+      registros = data.map(r => ({
+        id: r.id,
+        supabase_id: r.id,
+        fecha: r.fecha,
+        hora: r.hora ? r.hora.slice(0,5) : '',
+        area: r.area,
+        temperatura: parseFloat(r.temperatura),
+        estado: r.estado,
+        operario: r.operario,
+        turno: r.turno,
+        observaciones: r.observaciones,
+        created_at: r.created_at
+      }));
+    }
+  } catch(e) {
+    console.error('Error cargando desde Supabase:', e);
+    registros = JSON.parse(localStorage.getItem('temp_registros') || '[]');
+  }
+  renderTablaHoy();
+  renderDashboard();
+}
+
+async function cargarTodosRegistros() {
+  if (!config.sbUrl || !config.sbKey) {
+    registros = JSON.parse(localStorage.getItem('temp_registros') || '[]');
+    return;
+  }
+  try {
+    const res = await fetch(
+      `${config.sbUrl}/rest/v1/registros_temperatura?order=fecha.desc,hora.desc&limit=1000`,
+      { headers: { 'apikey': config.sbKey, 'Authorization': `Bearer ${config.sbKey}` } }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      registros = data.map(r => ({
+        id: r.id,
+        supabase_id: r.id,
+        fecha: r.fecha,
+        hora: r.hora ? r.hora.slice(0,5) : '',
+        area: r.area,
+        temperatura: parseFloat(r.temperatura),
+        estado: r.estado,
+        operario: r.operario,
+        turno: r.turno,
+        observaciones: r.observaciones,
+        created_at: r.created_at
+      }));
+    }
+  } catch(e) {
+    console.error('Error:', e);
+    registros = JSON.parse(localStorage.getItem('temp_registros') || '[]');
+  }
+}
 
 // ====== RANGOS POR ÁREA ======
 const rangos = {
@@ -952,7 +1021,7 @@ function calcularTurno(horaStr) {
 }
 
 // ====== INIT ======
-window.onload = () => {
+window.onload = async () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('fecha').value = today;
   const now = new Date();
@@ -961,18 +1030,26 @@ window.onload = () => {
   document.getElementById('turno').value = calcularTurno(horaInicial);
   if (config.sbUrl) document.getElementById('sbUrl').value = config.sbUrl;
   if (config.sbKey) document.getElementById('sbKey').value = config.sbKey;
-  renderTablaHoy();
-  renderDashboard();
+  await cargarRegistrosSupabase();
 };
 
 // ====== TABS ======
-function showPanel(id) {
+async function showPanel(id) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   event.target.classList.add('active');
-  if (id === 'dashboard') { setTimeout(() => { renderChartAreas(); renderChartHoras(); }, 100); }
-  if (id === 'historial') renderHistorial();
+  if (id === 'dashboard') {
+    await cargarRegistrosSupabase();
+    setTimeout(() => { renderChartAreas(); renderChartHoras(); }, 100);
+  }
+  if (id === 'historial') {
+    await cargarTodosRegistros();
+    renderHistorial();
+  }
+  if (id === 'registro') {
+    await cargarRegistrosSupabase();
+  }
 }
 
 // ====== UPDATE TEMP STATUS ======
@@ -1034,9 +1111,12 @@ async function guardarRegistro() {
     observaciones: obs.trim() !== '' ? obs.trim() : null
   };
 
-  // Guardar local (con id local para el historial)
-  registros.push({...registro, id: Date.now(), created_at: new Date().toISOString()});
-  localStorage.setItem('temp_registros', JSON.stringify(registros));
+  // Guardar local como respaldo
+  const localReg = {...registro, id: Date.now(), created_at: new Date().toISOString()};
+  if (!config.sbUrl || !config.sbKey) {
+    registros.push(localReg);
+    localStorage.setItem('temp_registros', JSON.stringify(registros));
+  }
 
   // Enviar a Supabase si está configurado
   if (config.sbUrl && config.sbKey) {
@@ -1053,6 +1133,7 @@ async function guardarRegistro() {
       });
       if (res.ok) {
         showToast('✅', 'Registro guardado en Supabase', `${area} · ${temp}°C · ${hora}`);
+        await cargarRegistrosSupabase();
       } else {
         const errText = await res.text();
         console.error('Supabase error:', res.status, errText);
@@ -1077,8 +1158,10 @@ async function guardarRegistro() {
   document.getElementById('hora').value = horaInicial;
   document.getElementById('turno').value = calcularTurno(horaInicial);
 
-  renderTablaHoy();
-  renderDashboard();
+  if (!config.sbUrl || !config.sbKey) {
+    renderTablaHoy();
+    renderDashboard();
+  }
 }
 
 // ====== TABLA HOY ======
@@ -1122,7 +1205,8 @@ function renderHistorial(filtro = {}) {
       <td style="font-size:11px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.observaciones||'—'}</td>
     </tr>`).join('');
 }
-function filtrarHistorial() {
+async function filtrarHistorial() {
+  await cargarTodosRegistros();
   renderHistorial({ fecha: document.getElementById('filtroFecha').value, area: document.getElementById('filtroArea').value });
 }
 
@@ -1250,7 +1334,7 @@ function cerrarModal(e) {
   editingId = null;
 }
 
-function guardarEdicion() {
+async function guardarEdicion() {
   if (editingId === null) return;
   const idx = registros.findIndex(x => x.id === editingId);
   if (idx === -1) return;
@@ -1277,8 +1361,7 @@ function guardarEdicion() {
 
   document.getElementById('modalOverlay').classList.remove('open');
   editingId = null;
-  renderTablaHoy();
-  renderDashboard();
+  await cargarRegistrosSupabase();
   showToast('✅', 'Registro actualizado', `${area} · ${temp}°C · ${hora}`);
 }
 
@@ -1291,7 +1374,7 @@ function confirmarEliminar(id) {
   setTimeout(() => document.querySelector('.btn-danger').focus(), 100);
 }
 
-function eliminarRegistro() {
+async function eliminarRegistro() {
   if (editingId === null) return;
   const r = registros.find(x => x.id === editingId);
   // Eliminar de Supabase si aplica
@@ -1305,8 +1388,7 @@ function eliminarRegistro() {
   localStorage.setItem('temp_registros', JSON.stringify(registros));
   document.getElementById('modalOverlay').classList.remove('open');
   editingId = null;
-  renderTablaHoy();
-  renderDashboard();
+  await cargarRegistrosSupabase();
   showToast('🗑', 'Registro eliminado', 'El registro fue borrado correctamente');
 }
 
