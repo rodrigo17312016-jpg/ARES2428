@@ -366,7 +366,7 @@
   /* SQL panel */
   .code-block {
     background: #0d1117;
-    border: 1px sccolid var(--border);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
     font-family: 'DM Mono', monospace;
@@ -460,7 +460,7 @@
   <button class="nav-tab" onclick="showPanel('historial')">📊 Historial</button>
   <button class="nav-tab" onclick="showPanel('dashboard')">🌡️ Dashboard</button>
   <button class="nav-tab" onclick="showPanel('config')">⚙️ Config</button>
-  <button class="nav-tab" onclick="showPanel('exportar')">🗄️ Base de datos</button>
+
 </div>
 
 <!-- ============== PANEL: REGISTRO ============== -->
@@ -474,27 +474,27 @@
         <label>Área / Zona</label>
         <select id="area" onchange="updateAreaInfo()">
           <option value="">— Seleccionar —</option>
-          <option value="Cámara Frigorífica 1">Cámara Frigorífica 1</option>
-          <option value="Cámara Frigorífica 2">Cámara Frigorífica 2</option>
-          <option value="Túnel de Congelado">Túnel de Congelado</option>
-          <option value="Sala de Proceso">Sala de Proceso</option>
-          <option value="Área de Selección">Área de Selección</option>
-          <option value="Muelle de Carga">Muelle de Carga</option>
-          <option value="Almacén Materia Prima">Almacén Materia Prima</option>
+          <option value="CAMARA DE MATERIA PRIMA">CAMARA DE MATERIA PRIMA</option>
+          <option value="ACONDICIONADOS">ACONDICIONADOS</option>
+          <option value="EMBANDEJADO">EMBANDEJADO</option>
+          <option value="LAVADO DE BANDEJAS">LAVADO DE BANDEJAS</option>
+          <option value="PRE ENFRIADO">PRE ENFRIADO</option>
+          <option value="EMPAQUE">EMPAQUE</option>
+          <option value="TEMPERATURA PRODUCTO">TEMPERATURA PRODUCTO</option>
+          <option value="CAMARA DE PRODUCTO TERMINADO">CAMARA DE PRODUCTO TERMINADO</option>
+          <option value="DESPACHO">DESPACHO</option>
         </select>
       </div>
       <div class="form-group">
         <label>Operario responsable</label>
         <select id="operario">
           <option value="">— Seleccionar —</option>
-          <option>Carlos Quispe</option>
-          <option>María Huanca</option>
-          <option>Luis Condori</option>
-          <option>Ana Torres</option>
-          <option>Jorge Mamani</option>
-          <option>Rosa Flores</option>
-          <option>Pedro Chávez</option>
-          <option>Elena Vargas</option>
+          <option>LUIS APONTE</option>
+          <option>MAYDA APONTE</option>
+          <option>SHEYLA CAMONES</option>
+          <option>JHONY PAJUELO</option>
+          <option>BLANCA MALVACEDA</option>
+          <option>CHRISTY JIMENEZ</option>
         </select>
       </div>
       <div class="form-group">
@@ -528,9 +528,8 @@
       <div class="form-group">
         <label>Turno</label>
         <select id="turno">
-          <option value="Mañana (06:00–14:00)">Mañana (06:00–14:00)</option>
-          <option value="Tarde (14:00–22:00)">Tarde (14:00–22:00)</option>
-          <option value="Noche (22:00–06:00)">Noche (22:00–06:00)</option>
+          <option value="TURNO DIA (06:00-18:00)">TURNO DIA (06:00-18:00)</option>
+          <option value="TURNO NOCHE (19:00-05:00)">TURNO NOCHE (19:00-05:00)</option>
         </select>
       </div>
     </div>
@@ -565,13 +564,15 @@
     <input type="date" id="filtroFecha" />
     <select id="filtroArea">
       <option value="">Todas las áreas</option>
-      <option>Cámara Frigorífica 1</option>
-      <option>Cámara Frigorífica 2</option>
-      <option>Túnel de Congelado</option>
-      <option>Sala de Proceso</option>
-      <option>Área de Selección</option>
-      <option>Muelle de Carga</option>
-      <option>Almacén Materia Prima</option>
+      <option>CAMARA DE MATERIA PRIMA</option>
+      <option>ACONDICIONADOS</option>
+      <option>EMBANDEJADO</option>
+      <option>LAVADO DE BANDEJAS</option>
+      <option>PRE ENFRIADO</option>
+      <option>EMPAQUE</option>
+      <option>TEMPERATURA PRODUCTO</option>
+      <option>CAMARA DE PRODUCTO TERMINADO</option>
+      <option>DESPACHO</option>
     </select>
     <button class="btn btn-secondary" onclick="filtrarHistorial()">Filtrar</button>
     <button class="btn btn-secondary" onclick="exportarCSV()">⬇ Exportar CSV</button>
@@ -623,13 +624,15 @@
   <div style="margin-bottom:12px">
     <select id="filtroAreaChart" onchange="actualizarChartHoras()" style="width:auto;min-width:200px">
       <option value="">Todas las áreas (promedio)</option>
-      <option>Cámara Frigorífica 1</option>
-      <option>Cámara Frigorífica 2</option>
-      <option>Túnel de Congelado</option>
-      <option>Sala de Proceso</option>
-      <option>Área de Selección</option>
-      <option>Muelle de Carga</option>
-      <option>Almacén Materia Prima</option>
+      <option>CAMARA DE MATERIA PRIMA</option>
+      <option>ACONDICIONADOS</option>
+      <option>EMBANDEJADO</option>
+      <option>LAVADO DE BANDEJAS</option>
+      <option>PRE ENFRIADO</option>
+      <option>EMPAQUE</option>
+      <option>TEMPERATURA PRODUCTO</option>
+      <option>CAMARA DE PRODUCTO TERMINADO</option>
+      <option>DESPACHO</option>
     </select>
   </div>
   <div class="chart-container">
@@ -646,52 +649,76 @@
   </div>
   <div class="areas-list">
     <div class="area-item">
-      <div class="area-color" style="background:#3b82f6"></div>
+      <div class="area-color" style="background:#10b981"></div>
       <div class="area-info">
-        <div class="area-name">Cámara Frigorífica 1 y 2</div>
-        <div class="area-range">Óptimo: -18°C a -22°C &nbsp;|&nbsp; Alerta: &gt; -15°C &nbsp;|&nbsp; Crítico: &gt; -10°C</div>
+        <div class="area-name">CAMARA DE MATERIA PRIMA</div>
+        <div class="area-range">Límite: &le; 8°C &nbsp;|&nbsp; Alerta: &gt; 8°C &nbsp;|&nbsp; Crítico: &gt; 13°C</div>
       </div>
-      <span class="status-badge status-ok"><span class="dot"></span>IQF Fruta</span>
-    </div>
-    <div class="area-item">
-      <div class="area-color" style="background:#00d4aa"></div>
-      <div class="area-info">
-        <div class="area-name">Túnel de Congelado</div>
-        <div class="area-range">Óptimo: -30°C a -40°C &nbsp;|&nbsp; Alerta: &gt; -25°C &nbsp;|&nbsp; Crítico: &gt; -20°C</div>
-      </div>
-      <span class="status-badge status-ok"><span class="dot"></span>Congelado rápido</span>
+      <span class="status-badge status-ok"><span class="dot"></span>Materia prima</span>
     </div>
     <div class="area-item">
       <div class="area-color" style="background:#f59e0b"></div>
       <div class="area-info">
-        <div class="area-name">Sala de Proceso</div>
-        <div class="area-range">Óptimo: 4°C a 8°C &nbsp;|&nbsp; Alerta: &gt; 10°C &nbsp;|&nbsp; Crítico: &gt; 15°C</div>
+        <div class="area-name">ACONDICIONADOS</div>
+        <div class="area-range">Límite: &le; 17°C &nbsp;|&nbsp; Alerta: &gt; 17°C &nbsp;|&nbsp; Crítico: &gt; 22°C</div>
       </div>
-      <span class="status-badge status-warn"><span class="dot"></span>Proceso frío</span>
+      <span class="status-badge status-warn"><span class="dot"></span>Acondicionado</span>
     </div>
     <div class="area-item">
-      <div class="area-color" style="background:#8b5cf6"></div>
+      <div class="area-color" style="background:#f59e0b"></div>
       <div class="area-info">
-        <div class="area-name">Área de Selección</div>
-        <div class="area-range">Óptimo: 10°C a 15°C &nbsp;|&nbsp; Alerta: &gt; 18°C &nbsp;|&nbsp; Crítico: &gt; 22°C</div>
+        <div class="area-name">EMBANDEJADO</div>
+        <div class="area-range">Límite: &le; 15°C &nbsp;|&nbsp; Alerta: &gt; 15°C &nbsp;|&nbsp; Crítico: &gt; 20°C</div>
       </div>
-      <span class="status-badge status-ok"><span class="dot"></span>Zona fresca</span>
+      <span class="status-badge status-warn"><span class="dot"></span>Proceso</span>
     </div>
     <div class="area-item">
-      <div class="area-color" style="background:#ef4444"></div>
+      <div class="area-color" style="background:#f59e0b"></div>
       <div class="area-info">
-        <div class="area-name">Muelle de Carga</div>
-        <div class="area-range">Óptimo: -18°C a -20°C &nbsp;|&nbsp; Alerta: &gt; -15°C &nbsp;|&nbsp; Crítico: &gt; -10°C</div>
+        <div class="area-name">LAVADO DE BANDEJAS</div>
+        <div class="area-range">Límite: &le; 18°C &nbsp;|&nbsp; Alerta: &gt; 18°C &nbsp;|&nbsp; Crítico: &gt; 23°C</div>
       </div>
-      <span class="status-badge status-ok"><span class="dot"></span>Zona carga</span>
+      <span class="status-badge status-warn"><span class="dot"></span>Lavado</span>
     </div>
     <div class="area-item">
-      <div class="area-color" style="background:#10b981"></div>
+      <div class="area-color" style="background:#3b82f6"></div>
       <div class="area-info">
-        <div class="area-name">Almacén Materia Prima</div>
-        <div class="area-range">Óptimo: 2°C a 6°C &nbsp;|&nbsp; Alerta: &gt; 8°C &nbsp;|&nbsp; Crítico: &gt; 12°C</div>
+        <div class="area-name">PRE ENFRIADO</div>
+        <div class="area-range">Límite: &le; 10°C &nbsp;|&nbsp; Alerta: &gt; 10°C &nbsp;|&nbsp; Crítico: &gt; 15°C</div>
       </div>
       <span class="status-badge status-ok"><span class="dot"></span>Pre-frío</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#3b82f6"></div>
+      <div class="area-info">
+        <div class="area-name">EMPAQUE</div>
+        <div class="area-range">Límite: &le; 5°C &nbsp;|&nbsp; Alerta: &gt; 5°C &nbsp;|&nbsp; Crítico: &gt; 10°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Empaque frío</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#00d4aa"></div>
+      <div class="area-info">
+        <div class="area-name">TEMPERATURA PRODUCTO</div>
+        <div class="area-range">Límite: &le; -18°C &nbsp;|&nbsp; Alerta: &gt; -18°C &nbsp;|&nbsp; Crítico: &gt; -13°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Producto IQF</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#00d4aa"></div>
+      <div class="area-info">
+        <div class="area-name">CAMARA DE PRODUCTO TERMINADO</div>
+        <div class="area-range">Límite: &le; -20°C &nbsp;|&nbsp; Alerta: &gt; -20°C &nbsp;|&nbsp; Crítico: &gt; -15°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Producto terminado</span>
+    </div>
+    <div class="area-item">
+      <div class="area-color" style="background:#3b82f6"></div>
+      <div class="area-info">
+        <div class="area-name">DESPACHO</div>
+        <div class="area-range">Límite: &le; 5°C &nbsp;|&nbsp; Alerta: &gt; 5°C &nbsp;|&nbsp; Crítico: &gt; 10°C</div>
+      </div>
+      <span class="status-badge status-ok"><span class="dot"></span>Despacho frío</span>
     </div>
   </div>
 </div>
@@ -787,20 +814,28 @@ let chartAreas = null, chartHoras = null;
 
 // ====== RANGOS POR ÁREA ======
 const rangos = {
-  'Cámara Frigorífica 1':  { min: -22, max: -18, alerta: -15, critico: -10 },
-  'Cámara Frigorífica 2':  { min: -22, max: -18, alerta: -15, critico: -10 },
-  'Túnel de Congelado':    { min: -40, max: -30, alerta: -25, critico: -20 },
-  'Sala de Proceso':       { min: 4,   max: 8,   alerta: 10,  critico: 15  },
-  'Área de Selección':     { min: 10,  max: 15,  alerta: 18,  critico: 22  },
-  'Muelle de Carga':       { min: -20, max: -18, alerta: -15, critico: -10 },
-  'Almacén Materia Prima': { min: 2,   max: 6,   alerta: 8,   critico: 12  },
+  'CAMARA DE MATERIA PRIMA':      { limite: 8,   critico: 13  },
+  'ACONDICIONADOS':               { limite: 17,  critico: 22  },
+  'EMBANDEJADO':                  { limite: 15,  critico: 20  },
+  'LAVADO DE BANDEJAS':           { limite: 18,  critico: 23  },
+  'PRE ENFRIADO':                 { limite: 10,  critico: 15  },
+  'EMPAQUE':                      { limite: 5,   critico: 10  },
+  'TEMPERATURA PRODUCTO':         { limite: -18, critico: -13 },
+  'CAMARA DE PRODUCTO TERMINADO': { limite: -20, critico: -15 },
+  'DESPACHO':                     { limite: 5,   critico: 10  },
 };
 
 function getEstado(area, temp) {
   const r = rangos[area];
   if (!r) return 'OK';
-  if (temp > r.critico) return 'CRITICO';
-  if (temp > r.alerta)  return 'ALERTA';
+  // Para areas de congelado el limite es negativo: superar = subir por encima del limite
+  if (r.limite < 0) {
+    if (temp > r.critico) return 'CRITICO';
+    if (temp > r.limite)  return 'ALERTA';
+  } else {
+    if (temp > r.critico) return 'CRITICO';
+    if (temp > r.limite)  return 'ALERTA';
+  }
   return 'OK';
 }
 
@@ -840,7 +875,7 @@ function updateAreaInfo() {
   const area = document.getElementById('area').value;
   const r = rangos[area];
   if (r) {
-    document.getElementById('rangoInfo').textContent = `Rango óptimo: ${r.min}°C a ${r.max}°C`;
+    document.getElementById('rangoInfo').textContent = `Límite máximo: ${r.limite}°C · Crítico: +5°C sobre el límite (${r.critico}°C)`;
   } else {
     document.getElementById('rangoInfo').textContent = '';
   }
@@ -882,9 +917,20 @@ async function guardarRegistro() {
   }
 
   const estado = getEstado(area, temp);
-  const registro = { fecha, hora, area, temperatura: temp, estado, operario, turno, observaciones: obs };
-  // Guardar local
-  registros.push(registro);
+  // Solo los campos que acepta Supabase — sin id ni created_at (los genera automáticamente)
+  const registro = {
+    fecha,
+    hora,
+    area,
+    temperatura: parseFloat(temp),
+    estado,
+    operario,
+    turno: turno || null,
+    observaciones: obs.trim() !== '' ? obs.trim() : null
+  };
+
+  // Guardar local (con id local para el historial)
+  registros.push({...registro, id: Date.now(), created_at: new Date().toISOString()});
   localStorage.setItem('temp_registros', JSON.stringify(registros));
 
   // Enviar a Supabase si está configurado
@@ -892,13 +938,24 @@ async function guardarRegistro() {
     try {
       const res = await fetch(`${config.sbUrl}/rest/v1/registros_temperatura`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': config.sbKey, 'Authorization': `Bearer ${config.sbKey}`, 'Prefer': 'return=minimal' },
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': config.sbKey,
+          'Authorization': `Bearer ${config.sbKey}`,
+          'Prefer': 'return=minimal'
+        },
         body: JSON.stringify(registro)
       });
-      if (res.ok) showToast('✅', 'Registro guardado', `${area} · ${temp}°C · ${hora} → Supabase ✓`);
-      else { const errText = await res.text(); showToast('⚠️', 'Error '+res.status, errText.slice(0,120)); console.error('Supabase error:', errText); }
+      if (res.ok) {
+        showToast('✅', 'Registro guardado en Supabase', `${area} · ${temp}°C · ${hora}`);
+      } else {
+        const errText = await res.text();
+        console.error('Supabase error:', res.status, errText);
+        showToast('⚠️', 'Error ' + res.status, errText.slice(0, 120));
+      }
     } catch (e) {
-      showToast('⚠️', 'Guardado local', 'No se pudo conectar a Supabase');
+      console.error('Fetch error:', e);
+      showToast('⚠️', 'Guardado local', 'Sin conexión a Supabase');
     }
   } else {
     showToast('✅', 'Registro guardado localmente', `${area} · ${temp}°C · ${hora}`);
@@ -973,7 +1030,7 @@ function renderDashboard() {
   const today = new Date().toISOString().split('T')[0];
   const hoy = registros.filter(r => r.fecha === today);
   const areas = Object.keys(rangos);
-  const cardColors = { 'Cámara Frigorífica 1':'frozen','Cámara Frigorífica 2':'frozen','Túnel de Congelado':'frozen','Sala de Proceso':'ambient','Área de Selección':'ambient','Muelle de Carga':'cold','Almacén Materia Prima':'cold' };
+  const cardColors = { 'CAMARA DE MATERIA PRIMA':'cold','ACONDICIONADOS':'ambient','EMBANDEJADO':'ambient','LAVADO DE BANDEJAS':'ambient','PRE ENFRIADO':'cold','EMPAQUE':'cold','TEMPERATURA PRODUCTO':'frozen','CAMARA DE PRODUCTO TERMINADO':'frozen','DESPACHO':'cold' };
   const container = document.getElementById('dashCards');
   container.innerHTML = areas.map(area => {
     const regs = hoy.filter(r => r.area === area).sort((a,b) => b.hora.localeCompare(a.hora));
