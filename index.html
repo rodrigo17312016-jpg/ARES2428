@@ -22,6 +22,66 @@
 –success: #10b981;
 }
 
+/* MODO CLARO */
+body.light-mode {
+–bg: #f0f4f8;
+–surface: #ffffff;
+–surface2: #f8fafc;
+–border: rgba(0,0,0,0.08);
+–accent: #0d9488;
+–accent2: #2563eb;
+–warn: #d97706;
+–danger: #dc2626;
+–text: #0f172a;
+–muted: #64748b;
+–success: #16a34a;
+}
+
+/* SWITCH */
+.theme-switch {
+display: flex;
+align-items: center;
+gap: 8px;
+cursor: pointer;
+user-select: none;
+}
+.switch-track {
+position: relative;
+width: 44px;
+height: 24px;
+background: #334155;
+border-radius: 12px;
+transition: background 0.3s;
+flex-shrink: 0;
+}
+body.light-mode .switch-track {
+background: #cbd5e1;
+}
+.switch-thumb {
+position: absolute;
+top: 3px;
+left: 3px;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #00d4aa;
+transition: transform 0.3s, background 0.3s;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 11px;
+}
+body.light-mode .switch-thumb {
+transform: translateX(20px);
+background: #f59e0b;
+}
+.switch-label {
+font-size: 11px;
+font-weight: 600;
+color: var(–muted);
+white-space: nowrap;
+}
+
 - { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -534,7 +594,13 @@ line-height: 1.4;
       <div class="logo-sub">Registro de Temperaturas</div>
     </div>
   </div>
-  <div class="header-right" style="text-align:right;flex-shrink:0;">
+  <div class="header-right" style="text-align:right;flex-shrink:0;display:flex;align-items:center;gap:16px;">
+    <div class="theme-switch" onclick="toggleTheme()" title="Cambiar modo">
+      <div class="switch-track">
+        <div class="switch-thumb" id="switchThumb">🌙</div>
+      </div>
+      <span class="switch-label" id="switchLabel">Modo oscuro</span>
+    </div>
     <div style="font-size:10px;color:var(--muted);line-height:1.5;">
       Desarrollado por<br>
       <span style="color:var(--text);font-weight:600;font-size:12px;">RODRIGO GARCIA</span><br>
@@ -1428,6 +1494,36 @@ async function eliminarRegistro() {
   await cargarRegistrosSupabase();
   showToast('🗑', 'Registro eliminado', 'El registro fue borrado correctamente');
 }
+
+// ====== MODO CLARO/OSCURO ======
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-mode');
+  const thumb = document.getElementById('switchThumb');
+  const label = document.getElementById('switchLabel');
+  if (isLight) {
+    thumb.textContent = '☀️';
+    label.textContent = 'Modo claro';
+  } else {
+    thumb.textContent = '🌙';
+    label.textContent = 'Modo oscuro';
+  }
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+
+// Restaurar tema guardado
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') {
+    document.body.classList.add('light-mode');
+    // Update switch after DOM loads
+    window.addEventListener('DOMContentLoaded', () => {
+      const thumb = document.getElementById('switchThumb');
+      const label = document.getElementById('switchLabel');
+      if (thumb) thumb.textContent = '☀️';
+      if (label) label.textContent = 'Modo claro';
+    });
+  }
+})();
 
 // ====== SQL COPY ======
 function copiarSQL() {
