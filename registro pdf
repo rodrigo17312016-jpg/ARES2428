@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte Área Frío — Frutos Tropicales</title>
+<style>
+  /* ── PANTALLA: controles ── */
+  @media screen {
+    body { font-family: Arial, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; }
+    .controls {
+      background: #fff; border-radius: 16px; padding: 24px;
+      margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      max-width: 900px; margin-left: auto; margin-right: auto;
+    }
+    .controls-title {
+      font-size: 18px; font-weight: 800; color: #1a2e1a; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ctrl-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .ctrl-group { display: flex; flex-direction: column; gap: 6px; }
+    .ctrl-group label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+    .ctrl-group input, .ctrl-group select {
+      padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 10px;
+      font-size: 14px; font-family: Arial, sans-serif; outline: none;
+      transition: border-color 0.2s;
+    }
+    .ctrl-group input:focus, .ctrl-group select:focus { border-color: #16a34a; }
+    .btn-load {
+      background: #16a34a; color: #fff; border: none; border-radius: 10px;
+      padding: 11px 24px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: Arial, sans-serif; transition: all 0.2s;
+    }
+    .btn-load:hover { background: #15803d; }
+    .btn-print {
+      background: #2563eb; color: #fff; border: none; border-radius: 10px;
+      padding: 11px 24px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: Arial, sans-serif; transition: all 0.2s; margin-left: 8px;
+    }
+    .btn-print:hover { background: #1d4ed8; }
+    .status-msg { font-size: 13px; color: #64748b; margin-top: 10px; min-height: 18px; }
+    .preview-wrap { max-width: 900px; margin: 0 auto; }
+  }
+
+/* ── FORMULARIO (pantalla y PDF) ── */
+.form-page {
+background: #fff;
+width: 210mm;
+min-height: 297mm;
+margin: 0 auto;
+padding: 10mm 12mm;
+box-sizing: border-box;
+font-family: Arial, sans-serif;
+font-size: 9pt;
+color: #000;
+}
+
+@media screen {
+.form-page {
+box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+border-radius: 4px;
+margin-bottom: 20px;
+}
+}
+
+/* ENCABEZADO */
+.header-table {
+width: 100%; border-collapse: collapse; margin-bottom: 4mm;
+}
+.header-table td { vertical-align: middle; padding: 0; }
+.company-name {
+font-size: 13pt; font-weight: 900; color: #1a5c25; line-height: 1.1;
+}
+.company-sub { font-size: 7pt; color: #555; }
+.doc-title {
+text-align: center; font-size: 11pt; font-weight: 900;
+text-transform: uppercase; letter-spacing: 0.5px;
+border: 2px solid #000; padding: 3mm 2mm;
+}
+.doc-code { text-align: right; font-size: 7pt; color: #555; line-height: 1.6; }
+
+/* INFO SUPERIOR */
+.info-row {
+display: flex; gap: 4mm; margin-bottom: 3mm;
+}
+.info-box {
+border: 1.5px solid #000; border-radius: 3px;
+padding: 2mm 3mm; flex: 1;
+}
+.info-box-label { font-size: 7pt; color: #555; font-weight: 700; text-transform: uppercase; }
+.info-box-value { font-size: 11pt; font-weight: 900; color: #000; margin-top: 1mm; }
+
+/* ACCIONES CORRECTIVAS - mini box arriba derecha */
+.acciones-box {
+border: 1.5px solid #000; border-radius: 3px;
+padding: 2mm 3mm; font-size: 7.5pt; line-height: 1.5;
+}
+.acciones-box strong { font-size: 8pt; }
+
+/* TABLA PRINCIPAL */
+.main-table {
+width: 100%; border-collapse: collapse;
+margin-bottom: 3mm;
+}
+.main-table th, .main-table td {
+border: 1px solid #333;
+text-align: center;
+padding: 0;
+vertical-align: middle;
+}
+.main-table th {
+background: #d4edda;
+font-size: 7.5pt;
+font-weight: 700;
+padding: 2mm 1mm;
+line-height: 1.3;
+}
+.main-table th.area-header {
+background: #1a5c25;
+color: #fff;
+font-size: 8pt;
+padding: 2mm;
+}
+.main-table td {
+height: 7mm;
+font-size: 8.5pt;
+}
+.main-table td.hora-cell {
+font-weight: 700;
+background: #f0f9f3;
+font-size: 9pt;
+}
+.main-table td.temp-ok { color: #166534; font-weight: 700; }
+.main-table td.temp-alerta { color: #92400e; font-weight: 700; background: #fef3c7; }
+.main-table td.temp-critico { color: #991b1b; font-weight: 700; background: #fee2e2; }
+.main-table td.empty { background: #fafafa; }
+.main-table td.obs-cell { font-size: 7.5pt; text-align: left; padding: 1mm 2mm; }
+
+/* ACCIONES CORRECTIVAS ABAJO */
+.acciones-bottom {
+border: 1.5px solid #000; border-radius: 3px;
+padding: 2mm 3mm; margin-bottom: 3mm; min-height: 12mm;
+}
+.acciones-bottom-title { font-size: 8pt; font-weight: 700; text-transform: uppercase; margin-bottom: 2mm; }
+
+/* PARAMETROS */
+.params-table {
+width: 55%; border-collapse: collapse; margin: 0 auto;
+margin-bottom: 4mm;
+}
+.params-table th, .params-table td {
+border: 1px solid #333; padding: 1.5mm 2mm;
+font-size: 7.5pt; text-align: center;
+}
+.params-table th { background: #d4edda; font-weight: 700; }
+
+/* FIRMAS */
+.firmas-row {
+display: flex; justify-content: space-between; gap: 8mm;
+margin-top: 3mm;
+}
+.firma-box { flex: 1; text-align: center; }
+.firma-line { border-top: 1.5px solid #000; padding-top: 2mm; font-size: 7.5pt; }
+.firma-title { font-size: 7pt; color: #555; margin-bottom: 6mm; }
+
+/* PIE */
+.footer-doc {
+text-align: center; font-size: 6.5pt; color: #666;
+margin-top: 3mm; border-top: 1px solid #ccc; padding-top: 2mm;
+}
+
+/* ── IMPRESIÓN ── */
+@media print {
+body { background: #fff; padding: 0; margin: 0; }
+.controls { display: none !important; }
+.form-page {
+width: 100%; box-shadow: none; border-radius: 0;
+padding: 8mm 10mm; margin: 0;
+}
+@page { size: A4; margin: 0; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- CONTROLES (solo pantalla) -->
+
+<div class="controls">
+  <div class="controls-title">🌡️ Reporte de Control de Temperaturas — Área Frío</div>
+  <div class="ctrl-grid">
+    <div class="ctrl-group">
+      <label>Fecha del reporte</label>
+      <input type="date" id="ctrlFecha" />
+    </div>
+    <div class="ctrl-group">
+      <label>Turno</label>
+      <select id="ctrlTurno">
+        <option value="DIA">TURNO DÍA (06:00 - 18:00)</option>
+        <option value="NOCHE">TURNO NOCHE (19:00 - 05:00)</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>Responsable / Supervisor</label>
+      <select id="ctrlResponsable">
+        <option>LUIS APONTE</option>
+        <option>MAYDA APONTE</option>
+        <option>SHEYLA CAMONES</option>
+        <option>JHONY PAJUELO</option>
+        <option>BLANCA MALVACEDA</option>
+        <option>CHRISTY JIMENEZ</option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <button class="btn-load" onclick="cargarDatos()">⬇ Cargar datos de Supabase</button>
+    <button class="btn-print" onclick="window.print()">🖨 Imprimir / Descargar PDF</button>
+  </div>
+  <div class="status-msg" id="statusMsg">Selecciona la fecha y turno, luego carga los datos.</div>
+</div>
+
+<!-- FORMULARIO IMPRIMIBLE -->
+
+<div class="preview-wrap">
+<div class="form-page" id="formPage">
+
+  <!-- ENCABEZADO -->
+
+  <table class="header-table">
+    <tr>
+      <td style="width:30%">
+        <div class="company-name">FRUTOS TROPICALES</div>
+        <div class="company-sub">PERU EXPORT S.A.C.</div>
+      </td>
+      <td style="width:40%">
+        <div class="doc-title">CONTROL DE TEMPERATURAS<br>ÁREA FRÍO</div>
+      </td>
+      <td style="width:30%;padding-left:4mm">
+        <div class="doc-code">
+          Código: FTP-CAL-001<br>
+          Versión: 03<br>
+          F. Emisión: 15/03/2026
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <!-- INFO: Fecha, Juliano, Turno + Acciones correctivas -->
+
+  <table style="width:100%;border-collapse:collapse;margin-bottom:3mm;">
+    <tr>
+      <td style="width:65%;vertical-align:top;padding-right:3mm;">
+        <div class="info-row">
+          <div class="info-box">
+            <div class="info-box-label">Fecha</div>
+            <div class="info-box-value" id="displayFecha">—</div>
+          </div>
+          <div class="info-box" style="max-width:28mm;">
+            <div class="info-box-label">Juliano</div>
+            <div class="info-box-value" id="displayJuliano">—</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-label">Turno</div>
+            <div class="info-box-value" id="displayTurno">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-box">
+            <div class="info-box-label">Responsable / Supervisor</div>
+            <div class="info-box-value" id="displayResponsable" style="font-size:9pt;">—</div>
+          </div>
+        </div>
+      </td>
+      <td style="width:35%;vertical-align:top;">
+        <div class="acciones-box">
+          <strong>ACCIONES CORRECTIVAS:</strong><br>
+          Si la temperatura de la sala se encuentra fuera del rango establecido,
+          comunicar al Jefe de Área de inmediato y registrar la acción tomada
+          al final de este formato.
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <!-- TABLA PRINCIPAL -->
+
+  <table class="main-table" id="mainTable">
+    <thead>
+      <tr>
+        <th rowspan="2" style="width:12mm">HORA</th>
+        <th class="area-header" colspan="1">TEMPERATURA<br>DE PRODUCTO<br><span style="font-size:6.5pt;font-weight:400">(°C)</span></th>
+        <th class="area-header" colspan="1" style="background:#2d7a3a;">SALA DE<br>EMPAQUE<br><span style="font-size:6.5pt;font-weight:400">(°C)</span></th>
+        <th class="area-header" colspan="1" style="background:#1a5c25;">CÁMARA DE<br>PRODUCTO<br>TERMINADO<br><span style="font-size:6.5pt;font-weight:400">(°C)</span></th>
+        <th class="area-header" colspan="1" style="background:#2d7a3a;">SALA DE<br>DESPACHO<br><span style="font-size:6.5pt;font-weight:400">(°C)</span></th>
+        <th rowspan="2" style="min-width:35mm;background:#e8f5e9;color:#000;">OBSERVACIONES</th>
+      </tr>
+      <tr>
+        <th style="font-size:7pt;color:#555;padding:1mm">T (°C)</th>
+        <th style="font-size:7pt;color:#555;padding:1mm">T (°C)</th>
+        <th style="font-size:7pt;color:#555;padding:1mm">T (°C)</th>
+        <th style="font-size:7pt;color:#555;padding:1mm">T (°C)</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Se llena dinámicamente -->
+    </tbody>
+  </table>
+
+  <!-- ACCIONES CORRECTIVAS ABAJO -->
+
+  <div class="acciones-bottom">
+    <div class="acciones-bottom-title">Acciones correctivas tomadas:</div>
+    <div id="accionesTexto" style="font-size:8pt;color:#333;min-height:8mm;"></div>
+  </div>
+
+  <!-- PARAMETROS -->
+
+  <table class="params-table">
+    <thead>
+      <tr>
+        <th colspan="2">PARÁMETROS DE TEMPERATURA (°C)</th>
+      </tr>
+      <tr>
+        <th>ZONA</th>
+        <th>RANGO DE TEMPERATURA (°C)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Temperatura de Producto</td><td>-18 a -20</td></tr>
+      <tr><td>Sala de Empaque</td><td>0 a 5</td></tr>
+      <tr><td>Cámara de Producto Terminado</td><td>-18 a -20</td></tr>
+      <tr><td>Sala de Despacho</td><td>0 a 5</td></tr>
+    </tbody>
+  </table>
+
+  <!-- FIRMAS -->
+
+  <div class="firmas-row">
+    <div class="firma-box">
+      <div class="firma-title">Inspector de Aseguramiento de la Calidad</div>
+      <div class="firma-line" id="firmaInspector">_______________________________</div>
+    </div>
+    <div class="firma-box">
+      <div class="firma-title">VºBº Coordinador de Site</div>
+      <div class="firma-line">_______________________________</div>
+    </div>
+  </div>
+
+  <!-- PIE -->
+
+  <div class="footer-doc">
+    DOCUMENTO CONTROLADO — PROHIBIDA SU REPRODUCCIÓN SIN AUTORIZACIÓN DE FRUTOS TROPICALES PERU EXPORT S.A.C.
+  </div>
+
+</div>
+</div>
+
+<script>
+const SB_URL = 'https://obnvrfvcujsrmifvlqni.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ibnZyZnZjdWpzcm1pZnZscW5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY3OTUsImV4cCI6MjA4OTA4Mjc5NX0.A7BilSrDzqe2rqz1Kh8fg5t-GVNxrLGYJK4IaMlVtBs';
+
+// Mapeo de áreas de la app a columnas del formulario
+const AREAS_FRIO = {
+  'TEMPERATURA PRODUCTO':         'producto',
+  'EMPAQUE':                      'empaque',
+  'CAMARA DE PRODUCTO TERMINADO': 'camara',
+  'DESPACHO':                     'despacho',
+};
+
+// Rangos para colorear
+const RANGOS = {
+  'producto': { limite: -18, critico: -13 },
+  'empaque':  { limite: 5,   critico: 10  },
+  'camara':   { limite: -20, critico: -15 },
+  'despacho': { limite: 5,   critico: 10  },
+};
+
+// Calcular día juliano
+function getDayOfYear(date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff = date - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diff / oneDay);
+}
+
+// Formatear fecha para mostrar
+function formatFecha(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// Init: set today's date
+window.onload = () => {
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  document.getElementById('ctrlFecha').value = today;
+  // Auto-detect turno
+  const h = now.getHours();
+  document.getElementById('ctrlTurno').value = (h >= 6 && h <= 18) ? 'DIA' : 'NOCHE';
+};
+
+async function cargarDatos() {
+  const fecha    = document.getElementById('ctrlFecha').value;
+  const turno    = document.getElementById('ctrlTurno').value;
+  const responsable = document.getElementById('ctrlResponsable').value;
+  const msg      = document.getElementById('statusMsg');
+
+  if (!fecha) { msg.textContent = '⚠ Selecciona una fecha primero.'; return; }
+
+  msg.textContent = '⏳ Consultando Supabase...';
+
+  // Actualizar encabezado del formulario
+  const dateObj = new Date(fecha + 'T12:00:00');
+  document.getElementById('displayFecha').textContent = formatFecha(fecha);
+  document.getElementById('displayJuliano').textContent = getDayOfYear(dateObj);
+  document.getElementById('displayTurno').textContent = turno === 'DIA' ? 'DÍA' : 'NOCHE';
+  document.getElementById('displayResponsable').textContent = responsable;
+  document.getElementById('firmaInspector').textContent = responsable;
+
+  try {
+    // Traer todos los registros de las 4 áreas del formulario en esa fecha
+    const areas = Object.keys(AREAS_FRIO).map(a => `area=eq.${encodeURIComponent(a)}`).join('&');
+    const url = `${SB_URL}/rest/v1/registros_temperatura?fecha=eq.${fecha}&or=(${Object.keys(AREAS_FRIO).map(a=>`area.eq.${a}`).join(',')})&order=hora.asc`;
+
+    const res = await fetch(url, {
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+    });
+
+    let data = [];
+    if (res.ok) {
+      data = await res.json();
+      // Filtrar por turno
+      data = data.filter(r => {
+        const h = parseInt(r.hora.split(':')[0]);
+        return turno === 'DIA' ? (h >= 6 && h <= 18) : (h >= 19 || h <= 5);
+      });
+    }
+
+    msg.textContent = `✅ ${data.length} registros encontrados para ${formatFecha(fecha)} — Turno ${turno}`;
+    buildTable(data, turno);
+
+  } catch(e) {
+    msg.textContent = '❌ Error al conectar con Supabase: ' + e.message;
+  }
+}
+
+function buildTable(data, turno) {
+  // Generar las horas del turno seleccionado
+  let horas = [];
+  if (turno === 'DIA') {
+    for (let h = 6; h <= 18; h++) horas.push(`${String(h).padStart(2,'0')}:00`);
+  } else {
+    for (let h = 19; h <= 23; h++) horas.push(`${String(h).padStart(2,'0')}:00`);
+    for (let h = 0; h <= 5; h++)  horas.push(`${String(h).padStart(2,'0')}:00`);
+  }
+
+  // Organizar datos por hora y área
+  // Para cada hora, buscar el registro más cercano (mismo hour)
+  const byHoraArea = {};
+  data.forEach(r => {
+    const hh = r.hora.slice(0,2);
+    if (!byHoraArea[hh]) byHoraArea[hh] = {};
+    const col = AREAS_FRIO[r.area];
+    if (col) byHoraArea[hh][col] = r;
+  });
+
+  // Recopilar observaciones y acciones correctivas
+  const observaciones = [];
+  const acciones = [];
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  horas.forEach(hora => {
+    const hh = hora.slice(0,2);
+    const regs = byHoraArea[hh] || {};
+    const tr = document.createElement('tr');
+
+    // Columna hora
+    const tdHora = document.createElement('td');
+    tdHora.className = 'hora-cell';
+    tdHora.textContent = hora;
+    tr.appendChild(tdHora);
+
+    // Columnas de temperatura
+    ['producto','empaque','camara','despacho'].forEach(col => {
+      const td = document.createElement('td');
+      const r = regs[col];
+      if (r) {
+        td.textContent = r.temperatura + '°C';
+        const c = getColorClass(col, r.temperatura);
+        td.className = c;
+        if (r.observaciones && r.observaciones.trim()) {
+          observaciones.push(`${hora} (${col.toUpperCase()}): ${r.observaciones}`);
+        }
+        if (r.estado === 'ALERTA' || r.estado === 'CRITICO') {
+          acciones.push(`${hora} — ${r.area}: ${r.temperatura}°C (${r.estado})`);
+        }
+      } else {
+        td.className = 'empty';
+        td.textContent = '—';
+      }
+      tr.appendChild(td);
+    });
+
+    // Columna observaciones (agrupadas por hora)
+    const tdObs = document.createElement('td');
+    tdObs.className = 'obs-cell';
+    const obsHora = Object.values(regs)
+      .filter(r => r && r.observaciones && r.observaciones.trim())
+      .map(r => r.observaciones.trim())
+      .join(' / ');
+    tdObs.textContent = obsHora || '';
+    tr.appendChild(tdObs);
+
+    tbody.appendChild(tr);
+  });
+
+  // Acciones correctivas
+  const acText = document.getElementById('accionesTexto');
+  if (acciones.length > 0) {
+    acText.innerHTML = acciones.map(a => `• ${a}`).join('<br>');
+  } else {
+    acText.textContent = 'Sin alertas registradas en este turno.';
+  }
+}
+
+function getColorClass(col, temp) {
+  const r = RANGOS[col];
+  if (!r) return '';
+  if (r.limite < 0) {
+    if (temp > r.critico) return 'temp-critico';
+    if (temp > r.limite)  return 'temp-alerta';
+  } else {
+    if (temp > r.critico) return 'temp-critico';
+    if (temp > r.limite)  return 'temp-alerta';
+  }
+  return 'temp-ok';
+}
+</script>
+
+</body>
+</html>
