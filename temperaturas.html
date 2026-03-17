@@ -1101,7 +1101,7 @@ function actualizarReloj() {
   if (rd) rd.textContent = dateStr;
   if (rt) {
     const h = now.getHours();
-    rt.textContent = (h >= 6 && h <= 18) ? 'TURNO DIA (06:00-18:00)' : 'TURNO NOCHE (19:00-05:00)';
+    rt.textContent = (h >= 6 && h <= 18) ? 'TURNO DIA (06:00-17:00)' : 'TURNO NOCHE (18:00-05:00)';
   }
 }
 setInterval(actualizarReloj, 1000);
@@ -1112,8 +1112,8 @@ function calcularTurno(horaStr) {
   const h = parseInt(horaStr.split(':')[0]);
   // Turno Dia: 06:00 a 18:00 (h >= 6 && h <= 18)
   // Turno Noche: 19:00 a 05:00
-  if (h >= 6 && h <= 18) return 'TURNO DIA (06:00-18:00)';
-  return 'TURNO NOCHE (19:00-05:00)';
+  if (h >= 6 && h <= 18) return 'TURNO DIA (06:00-17:00)';
+  return 'TURNO NOCHE (18:00-05:00)';
 }
 
 // ====== INIT ======
