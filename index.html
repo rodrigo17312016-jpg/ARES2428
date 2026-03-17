@@ -321,6 +321,9 @@ tr:hover td { background:var(--bg); }
       <div class="nav-item" onclick="showPanel('certificaciones',this)">
         <span class="nav-icon">🏅</span> Certificaciones
       </div>
+      <div class="nav-item" onclick="showPanel('consumos',this)">
+        <span class="nav-icon">📦</span> Consumos
+      </div>
     </nav>
     <div class="sidebar-footer">
       <div class="user-card">
@@ -632,6 +635,78 @@ tr:hover td { background:var(--bg); }
       </div>
     </div>
 
+
+    <!-- CONSUMOS -->
+    <div id="panel-consumos" class="panel">
+      <div class="kpi-grid" id="consumosKpis">
+        <div class="kpi-card azul">
+          <div class="kpi-label">Total consumido</div>
+          <div class="kpi-value azul" id="cKpiTotal">—</div>
+          <div class="kpi-sub">unidades</div>
+        </div>
+        <div class="kpi-card verde">
+          <div class="kpi-label">Productos distintos</div>
+          <div class="kpi-value verde" id="cKpiProductos">—</div>
+          <div class="kpi-sub">insumos únicos</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid var(--color-text-info)">
+          <div class="kpi-label">Semanas registradas</div>
+          <div class="kpi-value" style="color:var(--color-text-info)" id="cKpiSemanas">—</div>
+          <div class="kpi-sub" id="cKpiSemanasRango">—</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid #a78bfa">
+          <div class="kpi-label">Insumo top</div>
+          <div class="kpi-value" style="color:#a78bfa;font-size:14px;" id="cKpiTop">—</div>
+          <div class="kpi-sub" id="cKpiTopCant">—</div>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+        <select id="cFiltroSubgrupo" onchange="filtrarConsumos()" style="background:var(--surface2);border:1px solid var(--border);color:var(--color-text-primary);padding:7px 12px;border-radius:8px;font-size:12px;font-family:inherit;outline:none;">
+          <option value="">Todos los subgrupos</option>
+        </select>
+        <select id="cFiltroCentro" onchange="filtrarConsumos()" style="background:var(--surface2);border:1px solid var(--border);color:var(--color-text-primary);padding:7px 12px;border-radius:8px;font-size:12px;font-family:inherit;outline:none;">
+          <option value="">Todos los centros</option>
+        </select>
+        <select id="cFiltroSemana" onchange="filtrarConsumos()" style="background:var(--surface2);border:1px solid var(--border);color:var(--color-text-primary);padding:7px 12px;border-radius:8px;font-size:12px;font-family:inherit;outline:none;">
+          <option value="">Todas las semanas</option>
+        </select>
+        <a href="dashboard_consumos.html" target="_blank" class="link-btn" style="font-size:12px;padding:7px 16px;">
+          📊 Ver dashboard completo
+        </a>
+      </div>
+
+      <div class="grid2">
+        <div class="chart-container">
+          <div class="chart-title">Consumo por semana</div>
+          <canvas id="cChartSemana" height="200"></canvas>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Top 5 insumos</div>
+          <canvas id="cChartTop" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">Consumo por centro de costo y subgrupo</div>
+        <canvas id="cChartCentro" height="140"></canvas>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="table-title">Detalle de consumos</span>
+          <button onclick="exportarConsumos()" style="background:var(--verde);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">⬇ CSV</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Fecha</th><th>Sem.</th><th>Centro</th><th>Subgrupo</th><th>Producto</th><th>Cant.</th><th>Unidad</th></tr></thead>
+            <tbody id="cTabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -691,6 +766,7 @@ function showPanel(id, el) {
   if (id === 'alertas' || id === 'inspecciones') cargarTemperaturas();
   if (id === 'produccion') initChartProduccion();
   if (id === 'rendimiento') initChartRendimiento();
+  if (id === 'consumos') initConsumos();
   closeSidebar();
 }
 
@@ -701,9 +777,10 @@ function closeSidebar() { document.getElementById('sidebar').classList.remove('o
 // ── CLOCK ──
 function updateClock() {
   const now = new Date();
+  const peruTime = new Date(now.toLocaleString('en-US', {timeZone: 'America/Lima'}));
   document.getElementById('topbarDate').textContent =
-    now.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'}) +
-    ' · ' + now.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit',hour12:false});
+    peruTime.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Lima'}) +
+    ' · ' + peruTime.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Lima'});
 }
 setInterval(updateClock, 1000);
 updateClock();
@@ -719,9 +796,11 @@ async function fetchSupabase(query) {
 // ── CARGAR TEMPERATURAS ──
 let tempData = [];
 async function cargarTemperaturas() {
-  const today = new Date().toISOString().split('T')[0];
+  // Fecha local Peru (UTC-5) — evita desfase con UTC de Supabase
+  const nowPeru = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/Lima'}));
+  const today = `${nowPeru.getFullYear()}-${String(nowPeru.getMonth()+1).padStart(2,'0')}-${String(nowPeru.getDate()).padStart(2,'0')}`;
   tempData = await fetchSupabase(
-    `registros_temperatura?fecha=eq.${today}&order=hora.desc&limit=500`
+    `registros_temperatura?fecha=eq.${today}&order=hora.desc&limit=1000`
   );
   renderTemperaturas();
   actualizarKPIs();
@@ -991,6 +1070,146 @@ function initChartRendimiento() {
     options:{responsive:true,plugins:{legend:{display:false}},
       scales:{x:{ticks:{color:'#64748b'}},y:{ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.05)'}}}}
   });
+}
+
+// ── CONSUMOS ──
+let consumosData = [];
+let consumosFiltrado = [];
+let consumosLoaded = false;
+let cCharts = {};
+
+async function initConsumos() {
+  if (consumosLoaded) { filtrarConsumos(); return; }
+  const el = document.getElementById('cTabla');
+  if (el) el.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Cargando datos...</td></tr>';
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/consumos_insumos?order=fecha.desc&limit=1000`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+    });
+    if (res.ok) {
+      consumosData = await res.json();
+      consumosLoaded = true;
+      // Populate filters
+      const subgrupos = [...new Set(consumosData.map(r=>r.subgrupo).filter(Boolean))].sort();
+      const centros   = [...new Set(consumosData.map(r=>r.centro_costo).filter(Boolean))].sort();
+      const semanas   = [...new Set(consumosData.map(r=>r.semana).filter(Boolean))].sort((a,b)=>a-b);
+      const sg = document.getElementById('cFiltroSubgrupo');
+      const cc = document.getElementById('cFiltroCentro');
+      const sw = document.getElementById('cFiltroSemana');
+      subgrupos.forEach(s => { const o=document.createElement('option');o.value=s;o.textContent=s;sg.appendChild(o); });
+      centros.forEach(c => { const o=document.createElement('option');o.value=c;o.textContent=c;cc.appendChild(o); });
+      semanas.forEach(s => { const o=document.createElement('option');o.value=s;o.textContent='Semana '+s;sw.appendChild(o); });
+      filtrarConsumos();
+    } else {
+      if (el) el.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--danger)">Error al cargar datos. Verifica que la tabla consumos_insumos existe en Supabase.</td></tr>';
+    }
+  } catch(e) {
+    if (el) el.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--danger)">Error: ${e.message}</td></tr>`;
+  }
+}
+
+function filtrarConsumos() {
+  const sg = document.getElementById('cFiltroSubgrupo').value;
+  const cc = document.getElementById('cFiltroCentro').value;
+  const sw = document.getElementById('cFiltroSemana').value;
+  consumosFiltrado = consumosData.filter(r =>
+    (!sg || r.subgrupo === sg) &&
+    (!cc || r.centro_costo === cc) &&
+    (!sw || String(r.semana) === String(sw))
+  );
+  renderConsumos();
+}
+
+function renderConsumos() {
+  const data = consumosFiltrado;
+  const total = data.reduce((s,r)=>s+(parseFloat(r.cantidad)||0),0);
+  const prods = new Set(data.map(r=>r.producto)).size;
+  const semanas = [...new Set(data.map(r=>r.semana).filter(Boolean))].sort((a,b)=>a-b);
+
+  document.getElementById('cKpiTotal').textContent = total.toLocaleString();
+  document.getElementById('cKpiProductos').textContent = prods;
+  document.getElementById('cKpiSemanas').textContent = semanas.length;
+  document.getElementById('cKpiSemanasRango').textContent = semanas.length ? `sem ${semanas[0]} → ${semanas[semanas.length-1]}` : '—';
+
+  const byProd = {};
+  data.forEach(r => { byProd[r.producto] = (byProd[r.producto]||0)+(parseFloat(r.cantidad)||0); });
+  const topProd = Object.entries(byProd).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('cKpiTop').textContent = topProd ? topProd[0].split(' ').slice(0,3).join(' ')+'...' : '—';
+  document.getElementById('cKpiTopCant').textContent = topProd ? topProd[1].toLocaleString()+' und' : '—';
+
+  const COLORS = ['#3b82f6','#22c55e','#f97316','#a78bfa','#06b6d4','#fbbf24','#f43f5e','#10b981'];
+
+  // Chart semana
+  const bySem = {};
+  data.forEach(r => { if(r.semana) bySem[r.semana]=(bySem[r.semana]||0)+(parseFloat(r.cantidad)||0); });
+  const semArr = Object.keys(bySem).sort((a,b)=>a-b);
+  if (cCharts['sem']) cCharts['sem'].destroy();
+  const ctxS = document.getElementById('cChartSemana');
+  if (ctxS) cCharts['sem'] = new Chart(ctxS.getContext('2d'), {
+    type:'bar',
+    data:{ labels:semArr.map(s=>'Sem '+s), datasets:[{
+      label:'Cantidad', data:semArr.map(s=>bySem[s]),
+      backgroundColor:'#3b82f688', borderColor:'#3b82f6', borderWidth:2, borderRadius:4
+    }]},
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#64748b',font:{size:10}}},y:{ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+  });
+
+  // Chart top5
+  const top5 = Object.entries(byProd).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if (cCharts['top']) cCharts['top'].destroy();
+  const ctxT = document.getElementById('cChartTop');
+  if (ctxT) cCharts['top'] = new Chart(ctxT.getContext('2d'), {
+    type:'bar',
+    data:{ labels:top5.map(([p])=>p.length>25?p.slice(0,25)+'…':p),
+      datasets:[{label:'Cantidad',data:top5.map(([,v])=>v),
+        backgroundColor:COLORS.map(c=>c+'99'), borderColor:COLORS, borderWidth:2, borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#64748b'}},y:{ticks:{color:'#64748b',font:{size:10}}}}}
+  });
+
+  // Chart centro
+  const centros = [...new Set(data.map(r=>r.centro_costo).filter(Boolean))];
+  const subgrupos = [...new Set(data.map(r=>r.subgrupo).filter(Boolean))];
+  const datasets = subgrupos.slice(0,6).map((sg,i) => ({
+    label:sg, data:centros.map(c=>data.filter(r=>r.centro_costo===c&&r.subgrupo===sg).reduce((s,r)=>s+(parseFloat(r.cantidad)||0),0)),
+    backgroundColor:COLORS[i%COLORS.length]+'99', borderColor:COLORS[i%COLORS.length], borderWidth:1, borderRadius:3
+  }));
+  if (cCharts['centro']) cCharts['centro'].destroy();
+  const ctxC = document.getElementById('cChartCentro');
+  if (ctxC) cCharts['centro'] = new Chart(ctxC.getContext('2d'), {
+    type:'bar',
+    data:{labels:centros, datasets},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10},boxWidth:10}}},
+      scales:{x:{stacked:true,ticks:{color:'#64748b'}},y:{stacked:true,ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+  });
+
+  // Table
+  const tbody = document.getElementById('cTabla');
+  if (tbody) {
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">Sin registros</td></tr>';
+    } else {
+      tbody.innerHTML = data.slice(0,150).map(r=>`<tr>
+        <td style="font-family:monospace;font-size:12px">${r.fecha||'—'}</td>
+        <td style="text-align:center">${r.semana||'—'}</td>
+        <td style="font-size:12px">${r.centro_costo||'—'}</td>
+        <td><span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(59,130,246,0.12);color:#3b82f6">${r.subgrupo||'—'}</span></td>
+        <td style="font-size:12px">${r.producto||'—'}</td>
+        <td style="font-weight:700;color:#22c55e">${parseFloat(r.cantidad||0).toLocaleString()}</td>
+        <td style="color:var(--muted)">${r.unidad||'—'}</td>
+      </tr>`).join('');
+    }
+  }
+}
+
+function exportarConsumos() {
+  const headers = ['fecha','semana','dia_semana','centro_costo','subgrupo','producto','unidad','cantidad','observaciones'];
+  const rows = consumosFiltrado.map(r => headers.map(h=>`"${(r[h]||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','),...rows].join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`consumos_${new Date().toISOString().split('T')[0]}.csv`; a.click();
 }
 
 // ── INIT APP ──
