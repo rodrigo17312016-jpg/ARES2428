@@ -863,22 +863,30 @@ const USERS = {
 // ── LOGIN ──
 function doLogin() {
   const u = document.getElementById('loginUser').value.trim().toLowerCase();
-  const p = document
-    .getElementById('loginPass')
-    .value.replace(/\u00A0/g, ' ')
-    .trim();
-  document.getElementById('loginError').textContent = '';
+  const p = document.getElementById('loginPass').value.trim();
   const user = USERS[u];
+  if (u === '') {
+    document.getElementById('loginError').textContent = 'Por favor ingrese su usuario.';
+    document.getElementById('loginUser').focus();
+    return;
+  }
+  if (p === '') {
+    document.getElementById('loginError').textContent = 'Por favor ingrese su contraseña.';
+    document.getElementById('loginPass').focus();
+    return;
+  }
   if (user && user.pass === p) {
+    document.getElementById('loginError').textContent = '';
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appScreen').style.display = 'block';
     document.getElementById('userName').textContent = user.name;
     document.getElementById('userRole').textContent = user.role;
     document.getElementById('userAvatar').textContent = user.name[0];
-    initApp();
+    try { initApp(); } catch(e) { console.warn('initApp error:', e); }
   } else {
-    document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos';
+    document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos. Verifique sus datos.';
     document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
   }
 }
 function togglePass() {
@@ -942,23 +950,32 @@ updateClock();
 
 // ── SUPABASE FETCH ──
 async function fetchSupabase(query) {
-  const res = await fetch(`${SB_URL}/rest/v1/${query}`, {
-    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-  });
-  return res.ok ? res.json() : [];
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/${query}`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+    });
+    return res.ok ? res.json() : [];
+  } catch(e) {
+    console.warn('fetchSupabase error:', e);
+    return [];
+  }
 }
 
 // ── CARGAR TEMPERATURAS ──
 let tempData = [];
 async function cargarTemperaturas() {
-  // Fecha local Peru (UTC-5) — evita desfase con UTC de Supabase
-  const nowPeru = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/Lima'}));
-  const today = `${nowPeru.getFullYear()}-${String(nowPeru.getMonth()+1).padStart(2,'0')}-${String(nowPeru.getDate()).padStart(2,'0')}`;
-  tempData = await fetchSupabase(
-    `registros_temperatura?fecha=eq.${today}&order=hora.desc&limit=1000`
-  );
-  renderTemperaturas();
-  actualizarKPIs();
+  try {
+    const nowPeru = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/Lima'}));
+    const today = `${nowPeru.getFullYear()}-${String(nowPeru.getMonth()+1).padStart(2,'0')}-${String(nowPeru.getDate()).padStart(2,'0')}`;
+    tempData = await fetchSupabase(
+      `registros_temperatura?fecha=eq.${today}&order=hora.desc&limit=1000`
+    );
+  } catch(e) {
+    console.warn('cargarTemperaturas error:', e);
+    tempData = [];
+  }
+  try { renderTemperaturas(); } catch(e) { console.warn('renderTemperaturas error:', e); }
+  try { actualizarKPIs(); } catch(e) { console.warn('actualizarKPIs error:', e); }
 }
 
 const AREAS = ['CAMARA DE MATERIA PRIMA','ACONDICIONADO','EMBANDEJADO','LAVADO DE BANDEJAS',
@@ -1408,7 +1425,7 @@ function renderActiveCharts() {
 
 // ── INIT APP ──
 async function initApp() {
-  renderLotes();
+  try { renderLotes(); } catch(e) { console.warn('renderLotes error:', e); }
   await cargarTemperaturas();
   setInterval(cargarTemperaturas, 60000); // auto-refresh cada 1 min
 }
