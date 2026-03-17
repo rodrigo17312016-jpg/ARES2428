@@ -863,9 +863,20 @@ const USERS = {
 // ── LOGIN ──
 function doLogin() {
   const u = document.getElementById('loginUser').value.trim().toLowerCase();
-  const p = document.getElementById('loginPass').value;
+  const p = document.getElementById('loginPass').value.trim();
   const user = USERS[u];
+  if (u === '') {
+    document.getElementById('loginError').textContent = 'Por favor ingrese su usuario.';
+    document.getElementById('loginUser').focus();
+    return;
+  }
+  if (p === '') {
+    document.getElementById('loginError').textContent = 'Por favor ingrese su contraseña.';
+    document.getElementById('loginPass').focus();
+    return;
+  }
   if (user && user.pass === p) {
+    document.getElementById('loginError').textContent = '';
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appScreen').style.display = 'block';
     document.getElementById('userName').textContent = user.name;
@@ -873,8 +884,9 @@ function doLogin() {
     document.getElementById('userAvatar').textContent = user.name[0];
     initApp();
   } else {
-    document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos';
+    document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos. Verifique sus datos.';
     document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
   }
 }
 function togglePass() {
