@@ -338,8 +338,15 @@ tr:hover td { background:var(--bg); }
     </div>
     <div class="login-field">
       <label>Contraseña</label>
-      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"
-             onkeydown="if(event.key==='Enter')doLogin()" />
+      <div style="position:relative;">
+        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')doLogin()"
+               style="width:100%;padding-right:44px;box-sizing:border-box;" />
+        <button type="button" onclick="togglePass()" id="btnTogglePass"
+          style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1;opacity:0.7;">
+          👁
+        </button>
+      </div>
     </div>
     <button class="login-btn" onclick="doLogin()">Ingresar al portal</button>
     <div class="login-error" id="loginError"></div>
@@ -868,6 +875,17 @@ function doLogin() {
   } else {
     document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos';
     document.getElementById('loginPass').value = '';
+  }
+}
+function togglePass() {
+  const inp = document.getElementById('loginPass');
+  const btn = document.getElementById('btnTogglePass');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁';
   }
 }
 function doLogout() {
@@ -1467,4 +1485,3 @@ function exportarAnalisisCSV() {
 
 </body>
 </html>
-  
