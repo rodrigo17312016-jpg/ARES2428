@@ -22,7 +22,46 @@
   --warn: #fbbf24;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; transition: background 0.3s, color 0.3s; }
+body.light-mode {
+  --bg: #f0f4f8; --surface: #ffffff; --surface2: #f8fafc;
+  --border: rgba(0,0,0,0.07); --text: #0f172a; --muted: #64748b;
+  --accent: #2563eb; --verde: #16a34a; --naranja: #ea580c;
+  --morado: #7c3aed; --cyan: #0891b2; --warn: #d97706;
+}
+body.light-mode .card { background: #fff; border-color: rgba(0,0,0,0.07); }
+body.light-mode .kpi { background: #fff; border-color: rgba(0,0,0,0.07); }
+body.light-mode .tab { color: #64748b; }
+body.light-mode .tab.active { background: #fff; border-color: rgba(0,0,0,0.07); color: #2563eb; }
+body.light-mode table th { background: #f8fafc; color: #64748b; }
+body.light-mode table td { color: #0f172a; border-color: rgba(0,0,0,0.04); }
+body.light-mode tr:hover td { background: rgba(0,0,0,0.02); }
+body.light-mode .filter-btn { background: #f8fafc; border-color: rgba(0,0,0,0.07); color: #64748b; }
+body.light-mode .filter-select { background: #f8fafc; border-color: rgba(0,0,0,0.07); color: #0f172a; }
+body.light-mode .header { background: #fff; border-color: rgba(0,0,0,0.07); }
+body.light-mode .tabs { border-color: rgba(0,0,0,0.07); }
+body.light-mode .prog-bar { background: rgba(0,0,0,0.08); }
+
+/* SWITCH */
+.dash-switch {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  user-select:none; padding:6px 12px; border-radius:20px;
+  background:var(--surface2); border:1px solid var(--border);
+  transition:all 0.2s;
+}
+.dash-switch:hover { border-color:var(--accent); }
+.dash-track {
+  position:relative; width:38px; height:20px;
+  background:#3b82f6; border-radius:10px; transition:background 0.3s; flex-shrink:0;
+}
+body.light-mode .dash-track { background:#cbd5e1; }
+.dash-thumb {
+  position:absolute; top:1px; left:1px; width:18px; height:18px;
+  border-radius:50%; background:#fff; transition:transform 0.3s;
+  display:flex; align-items:center; justify-content:center; font-size:11px;
+}
+body.light-mode .dash-thumb { transform:translateX(0); }
+:not(body.light-mode) .dash-thumb { transform:translateX(18px); }
 
 /* HEADER */
 .header {
@@ -138,10 +177,18 @@ tr:last-child td { border-bottom:none; }
     <h1>📦 Dashboard de Consumos</h1>
     <p>Frutos Tropicales Peru Export S.A.C. · Enero – Marzo 2026</p>
   </div>
-  <div class="header-right">
-    <strong>428 registros</strong><br>
-    Desarrollado por: RODRIGO GARCIA<br>
-    Systems Analyst &amp; Developer
+  <div class="header-right" style="display:flex;align-items:center;gap:16px;">
+    <div class="dash-switch" onclick="toggleDashMode()" id="dashSwitch">
+      <div class="dash-track">
+        <div class="dash-thumb" id="dashThumb">🌙</div>
+      </div>
+      <span style="font-size:12px;font-weight:600;color:var(--muted)" id="dashLabel">Modo oscuro</span>
+    </div>
+    <div style="text-align:right;">
+      <strong>428 registros</strong><br>
+      Desarrollado por: RODRIGO GARCIA<br>
+      Systems Analyst &amp; Developer
+    </div>
   </div>
 </div>
 
@@ -597,6 +644,38 @@ function renderCentro() {
 
 init();
 renderSemana();
+
+function toggleDashMode() {
+  const isLight = document.body.classList.toggle('light-mode');
+  const thumb = document.getElementById('dashThumb');
+  const label = document.getElementById('dashLabel');
+  if (isLight) {
+    thumb.textContent = '☀️';
+    label.textContent = 'Modo claro';
+    thumb.style.transform = 'translateX(0)';
+  } else {
+    thumb.textContent = '🌙';
+    label.textContent = 'Modo oscuro';
+    thumb.style.transform = 'translateX(18px)';
+  }
+  localStorage.setItem('dashTheme', isLight ? 'light' : 'dark');
+  // Redraw active chart
+  renderActiveTab();
+}
+
+// Restore saved theme
+(function() {
+  const saved = localStorage.getItem('dashTheme');
+  if (saved === 'light') {
+    document.body.classList.add('light-mode');
+    window.addEventListener('DOMContentLoaded', () => {
+      const t = document.getElementById('dashThumb');
+      const l = document.getElementById('dashLabel');
+      if (t) { t.textContent = '☀️'; t.style.transform = 'translateX(0)'; }
+      if (l) l.textContent = 'Modo claro';
+    });
+  }
+})();
 </script>
 </body>
 </html>
