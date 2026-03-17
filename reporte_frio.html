@@ -247,8 +247,8 @@
   <div class="ctrl">
     <label>Turno</label>
     <select id="ctrlTurno">
-      <option value="DIA">TURNO DÍA (06:00–18:00)</option>
-      <option value="NOCHE">TURNO NOCHE (19:00–05:00)</option>
+      <option value="DIA">TURNO DÍA (06:00–17:00)</option>
+      <option value="NOCHE">TURNO NOCHE (18:00–05:00)</option>
     </select>
   </div>
   <div class="ctrl">
@@ -409,7 +409,7 @@ window.onload = () => {
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   document.getElementById('ctrlFecha').value = today;
   const h = now.getHours();
-  document.getElementById('ctrlTurno').value = (h >= 6 && h <= 18) ? 'DIA' : 'NOCHE';
+  document.getElementById('ctrlTurno').value = (h >= 6 && h <= 17) ? 'DIA' : 'NOCHE';
 };
 
 async function cargarDatos() {
@@ -436,7 +436,7 @@ async function cargarDatos() {
     // Filtrar por turno
     data = data.filter(r => {
       const h = parseInt(r.hora.split(':')[0]);
-      return turno === 'DIA' ? (h >= 6 && h <= 18) : (h >= 19 || h <= 5);
+      return turno === 'DIA' ? (h >= 6 && h <= 17) : (h >= 18 || h <= 5);
     });
 
     msg.textContent = `✅ ${data.length} registros · ${formatFecha(fecha)} · Turno ${turno}`;
@@ -450,9 +450,9 @@ function buildTable(data, turno) {
   // Horas del turno
   let horas = [];
   if (turno === 'DIA') {
-    for (let h = 6; h <= 18; h++) horas.push(`${String(h).padStart(2,'0')}:00`);
+    for (let h = 6; h <= 17; h++) horas.push(`${String(h).padStart(2,'0')}:00`);
   } else {
-    for (let h = 19; h <= 23; h++) horas.push(`${String(h).padStart(2,'0')}:00`);
+    for (let h = 18; h <= 23; h++) horas.push(`${String(h).padStart(2,'0')}:00`);
     for (let h = 0;  h <= 5;  h++) horas.push(`${String(h).padStart(2,'0')}:00`);
   }
 
