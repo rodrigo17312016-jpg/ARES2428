@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard de Análisis — Control de Gastos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --bg: #0a0c0f;
+  --bg2: #111318;
+  --bg3: #181c23;
+  --border: rgba(255,255,255,0.06);
+  --border-bright: rgba(255,255,255,0.12);
+  --text: #eceef1;
+  --text2: #8a8f9a;
+  --text3: #555b68;
+  --accent: #c8f542;
+  --accent2: #42d9f5;
+  --accent3: #f5a442;
+  --red: #f55a42;
+  --purple: #9b6dff;
+  --teal: #2dd4a8;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* NOISE TEXTURE */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 240px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 32px 0;
+  z-index: 100;
+}
+
+.logo {
+  padding: 0 24px 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.logo-mark span {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 16px;
+  color: #0a0c0f;
+}
+
+.logo h1 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.logo p {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+}
+
+.nav-section {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.nav-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 0 12px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 13px;
+  transition: all 0.15s;
+  margin-bottom: 2px;
+}
+
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: var(--accent); color: #0a0c0f; font-weight: 500; }
+
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+.nav-item.active .nav-icon { opacity: 1; }
+
+.nav-badge {
+  margin-left: auto;
+  background: rgba(255,255,255,0.1);
+  color: var(--text2);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+.nav-item.active .nav-badge { background: rgba(0,0,0,0.2); color: rgba(0,0,0,0.6); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px 24px 0;
+  border-top: 1px solid var(--border);
+}
+
+.campaign-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg3);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.chip-text { font-size: 12px; color: var(--text2); }
+.chip-text strong { color: var(--text); display: block; font-size: 11px; }
+
+/* MAIN */
+.main {
+  margin-left: 240px;
+  padding: 40px 40px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* HEADER */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.page-header-left h2 {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.page-header-left p {
+  color: var(--text2);
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  color: var(--text2);
+}
+.btn-outline:hover { border-color: var(--border-bright); color: var(--text); background: var(--bg3); }
+
+.btn-primary {
+  background: var(--accent);
+  color: #0a0c0f;
+}
+.btn-primary:hover { background: #d4f75c; transform: translateY(-1px); }
+
+/* KPI STRIP */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.kpi-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.kpi-card:hover { border-color: var(--border-bright); }
+
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.kpi-card.k1::after { background: var(--accent); }
+.kpi-card.k2::after { background: var(--accent2); }
+.kpi-card.k3::after { background: var(--accent3); }
+.kpi-card.k4::after { background: var(--purple); }
+
+.kpi-label {
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+}
+
+.kpi-value {
+  font-family: var(--font-head);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.kpi-sub {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+
+.delta-up { background: rgba(200,245,66,0.1); color: var(--accent); }
+.delta-down { background: rgba(245,90,66,0.1); color: var(--red); }
+
+/* GRID LAYOUT */
+.grid-2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; margin-bottom: 20px; }
+.grid-3 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap: 20px; margin-bottom: 20px; }
+.span-2 { grid-column: span 2; }
+
+/* CARDS */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border-bright); }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.card-tag {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--text3);
+}
+
+/* CHARTS */
+.chart-wrap { position: relative; width: 100%; }
+
+/* LEGEND */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.leg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* PROCESS BARS */
+.proc-bars { display: flex; flex-direction: column; gap: 10px; }
+
+.proc-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 90px;
+  align-items: center;
+  gap: 12px;
+}
+
+.proc-name {
+  font-size: 11px;
+  color: var(--text2);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+}
+
+.proc-track {
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.proc-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.proc-amount {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text2);
+  text-align: right;
+}
+
+/* TABLE */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.data-table th {
+  text-align: left;
+  color: var(--text3);
+  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 11px 12px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+
+.td-val {
+  font-family: var(--font-mono);
+  color: var(--text) !important;
+}
+
+.share-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.share-track {
+  width: 80px;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.share-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* FILTER TABS */
+.filter-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg3);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+
+.filter-tab {
+  padding: 6px 16px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+}
+
+.filter-tab.active {
+  background: var(--bg2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.kpi-card { animation: fadeUp 0.4s ease both; }
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.10s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.20s; }
+.card { animation: fadeUp 0.5s ease both; animation-delay: 0.25s; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-240px); }
+  .main { margin-left: 0; padding: 24px 20px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .span-2 { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-mark"><span>QA</span></div>
+    <h1>Quality Analytics</h1>
+    <p>Control de Costos · Lab</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+      <span class="nav-badge">Live</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12L6 8l3 3 5-6"/></svg>
+      Tendencias
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+      Por Campaña
+    </div>
+  </div>
+
+  <div class="nav-section" style="margin-top:8px">
+    <div class="nav-label">Análisis</div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="12" rx="1"/><rect x="9" y="6" width="5" height="8" rx="1"/></svg>
+      Laboratorios
+      <span class="nav-badge">5</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L3 6v8h10V6L8 2z"/></svg>
+      Cultivos
+      <span class="nav-badge">6</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
+      Procesos
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="campaign-chip">
+      <div class="chip-dot"></div>
+      <div class="chip-text">
+        <strong>2025–2026</strong>
+        Campaña activa
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2>Control de Gastos<br>de Análisis</h2>
+      <p>Campaña 2024–2025 / 2025–2026 · Datos al 16 Mar 2026</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline">↓ Exportar CSV</button>
+      <button class="btn btn-primary">+ Nueva muestra</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-strip">
+    <div class="kpi-card k1">
+      <div class="kpi-label">Costo total sin IGV</div>
+      <div class="kpi-value">S/ 206,245</div>
+      <div class="kpi-sub">Total acumulado ambas campañas</div>
+      <div class="kpi-delta delta-down">↓ 36% vs campaña anterior</div>
+    </div>
+    <div class="kpi-card k2">
+      <div class="kpi-label">Muestras analizadas</div>
+      <div class="kpi-value">2,945</div>
+      <div class="kpi-sub">Semana 23 (2024) → Semana 11 (2026)</div>
+      <div class="kpi-delta delta-up">↑ 5 laboratorios activos</div>
+    </div>
+    <div class="kpi-card k3">
+      <div class="kpi-label">Costo promedio / muestra</div>
+      <div class="kpi-value">S/ 70.15</div>
+      <div class="kpi-sub">Rango: S/ 11.14 – S/ 1,658</div>
+      <div class="kpi-delta delta-up">Mediana: S/ 86.00</div>
+    </div>
+    <div class="kpi-card k4">
+      <div class="kpi-label">Laboratorio líder en gasto</div>
+      <div class="kpi-value">GROEN</div>
+      <div class="kpi-sub">S/ 109,525 · 53% del total</div>
+      <div class="kpi-delta delta-down">1,650 muestras procesadas</div>
+    </div>
+  </div>
+
+  <!-- ROW 1: Línea temporal + Donut labs -->
+  <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Evolución mensual del gasto</span>
+        <span class="card-tag">Jun 2024 → Mar 2026</span>
+      </div>
+      <div class="chart-wrap" style="height:240px"><canvas id="c-monthly"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Por laboratorio</span>
+        <span class="card-tag">5 labs</span>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#c8f542"></div>AGQ 41.6%</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#42d9f5"></div>GROEN 53.1%</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f5a442"></div>NSF 2.9%</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#9b6dff"></div>Otros 2.4%</div>
+      </div>
+      <div class="chart-wrap" style="height:190px"><canvas id="c-labs"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Cultivos stacked + Tipo análisis -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Gasto por cultivo</span>
+        <span class="card-tag">Microbiológico vs Residuos</span>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#42d9f5"></div>Microbiológico</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f55a42"></div>Residuos</div>
+      </div>
+      <div class="chart-wrap" style="height:230px"><canvas id="c-cultivo"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Costo por proceso / PACK</span>
+        <span class="card-tag">Top 8</span>
+      </div>
+      <div class="proc-bars" id="proc-bars"></div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Lab x cultivo stacked + Origen + Campaña -->
+  <div class="grid-3">
+    <div class="card span-2">
+      <div class="card-header">
+        <span class="card-title">Comparativo laboratorio por cultivo</span>
+        <span class="card-tag">Barras apiladas</span>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#42d9f5"></div>Arándano</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f55a42"></div>Fresa</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#c8f542"></div>Mango</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#9b6dff"></div>Palta</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f5a442"></div>Granada/Otros</div>
+      </div>
+      <div class="chart-wrap" style="height:230px"><canvas id="c-labcultivo"></canvas></div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:20px;">
+      <div>
+        <div class="card-header" style="margin-bottom:14px">
+          <span class="card-title">Origen</span>
+        </div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot" style="background:#9b6dff"></div>Maquila 89.8%</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#f5a442"></div>Planta Propia 10.2%</div>
+        </div>
+        <div class="chart-wrap" style="height:130px"><canvas id="c-origen"></canvas></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:18px">
+        <div class="card-title" style="margin-bottom:12px;font-size:13px">Por campaña</div>
+        <div class="chart-wrap" style="height:100px"><canvas id="c-campana"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="card" style="margin-top:0">
+    <div class="card-header">
+      <span class="card-title">Resumen por laboratorio</span>
+      <span class="card-tag">Detalle comparativo</span>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Laboratorio</th>
+          <th>Muestras</th>
+          <th>Costo total</th>
+          <th>Costo prom.</th>
+          <th>Participación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--text)">GROEN</strong></td>
+          <td>1,650</td>
+          <td class="td-val">S/ 109,525</td>
+          <td class="td-val">S/ 66.38</td>
+          <td>
+            <div class="share-bar">
+              <div class="share-track"><div class="share-fill" style="width:100%;background:#42d9f5"></div></div>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--accent2)">53.1%</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">AGQ</strong></td>
+          <td>1,176</td>
+          <td class="td-val">S/ 85,806</td>
+          <td class="td-val">S/ 72.96</td>
+          <td>
+            <div class="share-bar">
+              <div class="share-track"><div class="share-fill" style="width:78%;background:#c8f542"></div></div>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--accent)">41.6%</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">NSF</strong></td>
+          <td>69</td>
+          <td class="td-val">S/ 6,035</td>
+          <td class="td-val">S/ 87.46</td>
+          <td>
+            <div class="share-bar">
+              <div class="share-track"><div class="share-fill" style="width:5.5%;background:#f5a442"></div></div>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--accent3)">2.9%</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">SGS</strong></td>
+          <td>15</td>
+          <td class="td-val">S/ 2,546</td>
+          <td class="td-val">S/ 169.73</td>
+          <td>
+            <div class="share-bar">
+              <div class="share-track"><div class="share-fill" style="width:2.3%;background:#9b6dff"></div></div>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--purple)">1.2%</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">MERIEUX</strong></td>
+          <td>30</td>
+          <td class="td-val">S/ 2,333</td>
+          <td class="td-val">S/ 77.75</td>
+          <td>
+            <div class="share-bar">
+              <div class="share-track"><div class="share-fill" style="width:2.1%;background:#f55a42"></div></div>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">1.1%</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<script>
+Chart.defaults.color = '#8a8f9a';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+const tooltipPlugin = {
+  backgroundColor: '#1a1e27',
+  borderColor: 'rgba(255,255,255,0.1)',
+  borderWidth: 1,
+  titleColor: '#eceef1',
+  bodyColor: '#8a8f9a',
+  padding: 10,
+  cornerRadius: 8,
+};
+
+const axisStyle = {
+  grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+  ticks: { color: '#555b68', font: { size: 10, family: "'DM Mono', monospace" } }
+};
+
+// MONTHLY
+new Chart(document.getElementById('c-monthly'), {
+  type: 'line',
+  data: {
+    labels: ['Jun\'24','Jul\'24','Ago\'24','Set\'24','Oct\'24','Nov\'24','Dic\'24','Ene\'25','Feb\'25','Mar\'25','Abr\'25','May\'25','Jun\'25','Jul\'25','Ago\'25','Set\'25','Oct\'25','Nov\'25','Dic\'25','Ene\'26','Feb\'26','Mar\'26'],
+    datasets: [{
+      data: [1626,2328,7912,15023,20016,18384,16569,16624,18047,7019,1850,1870,291,5370,5871,8806,14605,7438,9235,12180,11502,3681],
+      borderColor: '#c8f542',
+      backgroundColor: 'rgba(200,245,66,0.06)',
+      tension: 0.4, fill: true,
+      pointRadius: 3, pointHoverRadius: 6,
+      pointBackgroundColor: '#c8f542',
+      pointBorderColor: '#0a0c0f',
+      pointBorderWidth: 2,
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { ...tooltipPlugin, callbacks: { label: ctx => 'S/ ' + ctx.parsed.y.toLocaleString('es-PE') } } },
+    scales: {
+      x: { ...axisStyle, ticks: { ...axisStyle.ticks, maxRotation: 45 } },
+      y: { ...axisStyle, ticks: { ...axisStyle.ticks, callback: v => 'S/'+v.toLocaleString() } }
+    }
+  }
+});
+
+// LABS DOUGHNUT
+new Chart(document.getElementById('c-labs'), {
+  type: 'doughnut',
+  data: {
+    labels: ['AGQ', 'GROEN', 'NSF', 'SGS', 'MERIEUX'],
+    datasets: [{
+      data: [85806, 109525, 6035, 2546, 2333],
+      backgroundColor: ['#c8f542','#42d9f5','#f5a442','#9b6dff','#f55a42'],
+      borderWidth: 2,
+      borderColor: '#111318',
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '70%',
+    plugins: { legend: { display: false }, tooltip: { ...tooltipPlugin, callbacks: { label: ctx => ctx.label + ': S/ ' + ctx.parsed.toLocaleString('es-PE') } } }
+  }
+});
+
+// CULTIVO BARS
+new Chart(document.getElementById('c-cultivo'), {
+  type: 'bar',
+  data: {
+    labels: ['Mango', 'Fresa', 'Arándano', 'Palta', 'Granada', 'Otros'],
+    datasets: [
+      { label: 'Microbiológico', data: [19007,11609,8397,1226,830,1658], backgroundColor: '#42d9f5', borderRadius: 4, borderSkipped: false },
+      { label: 'Residuos', data: [79052,60114,19440,4352,560,0], backgroundColor: '#f55a42', borderRadius: 4, borderSkipped: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { ...tooltipPlugin, callbacks: { label: ctx => ctx.dataset.label + ': S/ ' + ctx.parsed.y.toLocaleString('es-PE') } } },
+    scales: { x: axisStyle, y: { ...axisStyle, ticks: { ...axisStyle.ticks, callback: v => 'S/'+v.toLocaleString() } } }
+  }
+});
+
+// PROCESS BARS
+const procs = [
+  { name: 'Pesticidas', val: 99811, color: '#f55a42' },
+  { name: 'Pack 2', val: 20647, color: '#c8f542' },
+  { name: 'Metales pesados', val: 16692, color: '#42d9f5' },
+  { name: 'Fosetil', val: 13898, color: '#9b6dff' },
+  { name: 'Glifosato', val: 13754, color: '#f5a442' },
+  { name: 'Cloratos+Perc.', val: 13420, color: '#2dd4a8' },
+  { name: 'Pack 6', val: 4680, color: '#f55a42' },
+  { name: 'Norovirus/HAV', val: 4022, color: '#42d9f5' },
+];
+const maxP = 99811;
+const pbDiv = document.getElementById('proc-bars');
+procs.forEach(p => {
+  pbDiv.innerHTML += `<div class="proc-row">
+    <div class="proc-name">${p.name}</div>
+    <div class="proc-track"><div class="proc-fill" style="width:${(p.val/maxP*100).toFixed(1)}%;background:${p.color}"></div></div>
+    <div class="proc-amount" style="color:${p.color}">S/${(p.val/1000).toFixed(0)}k</div>
+  </div>`;
+});
+
+// LAB x CULTIVO
+new Chart(document.getElementById('c-labcultivo'), {
+  type: 'bar',
+  data: {
+    labels: ['AGQ', 'GROEN', 'NSF', 'SGS', 'MERIEUX'],
+    datasets: [
+      { label: 'Arándano', data: [15152,9465,2560,583,77], backgroundColor: '#42d9f5', borderRadius: 4 },
+      { label: 'Fresa', data: [36398,32518,1877,305,625], backgroundColor: '#f55a42', borderRadius: 4 },
+      { label: 'Mango', data: [27864,66967,1597,0,1631], backgroundColor: '#c8f542', borderRadius: 4 },
+      { label: 'Palta', data: [5233,345,0,0,0], backgroundColor: '#9b6dff', borderRadius: 4 },
+      { label: 'Granada/Otros', data: [1160,230,0,1658,0], backgroundColor: '#f5a442', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { ...tooltipPlugin, callbacks: { label: ctx => ctx.dataset.label + ': S/ ' + ctx.parsed.y.toLocaleString('es-PE') } } },
+    scales: {
+      x: { ...axisStyle, stacked: true },
+      y: { ...axisStyle, stacked: true, ticks: { ...axisStyle.ticks, callback: v => 'S/'+v.toLocaleString() } }
+    }
+  }
+});
+
+// ORIGEN
+new Chart(document.getElementById('c-origen'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Maquila', 'Planta Propia'],
+    datasets: [{
+      data: [185268, 20977],
+      backgroundColor: ['#9b6dff','#f5a442'],
+      borderWidth: 2, borderColor: '#111318', hoverOffset: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '70%',
+    plugins: { legend: { display: false }, tooltip: { ...tooltipPlugin, callbacks: { label: ctx => ctx.label + ': S/ ' + ctx.parsed.toLocaleString('es-PE') } } }
+  }
+});
+
+// CAMPAÑA
+new Chart(document.getElementById('c-campana'), {
+  type: 'bar',
+  data: {
+    labels: ['2024-2025', '2025-2026'],
+    datasets: [{
+      data: [126049, 80196],
+      backgroundColor: ['#c8f542','#42d9f5'],
+      borderRadius: 6,
+      barPercentage: 0.5
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { ...tooltipPlugin, callbacks: { label: ctx => 'S/ ' + ctx.parsed.y.toLocaleString('es-PE') } } },
+    scales: { x: axisStyle, y: { ...axisStyle, ticks: { ...axisStyle.ticks, callback: v => 'S/'+v.toLocaleString() } } }
+  }
+});
+</script>
+</body>
+</html>
