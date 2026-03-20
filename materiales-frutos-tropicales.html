@@ -159,19 +159,49 @@
             gap: 12px;
         }
 
+        /* FIRMA PREMIUM (estilo portal) */
+        @keyframes sigShimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        @keyframes sigBorderGlow { 0%,100%{box-shadow:0 0 16px rgba(212,175,55,0.12),inset 0 1px 0 rgba(255,255,255,0.06)} 50%{box-shadow:0 0 28px rgba(212,175,55,0.25),inset 0 1px 0 rgba(255,255,255,0.1)} }
+        @keyframes sigShine { 0%{left:-100%} 60%,100%{left:130%} }
+
         .header-signature {
-            text-align: right;
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            line-height: 1.4;
             display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: linear-gradient(145deg,rgba(10,18,32,0.85),rgba(20,30,48,0.9),rgba(15,25,40,0.85));
+            border: 1px solid rgba(212,175,55,0.3);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            animation: sigBorderGlow 4s ease infinite;
+            box-shadow: 0 0 20px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.06);
         }
+        .header-signature::before {
+            content:''; position:absolute; top:0; left:-100%; width:50%; height:100%;
+            background:linear-gradient(90deg,transparent,rgba(212,175,55,0.08),rgba(255,255,255,0.05),transparent);
+            animation:sigShine 5s ease-in-out infinite; pointer-events:none;
+        }
+        @media(min-width:900px) { .header-signature { display: flex; } }
+        [data-theme="light"] .header-signature { background: linear-gradient(145deg,rgba(250,245,235,0.92),rgba(255,252,240,0.95)); border-color: rgba(212,175,55,0.35); }
 
-        @media(min-width:900px) { .header-signature { display: block; } }
-
-        .header-signature strong {
-            color: var(--text-secondary);
-            font-weight: 600;
+        .sig-dev-label {
+            font-size: 7px; color: rgba(212,175,55,0.8); text-transform: uppercase;
+            letter-spacing: 2px; font-weight: 800; position: relative; z-index: 1;
+        }
+        .sig-name {
+            font-size: 14px; font-weight: 900; letter-spacing: 0.3px;
+            background: linear-gradient(135deg,#d4af37 0%,#f5e6a3 25%,#c0c0c0 50%,#f5e6a3 75%,#d4af37 100%);
+            background-size: 300% 100%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            animation: sigShimmer 4s ease infinite;
+            position: relative; z-index: 1; line-height: 1.3;
+        }
+        .sig-role {
+            font-size: 9px; font-weight: 700; color: #22c55e;
+            letter-spacing: 0.5px; margin-top: 1px; position: relative; z-index: 1;
         }
 
         .btn {
@@ -476,6 +506,17 @@
             background: var(--green-bg);
             color: var(--green-light);
             border: 1px solid rgba(34,197,94,0.3);
+        }
+
+        .badge-encamino {
+            background: rgba(6,182,212,0.12);
+            color: #06b6d4;
+            border: 1px solid rgba(6,182,212,0.3);
+            animation: encaminoPulse 2s ease infinite;
+        }
+        @keyframes encaminoPulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(6,182,212,0); }
+            50% { box-shadow: 0 0 8px 2px rgba(6,182,212,0.25); }
         }
 
         .timeline-bar-container {
@@ -828,8 +869,9 @@
             </div>
             <div class="header-right">
                 <div class="header-signature">
-                    <strong>Rodrigo Garcia</strong><br>
-                    Systems Analyst &amp; Developer-QA
+                    <span class="sig-dev-label">DESARROLLADO POR:</span>
+                    <span class="sig-name">Rodrigo Garcia</span>
+                    <span class="sig-role">Systems Analyst &amp; Developer-QA</span>
                 </div>
                 <a href="index.html" class="btn">← Portal</a>
                 <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
@@ -852,12 +894,6 @@
         <div class="semaforo-container">
             <canvas id="semaforoChart"></canvas>
         </div>
-    </div>
-
-    <!-- TIMELINE CRITICAL -->
-    <div class="card animate-in" id="timelineSection">
-        <div class="section-title"><span class="icon">⏱️</span> Línea de Tiempo — Materiales Urgentes</div>
-        <div class="timeline-grid" id="timelineGrid"></div>
     </div>
 
     <!-- CHARTS -->
@@ -890,10 +926,11 @@
             </select>
             <select class="select-filter" id="statusFilter">
                 <option value="all">Todos los Estados</option>
-                <option value="critico">Crítico</option>
-                <option value="pedir">Pedir Ahora</option>
-                <option value="planificar">Planificar</option>
-                <option value="ok">OK</option>
+                <option value="critico">🔴 Crítico</option>
+                <option value="encamino">🚚 En Camino</option>
+                <option value="pedir">🟠 Pedir Ahora</option>
+                <option value="planificar">🟡 Planificar</option>
+                <option value="ok">🟢 OK</option>
             </select>
         </div>
         <div class="table-wrapper">
@@ -934,25 +971,25 @@ const materiales = [
     {id:2, area:'Producción', n:'Bolsas PE 20x20', full:'Bolsas Polietileno 20x20 cm IQF', und:'UND', stock:12000, gastoDia:1500, total:25000},
     {id:3, area:'Producción', n:'Stretch Film', full:'Stretch Film 18" x 1500ft Pallet Wrap', und:'UND', stock:18, gastoDia:3, total:30},
     {id:4, area:'Producción', n:'Cinta Embalaje', full:'Cinta de Embalaje Transparente 2" x 100m', und:'UND', stock:45, gastoDia:8, total:80},
-    {id:5, area:'Producción', n:'Etiquetas Impresas', full:'Etiquetas Autoadhesivas Impresas (Mango Kent)', und:'UND', stock:3500, gastoDia:1000, total:10000},
+    {id:5, area:'Producción', n:'Etiquetas Impresas', full:'Etiquetas Autoadhesivas Impresas (Mango Kent)', und:'UND', stock:3500, gastoDia:1000, total:10000, enCamino:true, etaDias:3},
     {id:6, area:'Producción', n:'Pallets Madera', full:'Pallets de Madera Tratados 1.2x1.0m', und:'UND', stock:42, gastoDia:4, total:60},
-    {id:7, area:'Producción', n:'Bolsas Big Bag', full:'Bolsas Big Bag 1 Tonelada con Liner', und:'UND', stock:8, gastoDia:2, total:15},
+    {id:7, area:'Producción', n:'Bolsas Big Bag', full:'Bolsas Big Bag 1 Tonelada con Liner', und:'UND', stock:8, gastoDia:2, total:15, enCamino:true, etaDias:2},
     {id:8, area:'Producción', n:'Esquineros Cartón', full:'Esquineros de Cartón para Palletizado', und:'UND', stock:320, gastoDia:40, total:500},
     {id:9, area:'Producción', n:'Zuncho Plástico', full:'Zuncho Plástico PP 12mm x 3000m', und:'UND', stock:6, gastoDia:1, total:10},
     {id:10, area:'Producción', n:'Grapas Zuncho', full:'Grapas/Sellos Metálicos para Zunchado', und:'UND', stock:450, gastoDia:80, total:800},
     {id:11, area:'Producción', n:'Guantes Nitrilo', full:'Guantes de Nitrilo Descartables Caja x100', und:'UND', stock:25, gastoDia:4, total:40},
     {id:12, area:'Producción', n:'Gorros Descartables', full:'Gorros Descartables Tipo Cofia x100', und:'UND', stock:12, gastoDia:2, total:20},
     {id:13, area:'Producción', n:'Mascarillas', full:'Mascarillas Descartables 3 Pliegues x50', und:'UND', stock:18, gastoDia:3, total:30},
-    {id:14, area:'Producción', n:'Mandiles Descar.', full:'Mandiles Descartables PE x50', und:'UND', stock:8, gastoDia:2, total:15},
+    {id:14, area:'Producción', n:'Mandiles Descar.', full:'Mandiles Descartables PE x50', und:'UND', stock:8, gastoDia:2, total:15, enCamino:true, etaDias:4},
     {id:15, area:'Producción', n:'Botas de Jebe', full:'Botas de Jebe Blancas Sanitarias', und:'PAR', stock:15, gastoDia:1, total:25},
 
-    {id:16, area:'Calidad', n:'Alcohol 96°', full:'Alcohol Etílico 96° para Sanitización', und:'LT', stock:35, gastoDia:5, total:60},
+    {id:16, area:'Calidad', n:'Alcohol 96°', full:'Alcohol Etílico 96° para Sanitización', und:'LT', stock:35, gastoDia:5, total:60, enCamino:true, etaDias:4},
     {id:17, area:'Calidad', n:'Jabón Bactericida', full:'Jabón Líquido Bactericida Industrial x5L', und:'LT', stock:20, gastoDia:3, total:40},
     {id:18, area:'Calidad', n:'Detergente Ind.', full:'Detergente Industrial Alcalino x20L', und:'LT', stock:40, gastoDia:4, total:80},
     {id:19, area:'Calidad', n:'Hipoclorito Na', full:'Hipoclorito de Sodio 7.5% x20L', und:'LT', stock:60, gastoDia:8, total:100},
-    {id:20, area:'Calidad', n:'Ác. Peracético', full:'Ácido Peracético 15% x25L', und:'LT', stock:15, gastoDia:3, total:30},
+    {id:20, area:'Calidad', n:'Ác. Peracético', full:'Ácido Peracético 15% x25L', und:'LT', stock:15, gastoDia:3, total:30, enCamino:true, etaDias:5},
     {id:21, area:'Calidad', n:'Papel Toalla Ind.', full:'Papel Toalla Industrial Rollo x6', und:'UND', stock:10, gastoDia:2, total:18},
-    {id:22, area:'Calidad', n:'Bolsas Muestreo', full:'Bolsas Estériles para Muestreo Whirl-Pak x100', und:'UND', stock:8, gastoDia:3, total:15},
+    {id:22, area:'Calidad', n:'Bolsas Muestreo', full:'Bolsas Estériles para Muestreo Whirl-Pak x100', und:'UND', stock:8, gastoDia:3, total:15, enCamino:true, etaDias:2},
     {id:23, area:'Calidad', n:'Escobillas Limpieza', full:'Escobillas de Limpieza Sanitaria Color', und:'UND', stock:12, gastoDia:1, total:20},
     {id:24, area:'Calidad', n:'Trapeadores Ind.', full:'Trapeadores Industriales Microfibra', und:'UND', stock:6, gastoDia:1, total:10},
     {id:25, area:'Calidad', n:'Desinfectante Amb.', full:'Desinfectante Ambiental Amonio Cuaternario x5L', und:'LT', stock:10, gastoDia:2, total:20},
@@ -962,7 +999,14 @@ const materiales = [
 materiales.forEach(m => {
     m.diasRestantes = m.gastoDia > 0 ? Math.round(m.stock / m.gastoDia) : 999;
     m.diasParaPedir = m.diasRestantes - LEAD_TIME;
-    if (m.diasRestantes <= 0) {
+
+    // If already ordered and in transit, override status
+    if (m.enCamino) {
+        m.status = 'encamino';
+        m.statusLabel = 'EN CAMINO';
+        m.statusColor = '#06b6d4';
+        m.statusClass = 'encamino';
+    } else if (m.diasRestantes <= 0) {
         m.status = 'sinstock';
         m.statusLabel = 'SIN STOCK';
         m.statusColor = '#ef4444';
@@ -1012,9 +1056,10 @@ function toggleTheme() {
 
 // ============= KPIs =============
 function renderKPIs(data) {
-    const counts = { critico: 0, pedir: 0, planificar: 0, ok: 0 };
+    const counts = { critico: 0, pedir: 0, planificar: 0, ok: 0, encamino: 0 };
     data.forEach(m => {
-        if (m.status === 'sinstock' || m.status === 'critico') counts.critico++;
+        if (m.status === 'encamino') counts.encamino++;
+        else if (m.status === 'sinstock' || m.status === 'critico') counts.critico++;
         else if (m.status === 'pedir') counts.pedir++;
         else if (m.status === 'planificar') counts.planificar++;
         else counts.ok++;
@@ -1027,22 +1072,28 @@ function renderKPIs(data) {
             <div class="kpi-value">${data.length}</div>
             <div class="kpi-sub">Producción + Calidad</div>
         </div>
-        <div class="kpi-card animate-in">
+        <div class="kpi-card animate-in" style="border-top:3px solid #ef4444;">
             <div class="kpi-icon">🔴</div>
             <div class="kpi-label">Crítico</div>
-            <div class="kpi-value">${counts.critico}</div>
+            <div class="kpi-value" style="color:#ef4444;">${counts.critico}</div>
             <div class="kpi-sub">Stock no alcanza para lead time</div>
         </div>
-        <div class="kpi-card animate-in">
+        <div class="kpi-card animate-in" style="border-top:3px solid #06b6d4;">
+            <div class="kpi-icon">🚚</div>
+            <div class="kpi-label">En Camino</div>
+            <div class="kpi-value" style="color:#06b6d4;">${counts.encamino}</div>
+            <div class="kpi-sub">Pedido realizado — en tránsito</div>
+        </div>
+        <div class="kpi-card animate-in" style="border-top:3px solid #f97316;">
             <div class="kpi-icon">🟠</div>
             <div class="kpi-label">Pedir Ahora</div>
-            <div class="kpi-value">${counts.pedir}</div>
+            <div class="kpi-value" style="color:#f97316;">${counts.pedir}</div>
             <div class="kpi-sub">Máximo 3 días para ordenar</div>
         </div>
-        <div class="kpi-card animate-in">
+        <div class="kpi-card animate-in" style="border-top:3px solid #22c55e;">
             <div class="kpi-icon">✅</div>
             <div class="kpi-label">OK / Planificar</div>
-            <div class="kpi-value">${counts.ok + counts.planificar}</div>
+            <div class="kpi-value" style="color:#22c55e;">${counts.ok + counts.planificar}</div>
             <div class="kpi-sub">Stock suficiente (>7 días)</div>
         </div>
     `;
@@ -1060,6 +1111,7 @@ function renderFilterBar() {
         <button class="pill ${activeAreaPill==='Calidad'?'active':''}" data-area="Calidad">Calidad</button>
         <div class="filter-divider"></div>
         <button class="pill ${activeStatusPill==='critico'?'active-red':''}" data-status="critico">🔴 Crítico</button>
+        <button class="pill ${activeStatusPill==='encamino'?'active':''}" data-status="encamino" style="${activeStatusPill==='encamino'?'background:#06b6d4;color:#fff;border-color:#06b6d4;':''}">🚚 En Camino</button>
         <button class="pill ${activeStatusPill==='pedir'?'active-orange':''}" data-status="pedir">🟠 Pedir Ahora</button>
         <button class="pill ${activeStatusPill==='planificar'?'active-yellow':''}" data-status="planificar">🟡 Planificar</button>
         <button class="pill ${activeStatusPill==='ok'?'active-green':''}" data-status="ok">🟢 OK</button>
@@ -1082,11 +1134,19 @@ function renderFilterBar() {
 
 function getFiltered() {
     let data = [...materiales];
-    if (activeAreaPill !== 'all') data = data.filter(m => m.area === activeAreaPill);
-    if (activeStatusPill !== 'all') {
-        if (activeStatusPill === 'critico') data = data.filter(m => m.status === 'critico' || m.status === 'sinstock');
-        else data = data.filter(m => m.status === activeStatusPill);
+    const searchVal = document.getElementById('searchBox').value.toLowerCase();
+    const areaDropdown = document.getElementById('areaFilter').value;
+    const statusDropdown = document.getElementById('statusFilter').value;
+
+    const area = activeAreaPill !== 'all' ? activeAreaPill : (areaDropdown !== 'all' ? areaDropdown : 'all');
+    const status = activeStatusPill !== 'all' ? activeStatusPill : statusDropdown;
+
+    if (area !== 'all') data = data.filter(m => m.area === area);
+    if (status !== 'all') {
+        if (status === 'critico') data = data.filter(m => m.status === 'critico' || m.status === 'sinstock');
+        else data = data.filter(m => m.status === status);
     }
+    if (searchVal) data = data.filter(m => m.n.toLowerCase().includes(searchVal) || m.full.toLowerCase().includes(searchVal) || m.area.toLowerCase().includes(searchVal));
     return data;
 }
 
@@ -1095,7 +1155,6 @@ function applyFilters() {
     renderFilterBar();
     renderKPIs(data);
     renderSemaforo(data);
-    renderTimeline(data);
     renderTable(data);
     renderDoughnut(data);
     renderUrgency(data);
@@ -1259,20 +1318,29 @@ function renderTable(data) {
     tbody.innerHTML = filtered.map((m, i) => {
         const areaCls = m.area === 'Producción' ? 'area-produccion' : 'area-calidad';
         let reorderHTML;
-        if (m.diasRestantes <= 0) reorderHTML = '<span class="reorder-sinstock">SIN STOCK</span>';
+        if (m.status === 'encamino') reorderHTML = `<span style="color:#06b6d4;font-weight:700;font-size:0.78rem;">🚚 Llega en ${m.etaDias}d</span>`;
+        else if (m.diasRestantes <= 0) reorderHTML = '<span class="reorder-sinstock">SIN STOCK</span>';
         else if (m.diasParaPedir <= 0) reorderHTML = '<span class="reorder-ya">¡YA!</span>';
         else reorderHTML = `En ${m.diasParaPedir} días`;
 
         const pctDias = Math.min(100, (m.diasRestantes / 30) * 100);
         let barCol;
-        if (m.status === 'critico' || m.status === 'sinstock') barCol = '#ef4444';
+        if (m.status === 'encamino') barCol = '#06b6d4';
+        else if (m.status === 'critico' || m.status === 'sinstock') barCol = '#ef4444';
         else if (m.status === 'pedir') barCol = '#f97316';
         else if (m.status === 'planificar') barCol = '#eab308';
         else barCol = '#22c55e';
 
-        const badgeClass = m.status === 'critico' || m.status === 'sinstock' ? 'badge-critico' : m.status === 'pedir' ? 'badge-pedir' : m.status === 'planificar' ? 'badge-planificar' : 'badge-ok';
+        let badgeClass;
+        if (m.status === 'encamino') badgeClass = 'badge-encamino';
+        else if (m.status === 'critico' || m.status === 'sinstock') badgeClass = 'badge-critico';
+        else if (m.status === 'pedir') badgeClass = 'badge-pedir';
+        else if (m.status === 'planificar') badgeClass = 'badge-planificar';
+        else badgeClass = 'badge-ok';
 
-        return `<tr>
+        const badgeLabel = m.status === 'encamino' ? '🚚 EN CAMINO' : m.statusLabel;
+
+        return `<tr${m.status === 'encamino' ? ' style="background:rgba(6,182,212,0.04);"' : ''}>
             <td style="color:var(--text-muted);font-weight:500;">${m.id}</td>
             <td>
                 <span class="material-name">${m.n}</span>
@@ -1290,7 +1358,7 @@ function renderTable(data) {
                 </div>
             </td>
             <td class="reorder-cell">${reorderHTML}</td>
-            <td><span class="timeline-item-badge ${badgeClass}" style="font-size:0.7rem;">${m.statusLabel}</span></td>
+            <td><span class="timeline-item-badge ${badgeClass}" style="font-size:0.7rem;">${badgeLabel}</span></td>
         </tr>`;
     }).join('');
 
@@ -1426,7 +1494,6 @@ function updateChartColors() {
 renderFilterBar();
 renderKPIs(materiales);
 renderSemaforo(materiales);
-renderTimeline(materiales);
 renderTable(materiales);
 renderDoughnut(materiales);
 renderUrgency(materiales);
