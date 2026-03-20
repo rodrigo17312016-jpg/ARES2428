@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Materiales — Frutos Tropicales Peru</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f1117;
+            --bg-secondary: #1a1d27;
+            --bg-card: rgba(26, 29, 39, 0.85);
+            --bg-card-hover: rgba(30, 34, 46, 0.95);
+            --bg-input: rgba(255,255,255,0.05);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255,255,255,0.08);
+            --border-hover: rgba(255,255,255,0.15);
+            --green-primary: #16a34a;
+            --green-light: #22c55e;
+            --green-glow: rgba(22,163,74,0.3);
+            --red: #ef4444;
+            --red-bg: rgba(239,68,68,0.12);
+            --orange: #f97316;
+            --orange-bg: rgba(249,115,22,0.12);
+            --yellow: #eab308;
+            --yellow-bg: rgba(234,179,8,0.12);
+            --green-bg: rgba(34,197,94,0.12);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.4);
+            --shadow-glow: 0 0 30px rgba(22,163,74,0.15);
+            --glass-bg: rgba(26,29,39,0.7);
+            --glass-border: rgba(255,255,255,0.08);
+            --glass-blur: 20px;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f4f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255,255,255,0.85);
+            --bg-card-hover: rgba(255,255,255,0.95);
+            --bg-input: rgba(0,0,0,0.04);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: rgba(0,0,0,0.08);
+            --border-hover: rgba(0,0,0,0.15);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.1);
+            --shadow-glow: 0 0 30px rgba(22,163,74,0.08);
+            --glass-bg: rgba(255,255,255,0.7);
+            --glass-border: rgba(0,0,0,0.06);
+            --red-bg: rgba(239,68,68,0.08);
+            --orange-bg: rgba(249,115,22,0.08);
+            --yellow-bg: rgba(234,179,8,0.08);
+            --green-bg: rgba(34,197,94,0.08);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(22,163,74,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(22,163,74,0.04) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1520px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-bottom: 1px solid var(--glass-border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-img {
+            height: 46px;
+            width: auto;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .logo-img:hover { transform: scale(1.05); }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .header-title span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-signature {
+            text-align: right;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            display: none;
+        }
+
+        @media(min-width:900px) { .header-signature { display: block; } }
+
+        .header-signature strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            transition: var(--transition);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            border-color: var(--green-primary);
+            background: rgba(22,163,74,0.1);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-primary), #15803d);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--green-light), var(--green-primary));
+            box-shadow: 0 4px 20px rgba(22,163,74,0.3);
+        }
+
+        .theme-toggle {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--green-primary);
+            background: rgba(22,163,74,0.1);
+            transform: rotate(30deg);
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 22px 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .kpi-card:nth-child(1)::before { background: linear-gradient(90deg, var(--green-primary), var(--green-light)); }
+        .kpi-card:nth-child(2)::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .kpi-card:nth-child(3)::before { background: linear-gradient(90deg, #f97316, #fb923c); }
+        .kpi-card:nth-child(4)::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-hover);
+        }
+
+        .kpi-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 14px;
+        }
+
+        .kpi-card:nth-child(1) .kpi-icon { background: var(--green-bg); }
+        .kpi-card:nth-child(2) .kpi-icon { background: var(--red-bg); }
+        .kpi-card:nth-child(3) .kpi-icon { background: var(--orange-bg); }
+        .kpi-card:nth-child(4) .kpi-icon { background: var(--green-bg); }
+
+        .kpi-label {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .kpi-card:nth-child(2) .kpi-value { color: var(--red); }
+        .kpi-card:nth-child(3) .kpi-value { color: var(--orange); }
+        .kpi-card:nth-child(4) .kpi-value { color: var(--green-light); }
+
+        .kpi-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* SECTION TITLES */
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.01em;
+        }
+
+        .section-title .icon {
+            font-size: 1.1rem;
+        }
+
+        /* FILTER PILLS */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pill {
+            padding: 7px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .pill:hover {
+            border-color: var(--green-primary);
+            color: var(--text-primary);
+        }
+
+        .pill.active {
+            background: linear-gradient(135deg, var(--green-primary), #15803d);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 2px 12px rgba(22,163,74,0.3);
+        }
+
+        .pill.active-red {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pill.active-orange {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pill.active-yellow {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pill.active-green {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-divider {
+            width: 1px;
+            background: var(--border-color);
+            align-self: stretch;
+            margin: 0 4px;
+        }
+
+        /* SEMÁFORO CHART SECTION */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .semaforo-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .semaforo-container canvas {
+            width: 100% !important;
+        }
+
+        /* TIMELINE SECTION */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 14px;
+        }
+
+        .timeline-item {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            transition: var(--transition);
+        }
+
+        .timeline-item:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .timeline-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item-name {
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
+
+        .timeline-item-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-critico {
+            background: var(--red-bg);
+            color: var(--red);
+            border: 1px solid rgba(239,68,68,0.3);
+        }
+
+        .badge-pedir {
+            background: var(--orange-bg);
+            color: var(--orange);
+            border: 1px solid rgba(249,115,22,0.3);
+        }
+
+        .badge-planificar {
+            background: var(--yellow-bg);
+            color: var(--yellow);
+            border: 1px solid rgba(234,179,8,0.3);
+        }
+
+        .badge-ok {
+            background: var(--green-bg);
+            color: var(--green-light);
+            border: 1px solid rgba(34,197,94,0.3);
+        }
+
+        .timeline-bar-container {
+            background: var(--bg-input);
+            border-radius: 6px;
+            height: 28px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .timeline-bar-stock {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            z-index: 2;
+            transition: width 0.6s ease;
+        }
+
+        .timeline-bar-leadtime {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background: repeating-linear-gradient(
+                -45deg,
+                rgba(239,68,68,0.15),
+                rgba(239,68,68,0.15) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            border-left: 2px dashed var(--red);
+            z-index: 1;
+        }
+
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .timeline-labels span.danger { color: var(--red); font-weight: 600; }
+
+        /* TABLE */
+        .table-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 220px;
+            padding: 9px 14px 9px 38px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--green-primary);
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.15);
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .search-wrapper::before {
+            content: '🔍';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            z-index: 1;
+        }
+
+        .select-filter {
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .select-filter:focus {
+            border-color: var(--green-primary);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+        }
+
+        thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: var(--bg-input);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        thead th:hover {
+            color: var(--green-primary);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background: rgba(22,163,74,0.04);
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody td {
+            padding: 11px 14px;
+            white-space: nowrap;
+        }
+
+        .material-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .material-full {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            display: block;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .area-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 50px;
+            letter-spacing: 0.02em;
+        }
+
+        .area-produccion {
+            background: rgba(99,102,241,0.12);
+            color: #818cf8;
+            border: 1px solid rgba(99,102,241,0.25);
+        }
+
+        .area-calidad {
+            background: rgba(14,165,233,0.12);
+            color: #38bdf8;
+            border: 1px solid rgba(14,165,233,0.25);
+        }
+
+        .stock-num {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-cell {
+            min-width: 140px;
+        }
+
+        .progress-bar-bg {
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .reorder-cell {
+            font-weight: 700;
+        }
+
+        .reorder-ya {
+            color: var(--red);
+            animation: pulse-text 1.5s ease infinite;
+        }
+
+        .reorder-sinstock {
+            color: var(--red);
+            font-weight: 800;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* CHARTS GRID */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: var(--transition);
+        }
+
+        .chart-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 28px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .footer p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .footer .ft-brand {
+            color: var(--green-primary);
+            font-weight: 700;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .animate-in:nth-child(1) { animation-delay: 0.05s; }
+        .animate-in:nth-child(2) { animation-delay: 0.1s; }
+        .animate-in:nth-child(3) { animation-delay: 0.15s; }
+        .animate-in:nth-child(4) { animation-delay: 0.2s; }
+
+        /* RESPONSIVE */
+        @media(max-width:1100px) {
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media(max-width:900px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .timeline-grid { grid-template-columns: 1fr; }
+        }
+
+        @media(max-width:600px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+            .header-left { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .container { padding: 0 12px; }
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* Table sort indicator */
+        thead th.sort-asc::after { content: ' ▲'; font-size: 0.65rem; }
+        thead th.sort-desc::after { content: ' ▼'; font-size: 0.65rem; }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="container">
+        <div class="header-inner">
+            <div class="header-left">
+                <img src="LOGO.png" alt="Frutos Tropicales Peru" class="logo-img">
+                <div class="header-title">
+                    <h1>Control de Materiales</h1>
+                    <span>Frutos Tropicales Peru — Dashboard de Gestión</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-signature">
+                    <strong>Rodrigo Garcia</strong><br>
+                    Systems Analyst &amp; Developer-QA
+                </div>
+                <a href="index.html" class="btn">← Portal</a>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container" style="padding-top:8px; padding-bottom:20px;">
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <!-- FILTER PILLS -->
+    <div class="filter-bar" id="filterBar"></div>
+
+    <!-- SEMÁFORO CHART -->
+    <div class="card animate-in">
+        <div class="section-title"><span class="icon">🚦</span> Semáforo de Materiales — Días Restantes</div>
+        <div class="semaforo-container">
+            <canvas id="semaforoChart"></canvas>
+        </div>
+    </div>
+
+    <!-- TIMELINE CRITICAL -->
+    <div class="card animate-in" id="timelineSection">
+        <div class="section-title"><span class="icon">⏱️</span> Línea de Tiempo — Materiales Urgentes</div>
+        <div class="timeline-grid" id="timelineGrid"></div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+        <div class="chart-card animate-in">
+            <div class="chart-title"><span>📊</span> Distribución por Área</div>
+            <div class="chart-container" style="max-width:380px;margin:0 auto;">
+                <canvas id="doughnutChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-card animate-in">
+            <div class="chart-title"><span>📉</span> Top 10 — Mayor Urgencia</div>
+            <div class="chart-container">
+                <canvas id="urgencyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card animate-in">
+        <div class="section-title"><span class="icon">📋</span> Inventario Completo de Materiales</div>
+        <div class="table-controls">
+            <div class="search-wrapper">
+                <input type="text" class="search-box" id="searchBox" placeholder="Buscar material...">
+            </div>
+            <select class="select-filter" id="areaFilter">
+                <option value="all">Todas las Áreas</option>
+                <option value="Producción">Producción</option>
+                <option value="Calidad">Calidad</option>
+            </select>
+            <select class="select-filter" id="statusFilter">
+                <option value="all">Todos los Estados</option>
+                <option value="critico">Crítico</option>
+                <option value="pedir">Pedir Ahora</option>
+                <option value="planificar">Planificar</option>
+                <option value="ok">OK</option>
+            </select>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th data-col="id">#</th>
+                        <th data-col="name">Material</th>
+                        <th data-col="area">Área</th>
+                        <th data-col="und">Und</th>
+                        <th data-col="stock">Stock</th>
+                        <th data-col="gasto">Gasto/Día</th>
+                        <th data-col="dias">Días Rest.</th>
+                        <th>Cobertura</th>
+                        <th data-col="reorder">Reordenar en</th>
+                        <th data-col="status">Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <p><span class="ft-brand">Frutos Tropicales Peru S.A.C.</span> — Sistema de Gestión Integral</p>
+    </div>
+</footer>
+
+<script>
+// ============= DATA =============
+const LEAD_TIME = 7;
+
+const materiales = [
+    {id:1, area:'Producción', n:'Cajas Cartón 10kg', full:'Cajas de Cartón Corrugado 10 kg (Mango)', und:'UND', stock:8500, gastoDia:1000, total:15000},
+    {id:2, area:'Producción', n:'Bolsas PE 20x20', full:'Bolsas Polietileno 20x20 cm IQF', und:'UND', stock:12000, gastoDia:1500, total:25000},
+    {id:3, area:'Producción', n:'Stretch Film', full:'Stretch Film 18" x 1500ft Pallet Wrap', und:'UND', stock:18, gastoDia:3, total:30},
+    {id:4, area:'Producción', n:'Cinta Embalaje', full:'Cinta de Embalaje Transparente 2" x 100m', und:'UND', stock:45, gastoDia:8, total:80},
+    {id:5, area:'Producción', n:'Etiquetas Impresas', full:'Etiquetas Autoadhesivas Impresas (Mango Kent)', und:'UND', stock:3500, gastoDia:1000, total:10000},
+    {id:6, area:'Producción', n:'Pallets Madera', full:'Pallets de Madera Tratados 1.2x1.0m', und:'UND', stock:42, gastoDia:4, total:60},
+    {id:7, area:'Producción', n:'Bolsas Big Bag', full:'Bolsas Big Bag 1 Tonelada con Liner', und:'UND', stock:8, gastoDia:2, total:15},
+    {id:8, area:'Producción', n:'Esquineros Cartón', full:'Esquineros de Cartón para Palletizado', und:'UND', stock:320, gastoDia:40, total:500},
+    {id:9, area:'Producción', n:'Zuncho Plástico', full:'Zuncho Plástico PP 12mm x 3000m', und:'UND', stock:6, gastoDia:1, total:10},
+    {id:10, area:'Producción', n:'Grapas Zuncho', full:'Grapas/Sellos Metálicos para Zunchado', und:'UND', stock:450, gastoDia:80, total:800},
+    {id:11, area:'Producción', n:'Guantes Nitrilo', full:'Guantes de Nitrilo Descartables Caja x100', und:'UND', stock:25, gastoDia:4, total:40},
+    {id:12, area:'Producción', n:'Gorros Descartables', full:'Gorros Descartables Tipo Cofia x100', und:'UND', stock:12, gastoDia:2, total:20},
+    {id:13, area:'Producción', n:'Mascarillas', full:'Mascarillas Descartables 3 Pliegues x50', und:'UND', stock:18, gastoDia:3, total:30},
+    {id:14, area:'Producción', n:'Mandiles Descar.', full:'Mandiles Descartables PE x50', und:'UND', stock:8, gastoDia:2, total:15},
+    {id:15, area:'Producción', n:'Botas de Jebe', full:'Botas de Jebe Blancas Sanitarias', und:'PAR', stock:15, gastoDia:1, total:25},
+
+    {id:16, area:'Calidad', n:'Alcohol 96°', full:'Alcohol Etílico 96° para Sanitización', und:'LT', stock:35, gastoDia:5, total:60},
+    {id:17, area:'Calidad', n:'Jabón Bactericida', full:'Jabón Líquido Bactericida Industrial x5L', und:'LT', stock:20, gastoDia:3, total:40},
+    {id:18, area:'Calidad', n:'Detergente Ind.', full:'Detergente Industrial Alcalino x20L', und:'LT', stock:40, gastoDia:4, total:80},
+    {id:19, area:'Calidad', n:'Hipoclorito Na', full:'Hipoclorito de Sodio 7.5% x20L', und:'LT', stock:60, gastoDia:8, total:100},
+    {id:20, area:'Calidad', n:'Ác. Peracético', full:'Ácido Peracético 15% x25L', und:'LT', stock:15, gastoDia:3, total:30},
+    {id:21, area:'Calidad', n:'Papel Toalla Ind.', full:'Papel Toalla Industrial Rollo x6', und:'UND', stock:10, gastoDia:2, total:18},
+    {id:22, area:'Calidad', n:'Bolsas Muestreo', full:'Bolsas Estériles para Muestreo Whirl-Pak x100', und:'UND', stock:8, gastoDia:3, total:15},
+    {id:23, area:'Calidad', n:'Escobillas Limpieza', full:'Escobillas de Limpieza Sanitaria Color', und:'UND', stock:12, gastoDia:1, total:20},
+    {id:24, area:'Calidad', n:'Trapeadores Ind.', full:'Trapeadores Industriales Microfibra', und:'UND', stock:6, gastoDia:1, total:10},
+    {id:25, area:'Calidad', n:'Desinfectante Amb.', full:'Desinfectante Ambiental Amonio Cuaternario x5L', und:'LT', stock:10, gastoDia:2, total:20},
+];
+
+// Compute derived fields
+materiales.forEach(m => {
+    m.diasRestantes = m.gastoDia > 0 ? Math.round(m.stock / m.gastoDia) : 999;
+    m.diasParaPedir = m.diasRestantes - LEAD_TIME;
+    if (m.diasRestantes <= 0) {
+        m.status = 'sinstock';
+        m.statusLabel = 'SIN STOCK';
+        m.statusColor = '#ef4444';
+        m.statusClass = 'critico';
+    } else if (m.diasParaPedir <= 0) {
+        m.status = 'critico';
+        m.statusLabel = 'CRÍTICO';
+        m.statusColor = '#ef4444';
+        m.statusClass = 'critico';
+    } else if (m.diasParaPedir <= 3) {
+        m.status = 'pedir';
+        m.statusLabel = 'PEDIR AHORA';
+        m.statusColor = '#f97316';
+        m.statusClass = 'pedir';
+    } else if (m.diasParaPedir <= 7) {
+        m.status = 'planificar';
+        m.statusLabel = 'PLANIFICAR';
+        m.statusColor = '#eab308';
+        m.statusClass = 'planificar';
+    } else {
+        m.status = 'ok';
+        m.statusLabel = 'OK';
+        m.statusColor = '#22c55e';
+        m.statusClass = 'ok';
+    }
+    m.pctStock = Math.min(100, Math.round((m.stock / m.total) * 100));
+});
+
+// ============= THEME =============
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '🌙' : '☀️';
+    localStorage.setItem('mat-theme', next);
+    updateChartColors();
+}
+
+(function initTheme() {
+    const saved = localStorage.getItem('mat-theme');
+    if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+        if (saved === 'light') document.querySelector('.theme-toggle').textContent = '☀️';
+    }
+})();
+
+// ============= KPIs =============
+function renderKPIs(data) {
+    const counts = { critico: 0, pedir: 0, planificar: 0, ok: 0 };
+    data.forEach(m => {
+        if (m.status === 'sinstock' || m.status === 'critico') counts.critico++;
+        else if (m.status === 'pedir') counts.pedir++;
+        else if (m.status === 'planificar') counts.planificar++;
+        else counts.ok++;
+    });
+
+    document.getElementById('kpiGrid').innerHTML = `
+        <div class="kpi-card animate-in">
+            <div class="kpi-icon">📦</div>
+            <div class="kpi-label">Total Materiales</div>
+            <div class="kpi-value">${data.length}</div>
+            <div class="kpi-sub">Producción + Calidad</div>
+        </div>
+        <div class="kpi-card animate-in">
+            <div class="kpi-icon">🔴</div>
+            <div class="kpi-label">Crítico</div>
+            <div class="kpi-value">${counts.critico}</div>
+            <div class="kpi-sub">Stock no alcanza para lead time</div>
+        </div>
+        <div class="kpi-card animate-in">
+            <div class="kpi-icon">🟠</div>
+            <div class="kpi-label">Pedir Ahora</div>
+            <div class="kpi-value">${counts.pedir}</div>
+            <div class="kpi-sub">Máximo 3 días para ordenar</div>
+        </div>
+        <div class="kpi-card animate-in">
+            <div class="kpi-icon">✅</div>
+            <div class="kpi-label">OK / Planificar</div>
+            <div class="kpi-value">${counts.ok + counts.planificar}</div>
+            <div class="kpi-sub">Stock suficiente (>7 días)</div>
+        </div>
+    `;
+}
+
+// ============= FILTER PILLS =============
+let activeAreaPill = 'all';
+let activeStatusPill = 'all';
+
+function renderFilterBar() {
+    const bar = document.getElementById('filterBar');
+    bar.innerHTML = `
+        <button class="pill ${activeAreaPill==='all'?'active':''}" data-area="all">Todos</button>
+        <button class="pill ${activeAreaPill==='Producción'?'active':''}" data-area="Producción">Producción</button>
+        <button class="pill ${activeAreaPill==='Calidad'?'active':''}" data-area="Calidad">Calidad</button>
+        <div class="filter-divider"></div>
+        <button class="pill ${activeStatusPill==='critico'?'active-red':''}" data-status="critico">🔴 Crítico</button>
+        <button class="pill ${activeStatusPill==='pedir'?'active-orange':''}" data-status="pedir">🟠 Pedir Ahora</button>
+        <button class="pill ${activeStatusPill==='planificar'?'active-yellow':''}" data-status="planificar">🟡 Planificar</button>
+        <button class="pill ${activeStatusPill==='ok'?'active-green':''}" data-status="ok">🟢 OK</button>
+    `;
+
+    bar.querySelectorAll('[data-area]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            activeAreaPill = btn.dataset.area;
+            applyFilters();
+        });
+    });
+
+    bar.querySelectorAll('[data-status]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            activeStatusPill = activeStatusPill === btn.dataset.status ? 'all' : btn.dataset.status;
+            applyFilters();
+        });
+    });
+}
+
+function getFiltered() {
+    let data = [...materiales];
+    if (activeAreaPill !== 'all') data = data.filter(m => m.area === activeAreaPill);
+    if (activeStatusPill !== 'all') {
+        if (activeStatusPill === 'critico') data = data.filter(m => m.status === 'critico' || m.status === 'sinstock');
+        else data = data.filter(m => m.status === activeStatusPill);
+    }
+    return data;
+}
+
+function applyFilters() {
+    const data = getFiltered();
+    renderFilterBar();
+    renderKPIs(data);
+    renderSemaforo(data);
+    renderTimeline(data);
+    renderTable(data);
+    renderDoughnut(data);
+    renderUrgency(data);
+}
+
+// ============= SEMÁFORO CHART =============
+let semaforoChartInstance = null;
+
+function renderSemaforo(data) {
+    const sorted = [...data].sort((a, b) => a.diasRestantes - b.diasRestantes);
+    const labels = sorted.map(m => m.n);
+    const values = sorted.map(m => m.diasRestantes);
+    const colors = sorted.map(m => m.statusColor);
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    const canvas = document.getElementById('semaforoChart');
+    const height = Math.max(400, sorted.length * 32);
+    canvas.style.height = height + 'px';
+
+    if (semaforoChartInstance) semaforoChartInstance.destroy();
+
+    semaforoChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                data: values,
+                backgroundColor: colors.map(c => c + '55'),
+                borderColor: colors,
+                borderWidth: 1.5,
+                borderRadius: 4,
+                barThickness: 22,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: isDark ? '#e2e8f0' : '#334155',
+                    font: { weight: '700', size: 11, family: 'Plus Jakarta Sans' },
+                    formatter: (val) => val + 'd',
+                    padding: { left: 6 }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                    titleColor: isDark ? '#f1f5f9' : '#1e293b',
+                    bodyColor: isDark ? '#94a3b8' : '#475569',
+                    borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: (ctx) => {
+                            const m = sorted[ctx.dataIndex];
+                            return `${m.diasRestantes} días | Stock: ${m.stock.toLocaleString()} ${m.und}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
+                    ticks: { color: isDark ? '#64748b' : '#94a3b8', font: { size: 11 } },
+                    title: { display: true, text: 'Días Restantes', color: isDark ? '#94a3b8' : '#64748b', font: { size: 12, weight: '600' } }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { color: isDark ? '#cbd5e1' : '#475569', font: { size: 11, family: 'Plus Jakarta Sans', weight: '500' } }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+// ============= TIMELINE =============
+function renderTimeline(data) {
+    const urgent = [...data].filter(m => m.status === 'critico' || m.status === 'sinstock' || m.status === 'pedir' || m.status === 'planificar')
+        .sort((a, b) => a.diasRestantes - b.diasRestantes);
+
+    if (urgent.length === 0) {
+        document.getElementById('timelineSection').style.display = 'none';
+        return;
+    }
+    document.getElementById('timelineSection').style.display = '';
+
+    const maxDays = Math.max(20, ...urgent.map(m => m.diasRestantes));
+    const grid = document.getElementById('timelineGrid');
+
+    grid.innerHTML = urgent.map(m => {
+        const pct = Math.min(100, (m.diasRestantes / maxDays) * 100);
+        const leadPct = Math.min(100, (LEAD_TIME / maxDays) * 100);
+        let barColor;
+        if (m.status === 'critico' || m.status === 'sinstock') barColor = 'linear-gradient(90deg, #ef4444, #f87171)';
+        else if (m.status === 'pedir') barColor = 'linear-gradient(90deg, #f97316, #fb923c)';
+        else if (m.status === 'planificar') barColor = 'linear-gradient(90deg, #eab308, #facc15)';
+        else barColor = 'linear-gradient(90deg, #22c55e, #4ade80)';
+
+        const badgeClass = m.status === 'critico' || m.status === 'sinstock' ? 'badge-critico' : m.status === 'pedir' ? 'badge-pedir' : 'badge-planificar';
+
+        return `
+        <div class="timeline-item">
+            <div class="timeline-item-header">
+                <span class="timeline-item-name">${m.n}</span>
+                <span class="timeline-item-badge ${badgeClass}">${m.statusLabel}</span>
+            </div>
+            <div class="timeline-bar-container">
+                <div class="timeline-bar-stock" style="width:${pct}%;background:${barColor};">
+                    ${m.diasRestantes}d
+                </div>
+                <div class="timeline-bar-leadtime" style="width:${leadPct}%;"></div>
+            </div>
+            <div class="timeline-labels">
+                <span>0 días</span>
+                <span class="danger">← Lead time: ${LEAD_TIME}d →</span>
+                <span>${maxDays}d</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ============= TABLE =============
+let sortCol = 'dias';
+let sortDir = 'asc';
+
+function renderTable(data) {
+    const search = document.getElementById('searchBox').value.toLowerCase();
+    const areaF = document.getElementById('areaFilter').value;
+    const statusF = document.getElementById('statusFilter').value;
+
+    let filtered = [...data];
+    if (search) filtered = filtered.filter(m => m.n.toLowerCase().includes(search) || m.full.toLowerCase().includes(search));
+    if (areaF !== 'all') filtered = filtered.filter(m => m.area === areaF);
+    if (statusF !== 'all') {
+        if (statusF === 'critico') filtered = filtered.filter(m => m.status === 'critico' || m.status === 'sinstock');
+        else filtered = filtered.filter(m => m.status === statusF);
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+        let va, vb;
+        switch(sortCol) {
+            case 'id': va = a.id; vb = b.id; break;
+            case 'name': va = a.n; vb = b.n; return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+            case 'area': va = a.area; vb = b.area; return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+            case 'stock': va = a.stock; vb = b.stock; break;
+            case 'gasto': va = a.gastoDia; vb = b.gastoDia; break;
+            case 'dias': va = a.diasRestantes; vb = b.diasRestantes; break;
+            case 'reorder': va = a.diasParaPedir; vb = b.diasParaPedir; break;
+            case 'status': va = a.diasRestantes; vb = b.diasRestantes; break;
+            default: va = a.diasRestantes; vb = b.diasRestantes;
+        }
+        return sortDir === 'asc' ? va - vb : vb - va;
+    });
+
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = filtered.map((m, i) => {
+        const areaCls = m.area === 'Producción' ? 'area-produccion' : 'area-calidad';
+        let reorderHTML;
+        if (m.diasRestantes <= 0) reorderHTML = '<span class="reorder-sinstock">SIN STOCK</span>';
+        else if (m.diasParaPedir <= 0) reorderHTML = '<span class="reorder-ya">¡YA!</span>';
+        else reorderHTML = `En ${m.diasParaPedir} días`;
+
+        const pctDias = Math.min(100, (m.diasRestantes / 30) * 100);
+        let barCol;
+        if (m.status === 'critico' || m.status === 'sinstock') barCol = '#ef4444';
+        else if (m.status === 'pedir') barCol = '#f97316';
+        else if (m.status === 'planificar') barCol = '#eab308';
+        else barCol = '#22c55e';
+
+        const badgeClass = m.status === 'critico' || m.status === 'sinstock' ? 'badge-critico' : m.status === 'pedir' ? 'badge-pedir' : m.status === 'planificar' ? 'badge-planificar' : 'badge-ok';
+
+        return `<tr>
+            <td style="color:var(--text-muted);font-weight:500;">${m.id}</td>
+            <td>
+                <span class="material-name">${m.n}</span>
+                <span class="material-full">${m.full}</span>
+            </td>
+            <td><span class="area-badge ${areaCls}">${m.area}</span></td>
+            <td style="color:var(--text-muted);">${m.und}</td>
+            <td class="stock-num">${m.stock.toLocaleString()}</td>
+            <td class="stock-num">${m.gastoDia.toLocaleString()}</td>
+            <td style="font-weight:700;color:${m.statusColor};">${m.diasRestantes}</td>
+            <td class="progress-cell">
+                <span style="font-size:0.75rem;color:var(--text-muted);">${m.diasRestantes}d / 30d</span>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" style="width:${pctDias}%;background:${barCol};"></div>
+                </div>
+            </td>
+            <td class="reorder-cell">${reorderHTML}</td>
+            <td><span class="timeline-item-badge ${badgeClass}" style="font-size:0.7rem;">${m.statusLabel}</span></td>
+        </tr>`;
+    }).join('');
+
+    // Update sort indicators
+    document.querySelectorAll('thead th').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (th.dataset.col === sortCol) th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+    });
+}
+
+// Table sort
+document.querySelectorAll('thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+        const col = th.dataset.col;
+        if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+        else { sortCol = col; sortDir = 'asc'; }
+        renderTable(getFiltered());
+    });
+});
+
+document.getElementById('searchBox').addEventListener('input', () => renderTable(getFiltered()));
+document.getElementById('areaFilter').addEventListener('change', () => renderTable(getFiltered()));
+document.getElementById('statusFilter').addEventListener('change', () => renderTable(getFiltered()));
+
+// ============= DOUGHNUT =============
+let doughnutInstance = null;
+
+function renderDoughnut(data) {
+    const prodCount = data.filter(m => m.area === 'Producción').length;
+    const calCount = data.filter(m => m.area === 'Calidad').length;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    if (doughnutInstance) doughnutInstance.destroy();
+
+    doughnutInstance = new Chart(document.getElementById('doughnutChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Producción', 'Calidad'],
+            datasets: [{
+                data: [prodCount, calCount],
+                backgroundColor: ['rgba(99,102,241,0.7)', 'rgba(14,165,233,0.7)'],
+                borderColor: ['#6366f1', '#0ea5e9'],
+                borderWidth: 2,
+                hoverOffset: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: isDark ? '#cbd5e1' : '#475569', font: { family: 'Plus Jakarta Sans', size: 12, weight: '500' }, padding: 20 }
+                },
+                datalabels: {
+                    color: '#fff',
+                    font: { weight: '700', size: 16, family: 'Plus Jakarta Sans' },
+                    formatter: (val) => val,
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+// ============= URGENCY BAR CHART =============
+let urgencyInstance = null;
+
+function renderUrgency(data) {
+    const sorted = [...data].sort((a, b) => a.diasRestantes - b.diasRestantes).slice(0, 10);
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    if (urgencyInstance) urgencyInstance.destroy();
+
+    urgencyInstance = new Chart(document.getElementById('urgencyChart'), {
+        type: 'bar',
+        data: {
+            labels: sorted.map(m => m.n),
+            datasets: [{
+                label: 'Días Restantes',
+                data: sorted.map(m => m.diasRestantes),
+                backgroundColor: sorted.map(m => m.statusColor + '66'),
+                borderColor: sorted.map(m => m.statusColor),
+                borderWidth: 1.5,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: isDark ? '#e2e8f0' : '#334155',
+                    font: { weight: '700', size: 11, family: 'Plus Jakarta Sans' },
+                    formatter: (val) => val + 'd'
+                },
+                tooltip: {
+                    backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                    titleColor: isDark ? '#f1f5f9' : '#1e293b',
+                    bodyColor: isDark ? '#94a3b8' : '#475569',
+                    borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { size: 10, family: 'Plus Jakarta Sans' }, maxRotation: 45 }
+                },
+                y: {
+                    grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
+                    ticks: { color: isDark ? '#64748b' : '#94a3b8', font: { size: 11 } },
+                    title: { display: true, text: 'Días', color: isDark ? '#94a3b8' : '#64748b', font: { size: 12, weight: '600' } }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+// ============= UPDATE CHART COLORS ON THEME CHANGE =============
+function updateChartColors() {
+    const data = getFiltered();
+    renderSemaforo(data);
+    renderDoughnut(data);
+    renderUrgency(data);
+}
+
+// ============= INIT =============
+renderFilterBar();
+renderKPIs(materiales);
+renderSemaforo(materiales);
+renderTimeline(materiales);
+renderTable(materiales);
+renderDoughnut(materiales);
+renderUrgency(materiales);
+</script>
+</body>
+</html>
