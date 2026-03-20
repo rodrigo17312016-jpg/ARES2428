@@ -916,6 +916,36 @@ footer{background:var(--oscuro);color:rgba(255,255,255,0.7);padding:56px 5% 24px
 <a href="#inicio" class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></a>
 
 <script>
+function toggleVideoSound() {
+  const video = document.getElementById('heroVideo');
+  const controlBtn = document.getElementById('videoControl');
+  
+  if (video.muted) {
+    video.muted = false;
+    controlBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+  } else {
+    video.muted = true;
+    controlBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+  }
+}
+
+// Opcional: Pausar el video cuando no está visible para ahorrar recursos
+const heroSection = document.getElementById('inicio');
+const heroVideo = document.getElementById('heroVideo');
+
+if (heroVideo) {
+  const videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        heroVideo.play();
+      } else {
+        heroVideo.pause();
+      }
+    });
+  }, { threshold: 0.5 });
+  
+  videoObserver.observe(heroVideo);
+}  
 // Nav scroll effect
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('navbar');
