@@ -889,12 +889,11 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
       </div>
 
       <div class="nav-section-label" style="margin-top:12px">Almacenes</div>
-      <div class="nav-item" style="opacity:0.45;cursor:default;">
-        <span class="nav-icon">🏗️</span> Inventario MP
-        <span class="nav-coming-soon">Pronto</span>
+      <div class="nav-item" onclick="window.open('materiales-frutos-tropicales.html','_blank')">
+        <span class="nav-icon">📦</span> Materiales
       </div>
       <div class="nav-item" style="opacity:0.45;cursor:default;">
-        <span class="nav-icon">📐</span> Insumos
+        <span class="nav-icon">🏗️</span> Inventario MP
         <span class="nav-coming-soon">Pronto</span>
       </div>
 
@@ -910,7 +909,7 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
     </nav>
     <div class="sidebar-footer" style="padding:14px 16px;">
       <!-- Visitar Sitio Web -->
-      <a class="sidebar-web-btn" href="index.html" target="_blank" style="width:100%;justify-content:center;margin-bottom:12px;">🌐 Visitar el Sitio Web</a>
+      <a class="sidebar-web-btn" href="frutos_tropicales_web.html" target="_blank" style="width:100%;justify-content:center;margin-bottom:12px;">🌐 Visitar el Sitio Web</a>
       <!-- User session -->
       <div class="user-card" style="padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
         <div class="user-avatar" id="userAvatar">G</div>
@@ -997,6 +996,10 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
         <button class="quick-action-btn" onclick="showPanel('stock-general',null)">
           <div class="qa-icon" style="background:rgba(236,72,153,0.08)">📦</div>
           Stock
+        </button>
+        <button class="quick-action-btn" onclick="window.open('materiales-frutos-tropicales.html','_blank')">
+          <span class="qa-icon">📦</span>
+          <span class="qa-text">Materiales</span>
         </button>
       </div>
 
@@ -1737,6 +1740,7 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
           <canvas id="lmChartSemaforo" height="480"></canvas>
         </div>
       </div>
+
       <!-- TABLA INVENTARIO COMPLETO -->
       <div class="card">
         <div class="card-header">
@@ -1883,9 +1887,9 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
         <a href="stock-general-frutos-tropicales.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:14px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(22,163,74,0.3);transition:all 0.3s ease;letter-spacing:0.3px;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(22,163,74,0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(22,163,74,0.3)'">📊 Ver Dashboard de Stock General</a>
       </div>
       <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
-        <div class="kpi-card verde"><div class="kpi-label">Stock Total</div><div class="kpi-value">265,370</div><div class="kpi-sub">kg en almacenes</div></div>
+        <div class="kpi-card verde"><div class="kpi-label">Stock Total</div><div class="kpi-value">272,020</div><div class="kpi-sub">kg en almacenes</div></div>
         <div class="kpi-card" style="border-top:3px solid var(--azul)"><div class="kpi-label">Total Cajas</div><div class="kpi-value" style="color:var(--azul)">24,210</div><div class="kpi-sub">todas las frutas</div></div>
-        <div class="kpi-card" style="border-top:3px solid #8b5cf6"><div class="kpi-label">FCL Equivalente</div><div class="kpi-value" style="color:#8b5cf6">11.06</div><div class="kpi-sub">contenedores</div></div>
+        <div class="kpi-card" style="border-top:3px solid #8b5cf6"><div class="kpi-label">FCL Equivalente</div><div class="kpi-value" style="color:#8b5cf6">10.10</div><div class="kpi-sub">contenedores</div></div>
         <div class="kpi-card" style="border-top:3px solid var(--naranja)"><div class="kpi-label">Plantas</div><div class="kpi-value" style="color:var(--naranja)">3</div><div class="kpi-sub">almacenes activos</div></div>
       </div>
       <div class="card" style="margin-bottom:20px">
@@ -1919,7 +1923,7 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
             <tr><td style="font-weight:700">🍊 Granada</td><td>FTP</td><td>Arilos</td><td>Conv.</td><td>NATURES TOUCH</td><td>961</td><td>9,610</td><td>0.40</td></tr>
           </tbody>
           <tfoot>
-            <tr style="font-weight:800;background:var(--surface2)"><td colspan="5">TOTAL GENERAL</td><td>24,210</td><td>265,370</td><td>11.06</td></tr>
+            <tr style="font-weight:800;background:var(--surface2)"><td colspan="5">TOTAL GENERAL</td><td>24,210</td><td>272,020</td><td>10.10</td></tr>
           </tfoot>
         </table>
         </div>
