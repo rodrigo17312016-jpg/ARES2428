@@ -909,7 +909,7 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
     </nav>
     <div class="sidebar-footer" style="padding:14px 16px;">
       <!-- Visitar Sitio Web -->
-      <a class="sidebar-web-btn" href="index.html" target="_blank" style="width:100%;justify-content:center;margin-bottom:12px;">🌐 Visitar el Sitio Web</a>
+      <a class="sidebar-web-btn" href="frutos_tropicales_web.html" target="_blank" style="width:100%;justify-content:center;margin-bottom:12px;">🌐 Visitar el Sitio Web</a>
       <!-- User session -->
       <div class="user-card" style="padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
         <div class="user-avatar" id="userAvatar">G</div>
@@ -1514,94 +1514,158 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
 
     <!-- COSTOS ANÁLISIS LAB -->
     <div id="panel-costos-analisis" class="panel">
-      <div class="card">
+      <!-- Enlace al dashboard completo -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
+        <a href="dashboard_analisis.html" target="_blank" class="link-btn" style="font-size:12px;padding:8px 18px;">📊 Ver Dashboard Completo de Análisis</a>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
         <div class="card-header">
           <div class="card-title">🧪 Costos de Análisis de Laboratorio</div>
-          <span class="card-tag tag-verde">2026</span>
+          <span class="card-tag tag-verde">Campaña 2025–2026</span>
         </div>
 
         <!-- KPIs -->
         <div class="kpi-grid" style="margin-bottom:18px;">
           <div class="kpi-card azul">
-            <div class="kpi-label">Total Anual (est.)</div>
-            <div class="kpi-value azul">S/. 18,700</div>
-            <div class="kpi-sub">presupuesto 2026</div>
+            <div class="kpi-label">Gasto Total Campaña</div>
+            <div class="kpi-value azul">S/. 80,196</div>
+            <div class="kpi-sub">campaña 2025–2026</div>
           </div>
           <div class="kpi-card verde">
-            <div class="kpi-label">Análisis realizados</div>
-            <div class="kpi-value verde">342</div>
-            <div class="kpi-sub">acumulado año</div>
+            <div class="kpi-label">Muestras Analizadas</div>
+            <div class="kpi-value verde">1,180</div>
+            <div class="kpi-sub">acumulado campaña</div>
           </div>
           <div class="kpi-card warn">
-            <div class="kpi-label">Costo prom. / análisis</div>
-            <div class="kpi-value warn">S/. 54.68</div>
+            <div class="kpi-label">Costo prom. / muestra</div>
+            <div class="kpi-value warn">S/. 67.96</div>
             <div class="kpi-sub">promedio ponderado</div>
           </div>
-          <div class="kpi-card danger">
-            <div class="kpi-label">Fuera de especificación</div>
-            <div class="kpi-value danger">8</div>
-            <div class="kpi-sub">resultados no conformes</div>
+          <div class="kpi-card" style="border-top:3px solid #8b5cf6">
+            <div class="kpi-label">Laboratorios Activos</div>
+            <div class="kpi-value" style="color:#8b5cf6">5</div>
+            <div class="kpi-sub">AGQ · GROEN · NSF · SGS · MERIEUX</div>
           </div>
         </div>
 
-        <!-- Tabla de costos -->
+        <!-- Tabla de gastos por laboratorio -->
         <div class="tbl-wrap">
           <table>
             <thead>
               <tr style="background:var(--azul);">
-                <th style="color:#fff;">Tipo de Análisis</th>
-                <th style="color:#fff;text-align:center;">Laboratorio</th>
-                <th style="color:#fff;text-align:center;">Frecuencia</th>
-                <th style="color:#fff;text-align:right;">Costo Unit. (S/.)</th>
-                <th style="color:#fff;text-align:right;">Cant./Año</th>
-                <th style="color:#fff;text-align:right;">Total (S/.)</th>
+                <th style="color:#fff;">Laboratorio</th>
+                <th style="color:#fff;text-align:right;">Muestras</th>
+                <th style="color:#fff;text-align:right;">Gasto (S/.)</th>
+                <th style="color:#fff;text-align:right;">% del Total</th>
+                <th style="color:#fff;text-align:right;">Prom./Muestra</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Microbiológico (Coliformes, Salmonella)</td>
-                <td style="text-align:center;">Lab. SGS Perú</td>
-                <td style="text-align:center;">Semanal</td>
-                <td style="text-align:right;">120.00</td>
-                <td style="text-align:right;">52</td>
-                <td style="text-align:right;font-weight:700;">6,240.00</td>
+                <td style="font-weight:700">🟢 GROEN</td>
+                <td style="text-align:right;">670</td>
+                <td style="text-align:right;font-weight:700;">42,325.00</td>
+                <td style="text-align:right;">52.8%</td>
+                <td style="text-align:right;">63.17</td>
               </tr>
               <tr>
-                <td>Residuos de Plaguicidas</td>
-                <td style="text-align:center;">SENASA</td>
-                <td style="text-align:center;">Mensual</td>
-                <td style="text-align:right;">380.00</td>
-                <td style="text-align:right;">12</td>
-                <td style="text-align:right;font-weight:700;">4,560.00</td>
+                <td style="font-weight:700">🟡 AGQ</td>
+                <td style="text-align:right;">466</td>
+                <td style="text-align:right;font-weight:700;">34,206.00</td>
+                <td style="text-align:right;">42.7%</td>
+                <td style="text-align:right;">73.40</td>
               </tr>
               <tr>
-                <td>Metales Pesados</td>
-                <td style="text-align:center;">Lab. SGS Perú</td>
-                <td style="text-align:center;">Trimestral</td>
-                <td style="text-align:right;">520.00</td>
-                <td style="text-align:right;">4</td>
-                <td style="text-align:right;font-weight:700;">2,080.00</td>
+                <td style="font-weight:700">🟠 NSF</td>
+                <td style="text-align:right;">29</td>
+                <td style="text-align:right;font-weight:700;">2,235.00</td>
+                <td style="text-align:right;">2.8%</td>
+                <td style="text-align:right;">77.07</td>
               </tr>
               <tr>
-                <td>Fisicoquímico (pH, Brix, Acidez)</td>
-                <td style="text-align:center;">Interno</td>
-                <td style="text-align:center;">Diario</td>
-                <td style="text-align:right;">18.00</td>
-                <td style="text-align:right;">240</td>
-                <td style="text-align:right;font-weight:700;">4,320.00</td>
+                <td style="font-weight:700">🟣 SGS</td>
+                <td style="text-align:right;">5</td>
+                <td style="text-align:right;font-weight:700;">946.00</td>
+                <td style="text-align:right;">1.2%</td>
+                <td style="text-align:right;">189.20</td>
               </tr>
               <tr>
-                <td>Agua de proceso</td>
-                <td style="text-align:center;">Lab. ALS Global</td>
-                <td style="text-align:center;">Mensual</td>
-                <td style="text-align:right;">125.00</td>
-                <td style="text-align:right;">12</td>
-                <td style="text-align:right;font-weight:700;">1,500.00</td>
+                <td style="font-weight:700">🔴 MERIEUX</td>
+                <td style="text-align:right;">10</td>
+                <td style="text-align:right;font-weight:700;">484.00</td>
+                <td style="text-align:right;">0.6%</td>
+                <td style="text-align:right;">48.40</td>
               </tr>
               <tr style="background:var(--azul-bg);font-weight:800;">
-                <td colspan="4">TOTAL</td>
-                <td style="text-align:right;">320</td>
-                <td style="text-align:right;color:var(--azul);">S/. 18,700.00</td>
+                <td>TOTAL</td>
+                <td style="text-align:right;">1,180</td>
+                <td style="text-align:right;color:var(--azul);">S/. 80,196.00</td>
+                <td style="text-align:right;">100%</td>
+                <td style="text-align:right;">67.96</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Gasto por tipo de análisis -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <div class="card-title">📋 Gasto por Tipo de Análisis</div>
+          <span class="card-tag tag-azul">Top procedimientos</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo de Análisis</th>
+                <th style="text-align:right;">Gasto (S/.)</th>
+                <th style="text-align:right;">% del Total</th>
+                <th>Distribución</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="font-weight:700">Pesticidas</td><td style="text-align:right;font-weight:700;color:#dc2626">37,811</td><td style="text-align:right;">47.1%</td><td><div style="background:#dc262630;border-radius:4px;height:12px;width:100%"><div style="background:#dc2626;border-radius:4px;height:100%;width:47.1%"></div></div></td></tr>
+              <tr><td style="font-weight:700">Pack 2</td><td style="text-align:right;font-weight:700;">7,447</td><td style="text-align:right;">9.3%</td><td><div style="background:var(--verde-bg);border-radius:4px;height:12px;width:100%"><div style="background:var(--verde);border-radius:4px;height:100%;width:9.3%"></div></div></td></tr>
+              <tr><td style="font-weight:700">Metales Pesados</td><td style="text-align:right;font-weight:700;">6,192</td><td style="text-align:right;">7.7%</td><td><div style="background:var(--azul-bg);border-radius:4px;height:12px;width:100%"><div style="background:var(--azul);border-radius:4px;height:100%;width:7.7%"></div></div></td></tr>
+              <tr><td style="font-weight:700">Glifosato</td><td style="text-align:right;font-weight:700;">5,554</td><td style="text-align:right;">6.9%</td><td><div style="background:#f59e0b30;border-radius:4px;height:12px;width:100%"><div style="background:#f59e0b;border-radius:4px;height:100%;width:6.9%"></div></div></td></tr>
+              <tr><td style="font-weight:700">Cloratos + Percloratos</td><td style="text-align:right;font-weight:700;">5,420</td><td style="text-align:right;">6.8%</td><td><div style="background:#16a34a30;border-radius:4px;height:12px;width:100%"><div style="background:#16a34a;border-radius:4px;height:100%;width:6.8%"></div></div></td></tr>
+              <tr><td style="font-weight:700">Fosetil</td><td style="text-align:right;font-weight:700;">5,298</td><td style="text-align:right;">6.6%</td><td><div style="background:#8b5cf630;border-radius:4px;height:12px;width:100%"><div style="background:#8b5cf6;border-radius:4px;height:100%;width:6.6%"></div></div></td></tr>
+              <tr><td style="font-weight:700">Pack 6</td><td style="text-align:right;font-weight:700;">1,631</td><td style="text-align:right;">2.0%</td><td><div style="background:#dc262630;border-radius:4px;height:12px;width:100%"><div style="background:#dc2626;border-radius:4px;height:100%;width:2%"></div></div></td></tr>
+              <tr><td style="font-weight:700">Norovirus / HAV</td><td style="text-align:right;font-weight:700;">1,522</td><td style="text-align:right;">1.9%</td><td><div style="background:var(--azul-bg);border-radius:4px;height:12px;width:100%"><div style="background:var(--azul);border-radius:4px;height:100%;width:1.9%"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Gasto por cultivo -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🌱 Gasto por Cultivo — Campaña 2025–2026</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cultivo</th>
+                <th style="text-align:right;">Microbiológico (S/.)</th>
+                <th style="text-align:right;">Residuos (S/.)</th>
+                <th style="text-align:right;">Total (S/.)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="font-weight:700">🥭 Mango</td><td style="text-align:right;">7,507</td><td style="text-align:right;">30,752</td><td style="text-align:right;font-weight:700;color:var(--naranja)">38,259</td></tr>
+              <tr><td style="font-weight:700">🍓 Fresa</td><td style="text-align:right;">4,609</td><td style="text-align:right;">23,314</td><td style="text-align:right;font-weight:700;color:#dc2626">27,923</td></tr>
+              <tr><td style="font-weight:700">🫐 Arándano</td><td style="text-align:right;">3,397</td><td style="text-align:right;">7,640</td><td style="text-align:right;font-weight:700;color:#8b5cf6">11,037</td></tr>
+              <tr><td style="font-weight:700">🥑 Palta</td><td style="text-align:right;">426</td><td style="text-align:right;">1,652</td><td style="text-align:right;font-weight:700;color:var(--verde)">2,078</td></tr>
+              <tr><td style="font-weight:700">🍊 Granada</td><td style="text-align:right;">330</td><td style="text-align:right;">160</td><td style="text-align:right;font-weight:700;color:#ec4899">490</td></tr>
+              <tr><td style="font-weight:700">📦 Otros</td><td style="text-align:right;">409</td><td style="text-align:right;">0</td><td style="text-align:right;font-weight:700;">409</td></tr>
+              <tr style="background:var(--azul-bg);font-weight:800;">
+                <td>TOTAL</td>
+                <td style="text-align:right;">16,678</td>
+                <td style="text-align:right;">63,518</td>
+                <td style="text-align:right;color:var(--azul);">S/. 80,196</td>
               </tr>
             </tbody>
           </table>
