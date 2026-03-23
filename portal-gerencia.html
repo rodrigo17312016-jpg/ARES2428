@@ -2086,7 +2086,11 @@ function showPanel(id, el) {
   if (id === 'prod-dia') initProdDia();
   if (id === 'contenedores' || id === 'stock-general') initStockCharts();
   closeSidebar();
-   window.scrollTo(0, 0);
+   setTimeout(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, 0);
 }
 
 // ── SIDEBAR MOBILE ──
