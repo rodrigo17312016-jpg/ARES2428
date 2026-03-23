@@ -1830,6 +1830,17 @@ ALTER TABLE registros_temperatura ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "allow_all" ON registros_temperatura FOR ALL USING (true);`;
   navigator.clipboard.writeText(sql).then(() => showToast('📋', 'SQL copiado', 'Pégalo en el editor SQL de Supabase'));
 }
+  // Fix para scroll en iOS
+if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+  document.body.style.position = 'relative';
+  document.body.style.height = 'auto';
+  document.body.style.overflow = 'visible';
+  
+  // Permitir scroll normal en todos los contenedores
+  document.querySelectorAll('.nav-tabs, .table-scroll, .main').forEach(el => {
+    el.style.webkitOverflowScrolling = 'touch';
+  });
+}
 </script>
 
 <!-- MODAL EDITAR REGISTRO -->
