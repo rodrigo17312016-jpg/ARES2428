@@ -20,6 +20,22 @@
     --muted: #64748b;
     --success: #10b981;
   }
+  /* Prevenir rebote en iOS sin bloquear el scroll */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  
+    .main, .nav-tabs, .header {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
   /* PREVENIR REBOTE - FIX PRINCIPAL */
   html, body {
     overflow-x: hidden;
