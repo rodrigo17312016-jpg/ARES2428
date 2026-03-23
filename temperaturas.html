@@ -91,45 +91,58 @@
     padding: 0;
   }
 
-  /* HEADER */
+  /* HEADER — grid 2 columnas: logo | firma+switch */
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 10px 16px;
-    display: flex;
+    padding: 12px 20px;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    position: relative;
+    gap: 12px;
     z-index: 100;
-    min-height: 64px;
+    min-height: 72px;
   }
 
-  /* Enlace FORMATOS dentro del header */
-  .header .btn-formatos {
-    display: inline-flex;
+  /* Columna izquierda: logo */
+  .header-left {
+    display: flex;
     align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  /* Columna derecha: firma + switch */
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     gap: 6px;
-    background: transparent;
-    border: none;
-    color: var(--accent);
+    justify-self: end;
+  }
+
+  /* Tab especial de Reporte de Formatos */
+  .nav-tab-formatos {
+    margin-left: auto;
+    color: var(--accent) !important;
+    border: 1.5px solid var(--accent) !important;
+    background: rgba(0,212,170,0.06) !important;
     text-decoration: none;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    transition: all 0.2s;
-    white-space: nowrap;
-    font-family: 'DM Sans', sans-serif;
+    border-radius: 8px 8px 0 0;
+    font-weight: 700 !important;
     letter-spacing: 0.3px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    flex-shrink: 0;
   }
-  .header .btn-formatos:hover {
-    color: var(--text);
+  .nav-tab-formatos:hover {
+    background: rgba(0,212,170,0.14) !important;
+    color: var(--text) !important;
   }
+  body.light-mode .nav-tab-formatos {
+    color: #0d9488 !important;
+    border-color: #0d9488 !important;
+    background: rgba(13,148,136,0.07) !important;
+  }
+
   .logo {
     display: flex;
     align-items: center;
@@ -147,12 +160,6 @@
   }
   .logo-text { font-size: 13px; font-weight: 700; white-space:nowrap; }
   .logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
   .clock {
     font-family: 'DM Mono', monospace;
     font-size: 18px;
@@ -545,25 +552,31 @@
 
   /* ===== RESPONSIVE: MOBILE (max-width: 640px) ===== */
   @media (max-width: 640px) {
-    /* --- Header móvil --- */
+    /* --- Header móvil: apilado vertical --- */
     .header {
-      flex-direction: column;
-      align-items: stretch;
-      padding: 10px 12px;
-      gap: 6px;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      padding: 12px;
+      gap: 10px;
+      text-align: center;
     }
-    .header > .logo {
+    .header-left {
       justify-content: center;
     }
     .header-right {
-      justify-content: center;
-      gap: 10px;
+      align-items: center;
     }
+    .nav-tab-formatos {
+      margin-left: 0;
+    }
+    .topbar-dev-sig {
+      text-align: center;
+    }
+    .theme-switch { justify-content: center; }
     .logo-text { font-size: 12px; }
     .logo-sub { font-size: 10px; }
     .clock { font-size: 16px; }
     .date-text { font-size: 10px; text-align: center; }
-    .theme-switch { justify-content: center; }
 
     /* --- Nav tabs scroll horizontal --- */
     .nav-tabs {
@@ -662,16 +675,6 @@
     .area-item { padding: 12px 14px; border-radius: 10px; }
     .area-name { font-size: 13px; }
     .area-range { font-size: 11px; }
-
-    /* --- Botón FORMATOS centrado en móvil --- */
-    .header .btn-formatos {
-      width: auto;
-      align-self: center;
-      justify-content: center;
-      font-size: 10px;
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
 
     /* --- Estilo dark mode para inputs time/date --- */
     [data-theme="dark"] input[type="time"],
@@ -833,17 +836,17 @@
 <body>
 
 <div class="header">
-  <div class="logo">
-    <img src="LOGO.png" alt="Frutos Tropicales" class="logo-float-img" style="height:44px;width:auto;object-fit:contain;flex-shrink:0;" />
+  <!-- IZQUIERDA: Logo -->
+  <div class="header-left">
+    <img src="LOGO.png" alt="Frutos Tropicales" class="logo-float-img" style="height:50px;width:auto;object-fit:contain;flex-shrink:0;" />
     <div>
       <div class="logo-text">FRUTOS TROPICALES</div>
       <div class="logo-sub">Registro de Temperaturas</div>
     </div>
   </div>
-  <a href="reporte_frio.html" class="btn-formatos">
-    📋 Reporte de Formatos
-  </a>
-  <div class="header-right" style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+
+  <!-- DERECHA: Firma premium + Switch -->
+  <div class="header-right">
     <div class="topbar-dev-sig">
       <div class="topbar-sig-label">DESARROLLADO POR:</div>
       <div class="topbar-sig-name">Rodrigo Garcia</div>
@@ -863,7 +866,7 @@
   <button class="nav-tab" onclick="showPanel('historial')">📊 Historial</button>
   <button class="nav-tab" onclick="showPanel('dashboard')">🌡️ Dashboard</button>
   <button class="nav-tab" onclick="showPanel('config')">⚙️ Detalles</button>
-
+  <a href="reporte_frio.html" class="nav-tab nav-tab-formatos">📋 Reporte de Formatos</a>
 </div>
 
 <!-- ============== PANEL: REGISTRO ============== -->
