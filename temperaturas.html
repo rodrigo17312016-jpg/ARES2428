@@ -20,6 +20,20 @@
     --muted: #64748b;
     --success: #10b981;
   }
+  /* PREVENIR REBOTE - FIX PRINCIPAL */
+  html, body {
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none; /* 🔥 CLAVE: elimina el rebote */
+  }
 
   /* MODO CLARO */
   body.light-mode {
