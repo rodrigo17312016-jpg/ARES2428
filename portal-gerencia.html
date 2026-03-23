@@ -2086,11 +2086,24 @@ function showPanel(id, el) {
   if (id === 'prod-dia') initProdDia();
   if (id === 'contenedores' || id === 'stock-general') initStockCharts();
   closeSidebar();
-   setTimeout(() => {
+  
+  // Scroll instantáneo sin animación - forzado
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  
+  // Doble aseguramiento con múltiples timeouts
+  setTimeout(() => {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-  }, 0);
+  }, 10);
+  
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, 50);
 }
 
 // ── SIDEBAR MOBILE ──
