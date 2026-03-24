@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>REPORTE DE TEMPERATURA-FTP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Temperaturas · FrutaFría Export</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
@@ -19,36 +20,6 @@
     --text: #f1f5f9;
     --muted: #64748b;
     --success: #10b981;
-  }
-  /* Prevenir rebote en iOS sin bloquear el scroll */
-  @supports (-webkit-touch-callout: none) {
-    body {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-  
-    .main, .nav-tabs, .header {
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-  /* PREVENIR REBOTE - FIX PRINCIPAL */
-  html, body {
-    overflow-x: hidden;
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  body {
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: none; /* 🔥 CLAVE: elimina el rebote */
   }
 
   /* MODO CLARO */
@@ -114,14 +85,11 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 0;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  /* ELIMINAR overscroll-behavior: none */
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
   }
 
   /* HEADER — 3 columnas: logo | título+formatos | firma+switch */
@@ -150,12 +118,22 @@
     gap: 4px;
   }
   .header-title {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 800;
-    color: var(--text);
-    letter-spacing: 0.3px;
+    letter-spacing: 1px;
     font-family: 'DM Sans', sans-serif;
     text-align: center;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #0d9488, #10b981, #34d399, #0d9488);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmerTitle 3s ease infinite;
+  }
+  @keyframes shimmerTitle {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
   .btn-formatos {
     display: inline-flex;
@@ -191,13 +169,7 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 6px;
-    }
-  .topbar-sig-label,
-  .topbar-sig-name,
-  .topbar-sig-role {
-  text-align: center;
   }
-  
   .clock {
     font-family: 'DM Mono', monospace;
     font-size: 18px;
@@ -207,7 +179,6 @@
   .date-text { font-size: 11px; color: var(--muted); text-align: right; }
 
   /* NAV TABS */
-    /* NAV TABS - SCROLL HORIZONTAL SIN REBOTE */
   .nav-tabs {
     display: flex;
     gap: 4px;
@@ -215,7 +186,6 @@
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     overflow-x: auto;
-    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -246,9 +216,6 @@
     max-width: 960px;
     margin: 0 auto;
     padding: 28px 24px;
-    position: relative;
-    overflow-x: hidden;
-    overflow-y: visible; /* Cambiar de auto a visible */
   }
 
   .panel { display: none; }
@@ -608,9 +575,9 @@
       order: 3;
       grid-column: 1 / -1;
     }
-    .header-title { font-size: 20px; }
+    .header-title { font-size: 14px; }
     .btn-formatos { font-size: 10px; padding: 5px 10px; }
-    .header-logo img { height: 70px !important; }
+    .header-logo img { height: 38px !important; }
     /* Firma 30% más pequeña en móvil */
     .topbar-dev-sig { padding: 3px 8px; }
     .topbar-sig-label { font-size: 6px !important; letter-spacing: 0.8px !important; }
@@ -880,6 +847,36 @@
   body:not(.light-mode) #registroTurno { background: rgba(0,212,170,0.08) !important; border-color: rgba(0,212,170,0.2) !important; color: #00d4aa !important; }
   body.light-mode #registroTurno { background: rgba(37,99,235,0.08) !important; border-color: rgba(37,99,235,0.2) !important; color: #1d4ed8 !important; font-weight: 700; }
 
+  /* ===== PESTAÑAS DE FORMATO (selector de grupo de áreas) ===== */
+  .format-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 12px 0;
+    flex-wrap: wrap;
+  }
+  .format-tab {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .format-tab:hover { border-color: var(--accent); color: var(--text); }
+  .format-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  /* Responsive: format-tabs en móvil */
+  @media (max-width: 640px) {
+    .format-tabs { gap: 6px; padding: 8px 0; }
+    .format-tab { padding: 8px 12px; font-size: 11px; }
+  }
+
 </style>
 </head>
 <body>
@@ -936,6 +933,13 @@
   <div class="form-card">
     <div class="section-title">Nuevo registro de temperatura</div>
 
+    <!-- Pestañas de selección de formato/grupo de áreas -->
+    <div class="format-tabs" id="formatTabs">
+      <button class="format-tab active" onclick="selectFormato('mp')" data-fmt="mp">🚛 Cámaras de Materia Prima</button>
+      <button class="format-tab" onclick="selectFormato('proceso')" data-fmt="proceso">🏭 Sala de Proceso</button>
+      <button class="format-tab" onclick="selectFormato('empaque')" data-fmt="empaque">❄️ Sala de Empaque</button>
+    </div>
+
     <div class="form-grid" style="margin-bottom:12px;grid-template-columns:1fr 1fr;">
       <div class="form-group">
         <label>Hora de medición</label>
@@ -949,18 +953,11 @@
     </div>
     <div class="form-grid" style="margin-bottom:16px;grid-template-columns:1fr 1fr;">
       <div class="form-group">
-        <label>Área</label>
+        <!-- La etiqueta cambia según el formato seleccionado -->
+        <label id="areaLabel">ZONA / REEFERS</label>
         <select id="area" onchange="updateAreaInfo()">
           <option value="">— Seleccionar —</option>
-          <option value="CAMARA DE MATERIA PRIMA">CAMARA DE MATERIA PRIMA</option>
-          <option value="ACONDICIONADO">ACONDICIONADO</option>
-          <option value="EMBANDEJADO">EMBANDEJADO</option>
-          <option value="LAVADO DE BANDEJAS">LAVADO DE BANDEJAS</option>
-          <option value="PRE ENFRIADO">PRE ENFRIADO</option>
-          <option value="EMPAQUE">EMPAQUE</option>
-          <option value="TEMPERATURA PRODUCTO">TEMPERATURA PRODUCTO</option>
-          <option value="CAMARA DE PRODUCTO TERMINADO">CAMARA DE PRODUCTO TERMINADO</option>
-          <option value="DESPACHO">DESPACHO</option>
+          <!-- Las opciones se generan dinámicamente con selectFormato() -->
         </select>
       </div>
       <div class="form-group">
@@ -970,7 +967,7 @@
           <option>LUIS APONTE</option>
           <option>MAYDA APONTE</option>
           <option>SHEYLA CAMONES</option>
-          <option>JOHNNY PAJUELO</option>
+          <option>JHONY PAJUELO</option>
           <option>BLANCA MALVACEDA</option>
           <option>CHRISTY JIMENEZ</option>
         </select>
@@ -1027,11 +1024,25 @@
     <input type="date" id="filtroFecha" />
     <select id="filtroArea">
       <option value="">Todas las áreas</option>
+      <!-- Cámaras de Materia Prima -->
       <option>CAMARA DE MATERIA PRIMA</option>
+      <option>TEMPERATURA DE PRODUCTO(MP)</option>
+      <option>REEFER 1</option>
+      <option>REEFER 2</option>
+      <option>REEFER 3</option>
+      <option>REEFER 4</option>
+      <option>REEFER 5</option>
+      <option>REEFER 6</option>
+      <option>REEFER 7</option>
+      <option>REEFER 8</option>
+      <option>REEFER 9</option>
+      <option>REEFER 10</option>
+      <!-- Sala de Proceso -->
       <option>ACONDICIONADO</option>
       <option>EMBANDEJADO</option>
       <option>LAVADO DE BANDEJAS</option>
       <option>PRE ENFRIADO</option>
+      <!-- Sala de Empaque -->
       <option>EMPAQUE</option>
       <option>TEMPERATURA PRODUCTO</option>
       <option>CAMARA DE PRODUCTO TERMINADO</option>
@@ -1055,7 +1066,7 @@
           <th>Temperatura</th>
           <th>Estado</th>
           <th>Turno</th>
-          <th>Inspector</th>
+          <th>Operario</th>
           <th>Observación</th>
         </tr>
       </thead>
@@ -1087,11 +1098,25 @@
   <div style="margin-bottom:12px">
     <select id="filtroAreaChart" onchange="actualizarChartHoras()" style="width:auto;min-width:200px">
       <option value="">Todas las áreas (promedio)</option>
+      <!-- Cámaras de Materia Prima -->
       <option>CAMARA DE MATERIA PRIMA</option>
+      <option>TEMPERATURA DE PRODUCTO(MP)</option>
+      <option>REEFER 1</option>
+      <option>REEFER 2</option>
+      <option>REEFER 3</option>
+      <option>REEFER 4</option>
+      <option>REEFER 5</option>
+      <option>REEFER 6</option>
+      <option>REEFER 7</option>
+      <option>REEFER 8</option>
+      <option>REEFER 9</option>
+      <option>REEFER 10</option>
+      <!-- Sala de Proceso -->
       <option>ACONDICIONADO</option>
       <option>EMBANDEJADO</option>
       <option>LAVADO DE BANDEJAS</option>
       <option>PRE ENFRIADO</option>
+      <!-- Sala de Empaque -->
       <option>EMPAQUE</option>
       <option>TEMPERATURA PRODUCTO</option>
       <option>CAMARA DE PRODUCTO TERMINADO</option>
@@ -1164,6 +1189,7 @@
       </div>
       <span class="status-badge status-ok"><span class="dot"></span>Producto IQF</span>
     </div>
+    <!-- TEMPERATURA DE PRODUCTO(MP) y REEFERs: sin alertas, solo OK -->
     <div class="area-item">
       <div class="area-color" style="background:#00d4aa"></div>
       <div class="area-info">
@@ -1364,11 +1390,26 @@ const rangos = {
   'TEMPERATURA PRODUCTO':         { limite: -18, critico: -13 },
   'CAMARA DE PRODUCTO TERMINADO': { limite: -20, critico: -15 },
   'DESPACHO':                     { limite: 5,   critico: 10  },
+  // Nuevas áreas: Temperatura de producto para materia prima
+  'TEMPERATURA DE PRODUCTO(MP)':  { limite: -20, critico: -15 },
+  // Reefers 1-10: rango de refrigeración estándar (0 a 8°C)
+  'REEFER 1':                     { limite: 8,   critico: 13  },
+  'REEFER 2':                     { limite: 8,   critico: 13  },
+  'REEFER 3':                     { limite: 8,   critico: 13  },
+  'REEFER 4':                     { limite: 8,   critico: 13  },
+  'REEFER 5':                     { limite: 8,   critico: 13  },
+  'REEFER 6':                     { limite: 8,   critico: 13  },
+  'REEFER 7':                     { limite: 8,   critico: 13  },
+  'REEFER 8':                     { limite: 8,   critico: 13  },
+  'REEFER 9':                     { limite: 8,   critico: 13  },
+  'REEFER 10':                    { limite: 8,   critico: 13  },
 };
 
 function getEstado(area, temp) {
   const r = rangos[area];
   if (!r) return 'OK';
+  // REEFERs y TEMPERATURA DE PRODUCTO(MP): siempre OK (sin alertas)
+  if (area.startsWith('REEFER') || area === 'TEMPERATURA DE PRODUCTO(MP)') return 'OK';
   // Para areas de congelado el limite es negativo: superar = subir por encima del limite
   if (r.limite < 0) {
     if (temp > r.critico) return 'CRITICO';
@@ -1407,6 +1448,68 @@ function calcularTurno(horaStr) {
   return 'TURNO NOCHE (18:00-05:00)';
 }
 
+// ====== SELECTOR DE FORMATO (grupo de áreas) ======
+var currentFormato = 'mp';
+
+// Definición de áreas por formato — el value es lo que se guarda en Supabase
+var FORMATO_AREAS = {
+  mp: [
+    {value: 'CAMARA DE MATERIA PRIMA', label: 'CAMARA DE MATERIA PRIMA'},
+    {value: 'TEMPERATURA DE PRODUCTO(MP)', label: 'TEMPERATURA DE PRODUCTO(MP)'},
+    {value: 'REEFER 1', label: 'REEFER 1'},
+    {value: 'REEFER 2', label: 'REEFER 2'},
+    {value: 'REEFER 3', label: 'REEFER 3'},
+    {value: 'REEFER 4', label: 'REEFER 4'},
+    {value: 'REEFER 5', label: 'REEFER 5'},
+    {value: 'REEFER 6', label: 'REEFER 6'},
+    {value: 'REEFER 7', label: 'REEFER 7'},
+    {value: 'REEFER 8', label: 'REEFER 8'},
+    {value: 'REEFER 9', label: 'REEFER 9'},
+    {value: 'REEFER 10', label: 'REEFER 10'}
+  ],
+  proceso: [
+    {value: 'ACONDICIONADO', label: 'ACONDICIONADO'},
+    {value: 'EMBANDEJADO', label: 'EMBANDEJADO'},
+    {value: 'LAVADO DE BANDEJAS', label: 'LAVADO DE BANDEJAS'},
+    {value: 'PRE ENFRIADO', label: 'PRE ENFRIADO'}
+  ],
+  empaque: [
+    {value: 'TEMPERATURA PRODUCTO', label: 'TEMPERATURA DE PRODUCTO'},
+    {value: 'EMPAQUE', label: 'EMPAQUE'},
+    {value: 'CAMARA DE PRODUCTO TERMINADO', label: 'CAMARA DE PRODUCTO TERMINADO'},
+    {value: 'DESPACHO', label: 'DESPACHO'}
+  ]
+};
+
+// Función para cambiar el formato activo y actualizar las opciones del dropdown de áreas
+function selectFormato(fmt) {
+  currentFormato = fmt;
+  // Actualizar pestaña activa
+  document.querySelectorAll('.format-tab').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.fmt === fmt);
+  });
+
+  // Cambiar etiqueta según el formato — "ZONA / REEFERS" para materia prima, "Área" para los demás
+  var areaLabel = document.getElementById('areaLabel');
+  if (areaLabel) {
+    areaLabel.textContent = (fmt === 'mp') ? 'ZONA / REEFERS' : 'Área';
+  }
+
+  // Reconstruir opciones del select de área
+  var select = document.getElementById('area');
+  select.innerHTML = '<option value="">— Seleccionar —</option>';
+  FORMATO_AREAS[fmt].forEach(function(a) {
+    var opt = document.createElement('option');
+    opt.value = a.value;
+    opt.textContent = a.label;
+    select.appendChild(opt);
+  });
+
+  // Limpiar selección actual
+  select.value = '';
+  updateAreaInfo();
+}
+
 // ====== INIT ======
 window.onload = async () => {
   const today = new Date().toLocaleDateString('sv', {timeZone:'America/Lima'});
@@ -1417,6 +1520,8 @@ window.onload = async () => {
   document.getElementById('turno').value = calcularTurno(horaInicial);
   if (config.sbUrl) document.getElementById('sbUrl').value = config.sbUrl;
   if (config.sbKey) document.getElementById('sbKey').value = config.sbKey;
+  // Inicializar con formato "Cámaras de Materia Prima" seleccionado
+  selectFormato('mp');
   await cargarRegistrosSupabase();
 };
 
@@ -1443,7 +1548,8 @@ async function showPanel(id) {
 function updateAreaInfo() {
   const area = document.getElementById('area').value;
   const r = rangos[area];
-  if (r) {
+  // REEFERs y PRODUCTO(MP): no mostrar límites ni alertas
+  if (r && !area.startsWith('REEFER') && area !== 'TEMPERATURA DE PRODUCTO(MP)') {
     document.getElementById('rangoInfo').textContent = `Límite máximo: ${r.limite}°C · Crítico: +5°C sobre el límite (${r.critico}°C)`;
   } else {
     document.getElementById('rangoInfo').textContent = '';
@@ -1610,7 +1716,7 @@ function renderDashboard() {
   const today = new Date().toISOString().split('T')[0];
   const hoy = registros.filter(r => r.fecha === today);
   const areas = Object.keys(rangos);
-  const cardColors = { 'CAMARA DE MATERIA PRIMA':'cold','ACONDICIONADO':'ambient','EMBANDEJADO':'ambient','LAVADO DE BANDEJAS':'ambient','PRE ENFRIADO':'cold','EMPAQUE':'cold','TEMPERATURA PRODUCTO':'frozen','CAMARA DE PRODUCTO TERMINADO':'frozen','DESPACHO':'cold' };
+  const cardColors = { 'CAMARA DE MATERIA PRIMA':'cold','ACONDICIONADO':'ambient','EMBANDEJADO':'ambient','LAVADO DE BANDEJAS':'ambient','PRE ENFRIADO':'cold','EMPAQUE':'cold','TEMPERATURA PRODUCTO':'frozen','CAMARA DE PRODUCTO TERMINADO':'frozen','DESPACHO':'cold','TEMPERATURA DE PRODUCTO(MP)':'frozen','REEFER 1':'cold','REEFER 2':'cold','REEFER 3':'cold','REEFER 4':'cold','REEFER 5':'cold','REEFER 6':'cold','REEFER 7':'cold','REEFER 8':'cold','REEFER 9':'cold','REEFER 10':'cold' };
   const container = document.getElementById('dashCards');
   container.innerHTML = areas.map(area => {
     const regs = hoy.filter(r => r.area === area).sort((a,b) => b.hora.localeCompare(a.hora));
@@ -1830,17 +1936,6 @@ ALTER TABLE registros_temperatura ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "allow_all" ON registros_temperatura FOR ALL USING (true);`;
   navigator.clipboard.writeText(sql).then(() => showToast('📋', 'SQL copiado', 'Pégalo en el editor SQL de Supabase'));
 }
-  // Fix para scroll en iOS
-if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-  document.body.style.position = 'relative';
-  document.body.style.height = 'auto';
-  document.body.style.overflow = 'visible';
-  
-  // Permitir scroll normal en todos los contenedores
-  document.querySelectorAll('.nav-tabs, .table-scroll, .main').forEach(el => {
-    el.style.webkitOverflowScrolling = 'touch';
-  });
-}
 </script>
 
 <!-- MODAL EDITAR REGISTRO -->
@@ -1855,11 +1950,25 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
       <div class="form-group">
         <label>Área</label>
         <select id="editArea">
+          <!-- Cámaras de Materia Prima -->
           <option value="CAMARA DE MATERIA PRIMA">CAMARA DE MATERIA PRIMA</option>
+          <option value="TEMPERATURA DE PRODUCTO(MP)">TEMPERATURA DE PRODUCTO(MP)</option>
+          <option value="REEFER 1">REEFER 1</option>
+          <option value="REEFER 2">REEFER 2</option>
+          <option value="REEFER 3">REEFER 3</option>
+          <option value="REEFER 4">REEFER 4</option>
+          <option value="REEFER 5">REEFER 5</option>
+          <option value="REEFER 6">REEFER 6</option>
+          <option value="REEFER 7">REEFER 7</option>
+          <option value="REEFER 8">REEFER 8</option>
+          <option value="REEFER 9">REEFER 9</option>
+          <option value="REEFER 10">REEFER 10</option>
+          <!-- Sala de Proceso -->
           <option value="ACONDICIONADO">ACONDICIONADO</option>
           <option value="EMBANDEJADO">EMBANDEJADO</option>
           <option value="LAVADO DE BANDEJAS">LAVADO DE BANDEJAS</option>
           <option value="PRE ENFRIADO">PRE ENFRIADO</option>
+          <!-- Sala de Empaque -->
           <option value="EMPAQUE">EMPAQUE</option>
           <option value="TEMPERATURA PRODUCTO">TEMPERATURA PRODUCTO</option>
           <option value="CAMARA DE PRODUCTO TERMINADO">CAMARA DE PRODUCTO TERMINADO</option>
@@ -1872,7 +1981,7 @@ if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
           <option>LUIS APONTE</option>
           <option>MAYDA APONTE</option>
           <option>SHEYLA CAMONES</option>
-          <option>JOHNNY PAJUELO</option>
+          <option>JHONY PAJUELO</option>
           <option>BLANCA MALVACEDA</option>
           <option>CHRISTY JIMENEZ</option>
         </select>
