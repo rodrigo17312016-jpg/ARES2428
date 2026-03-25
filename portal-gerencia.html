@@ -902,6 +902,11 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
         <span class="nav-coming-soon">Pronto</span>
       </div>
 
+      <div class="nav-section-label" style="margin-top:12px">Sanidad</div>
+      <div class="nav-item" onclick="window.open('plano-control-roedores.html','_blank')">
+        <span class="nav-icon">🗺️</span> Plano Control Roedores
+      </div>
+
       <div class="nav-section-label" style="margin-top:12px">Mantenimiento</div>
       <div class="nav-item" style="opacity:0.45;cursor:default;">
         <span class="nav-icon">🔧</span> Equipos
@@ -2086,6 +2091,10 @@ function showPanel(id, el) {
   if (id === 'prod-dia') initProdDia();
   if (id === 'contenedores' || id === 'stock-general') initStockCharts();
   closeSidebar();
+  // Scroll instantáneo al inicio al cambiar de panel
+  window.scrollTo({top:0, behavior:'instant'});
+  var mc = document.querySelector('.main-content');
+  if(mc) mc.scrollTop = 0;
 }
 
 // ── SIDEBAR MOBILE ──
@@ -2844,7 +2853,28 @@ function initStockCharts() {
 async function initApp() {
   renderLotes();
   await cargarTemperaturas();
-  setInterval(cargarTemperaturas, 60000);
+
+  // ── SUPABASE REALTIME: actualización instantánea ──
+  try {
+    const channel = supabase.channel('temp-realtime')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'registros_temperatura' },
+        (payload) => {
+          console.log('🔄 Temperatura actualizada en tiempo real:', payload.eventType);
+          cargarTemperaturas();
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Supabase Realtime conectado — temperaturas en vivo');
+        }
+      });
+  } catch(e) {
+    console.warn('Realtime no disponible, usando polling:', e.message);
+  }
+  // Polling de respaldo cada 10 segundos
+  setInterval(cargarTemperaturas, 10000);
+
   // Fill resumen lab mini
   const crit=LM_DATA.filter(p=>p.estado==='CRÍTICO').length;
   const bajo=LM_DATA.filter(p=>p.estado==='BAJO').length;
