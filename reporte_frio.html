@@ -89,24 +89,27 @@
         filter: drop-shadow(0 4px 12px rgba(13,148,136,0.3));
       }
 
-      .btn-portal {
-        display: inline-block;
-        padding: 6px 14px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #fff;
-        background: linear-gradient(135deg, #0d9488, #14b8a6);
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        text-decoration: none;
-        letter-spacing: 0.3px;
-        transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 8px rgba(13,148,136,0.3);
+      .btn-portal-premium {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+        text-decoration: none; color: #fff;
+        background: linear-gradient(135deg, #0d6b4e, #10b981, #0d6b4e);
+        background-size: 200% 200%;
+        animation: btnShimmer 3s ease-in-out infinite;
+        padding: 6px 16px; border-radius: 20px;
+        border: 1px solid rgba(16,185,129,0.4);
+        box-shadow: 0 2px 8px rgba(16,185,129,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+        transition: all 0.3s ease;
       }
-      .btn-portal:hover {
+      .btn-portal-premium:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(13,148,136,0.4);
+        box-shadow: 0 4px 16px rgba(16,185,129,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+        filter: brightness(1.15);
+      }
+      @keyframes btnShimmer {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
       }
 
       .page-header-center {
@@ -911,7 +914,7 @@
   <div class="page-header">
     <div class="page-header-left">
       <img src="LOGO.png" alt="Frutos Tropicales">
-      <a href="temperaturas.html" class="btn-portal">🌡️ Formatos de Temperaturas</a>
+      <a href="temperaturas.html" class="btn-portal-premium">🌡️ Ir a Registros de Temperatura</a>
     </div>
     <div class="page-header-center">
       <h1>Formatos de Temperaturas</h1>
