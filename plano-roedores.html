@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano Control de Roedores — Frutos Tropicales Peru Export S.A.C.</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ════════════════════════════════════════════════════════
+   FRUTOS TROPICALES — PLANO CONTROL DE ROEDORES
+   Premium Pest Control Dashboard
+   ════════════════════════════════════════════════════════ */
+
+:root {
+  --bg: #f0f2f5;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --border: rgba(0,0,0,0.06);
+  --verde: #16a34a;
+  --verde2: #22c55e;
+  --verde-bg: rgba(22,163,74,0.08);
+  --naranja: #ea580c;
+  --naranja-bg: rgba(234,88,12,0.08);
+  --azul: #2563eb;
+  --azul-bg: rgba(37,99,235,0.08);
+  --warn: #d97706;
+  --warn-bg: rgba(217,119,6,0.10);
+  --danger: #dc2626;
+  --danger-bg: rgba(220,38,38,0.08);
+  --texto: #0f172a;
+  --muted: #64748b;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.10);
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+body.dark {
+  --bg: #0a0f1a;
+  --surface: rgba(30,41,59,0.9);
+  --surface2: rgba(38,53,72,0.7);
+  --border: rgba(255,255,255,0.06);
+  --verde: #22c55e;
+  --verde2: #4ade80;
+  --verde-bg: rgba(34,197,94,0.12);
+  --naranja: #f97316;
+  --naranja-bg: rgba(249,115,22,0.12);
+  --azul: #3b82f6;
+  --azul-bg: rgba(59,130,246,0.12);
+  --warn: #fbbf24;
+  --warn-bg: rgba(251,191,36,0.12);
+  --danger: #f87171;
+  --danger-bg: rgba(248,113,113,0.10);
+  --texto: #f1f5f9;
+  --muted: #94a3b8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background:var(--bg); color:var(--texto);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.12); border-radius:6px; }
+body.dark ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); }
+
+/* ── TOPBAR ── */
+.topbar {
+  position:sticky; top:0; z-index:100;
+  background:linear-gradient(135deg,#0f2b1a 0%,#1a4d2a 50%,#0f2b1a 100%);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:0 28px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 4px 24px rgba(0,0,0,0.18);
+}
+.topbar-left { display:flex; align-items:center; gap:14px; }
+.back-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:8px 16px; border-radius:12px; cursor:pointer;
+  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.8); font-size:12px; font-weight:700;
+  text-decoration:none; transition:var(--transition); letter-spacing:0.3px;
+}
+.back-btn:hover { background:rgba(255,255,255,0.14); color:#fff; }
+.topbar-title-block { display:flex; flex-direction:column; }
+.topbar-title { font-size:16px; font-weight:800; color:#e2e8f0; letter-spacing:-0.3px; }
+.topbar-sub { font-size:10px; color:rgba(255,255,255,0.4); font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+.topbar-right { display:flex; align-items:center; gap:14px; }
+.topbar-date { font-size:11px; color:#94a3b8; font-weight:600; display:flex; align-items:center; gap:7px; }
+.live-dot { width:6px; height:6px; border-radius:50%; background:#22c55e; animation:livePulse 2s infinite; box-shadow:0 0 6px rgba(34,197,94,0.5); }
+.dark-toggle {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
+  padding:6px 14px; border-radius:20px; transition:var(--transition);
+  color:rgba(255,255,255,0.75); font-size:11px; font-weight:700;
+}
+.dark-toggle:hover { background:rgba(255,255,255,0.12); }
+
+/* ── MAIN LAYOUT ── */
+.main { padding:28px; max-width:1600px; margin:0 auto; }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px; flex-wrap:wrap; gap:12px;
+}
+.section-title {
+  font-size:20px; font-weight:800; color:var(--texto);
+  display:flex; align-items:center; gap:10px;
+}
+.section-title .badge-num {
+  background:var(--danger); color:#fff; font-size:11px; font-weight:800;
+  padding:3px 9px; border-radius:20px; letter-spacing:0.3px;
+}
+
+/* ── KPI CARDS ── */
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; margin-bottom:28px; }
+.kpi-card {
+  background:var(--surface); border-radius:var(--radius);
+  padding:22px 20px 18px; border:1px solid var(--border);
+  box-shadow:var(--shadow); position:relative; overflow:hidden;
+  transition:var(--transition); animation:fadeInUp 0.5s both;
+}
+.kpi-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+.kpi-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.kpi-card.verde::before { background:linear-gradient(90deg,#16a34a,#22c55e); }
+.kpi-card.naranja::before { background:linear-gradient(90deg,#ea580c,#fb923c); }
+.kpi-card.azul::before { background:linear-gradient(90deg,#2563eb,#60a5fa); }
+.kpi-card.warn::before { background:linear-gradient(90deg,#d97706,#fbbf24); }
+.kpi-card.danger::before { background:linear-gradient(90deg,#dc2626,#f87171); }
+.kpi-icon { font-size:26px; margin-bottom:10px; }
+.kpi-value { font-size:28px; font-weight:900; color:var(--texto); line-height:1; margin-bottom:4px; }
+.kpi-label { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; }
+.kpi-delta { font-size:11px; font-weight:700; margin-top:8px; display:flex; align-items:center; gap:4px; }
+.kpi-delta.ok { color:var(--verde); }
+.kpi-delta.bad { color:var(--danger); }
+.kpi-delta.warn { color:var(--warn); }
+
+/* ── TWO-COL LAYOUT ── */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:28px; }
+@media(max-width:1100px) { .grid-3 { grid-template-columns:1fr 1fr; } }
+@media(max-width:720px) { .grid-2,.grid-3 { grid-template-columns:1fr; } }
+
+/* ── CARD ── */
+.card {
+  background:var(--surface); border-radius:var(--radius-lg);
+  border:1px solid var(--border); box-shadow:var(--shadow);
+  overflow:hidden; transition:var(--transition);
+  animation:fadeInUp 0.6s both;
+}
+.card:hover { box-shadow:var(--shadow-lg); }
+.card-header {
+  padding:18px 22px 14px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.card-title { font-size:14px; font-weight:800; color:var(--texto); display:flex; align-items:center; gap:8px; }
+.card-badge {
+  font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px;
+}
+.card-badge.verde { background:var(--verde-bg); color:var(--verde); }
+.card-badge.warn { background:var(--warn-bg); color:var(--warn); }
+.card-badge.danger { background:var(--danger-bg); color:var(--danger); }
+.card-badge.azul { background:var(--azul-bg); color:var(--azul); }
+.card-body { padding:20px 22px; }
+
+/* ── SVG FLOOR PLAN ── */
+.plano-wrapper {
+  background:var(--surface2); border-radius:var(--radius-lg);
+  border:1px solid var(--border); box-shadow:var(--shadow);
+  margin-bottom:28px; overflow:hidden; animation:fadeInUp 0.5s 0.1s both;
+}
+.plano-header {
+  padding:16px 22px; background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+}
+.plano-title { font-size:15px; font-weight:800; color:var(--texto); display:flex; align-items:center; gap:8px; }
+.plano-legend { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--muted); }
+.legend-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+
+.plano-svg-container {
+  padding:24px; display:flex; justify-content:center;
+  overflow-x:auto;
+}
+.plano-svg-container svg { max-width:100%; height:auto; }
+
+/* SVG station styles */
+.station { cursor:pointer; transition:all 0.2s; }
+.station:hover .station-circle { filter:brightness(1.15); }
+.station-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:9px; font-weight:700; fill:#0f172a; pointer-events:none; }
+body.dark .station-label { fill:#e2e8f0; }
+.room-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:800; fill:#64748b; }
+body.dark .room-label { fill:#94a3b8; }
+.room-fill { fill:var(--surface2); }
+body.dark .room-fill { fill:rgba(38,53,72,0.6); }
+.wall { stroke:#cbd5e1; stroke-width:2; fill:none; }
+body.dark .wall { stroke:#334155; }
+.wall-outer { stroke:#94a3b8; stroke-width:3; fill:none; }
+body.dark .wall-outer { stroke:#475569; }
+.door { stroke:#60a5fa; stroke-width:1.5; fill:rgba(59,130,246,0.07); stroke-dasharray:4 2; }
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; }
+thead tr { background:var(--surface2); }
+th { padding:10px 14px; text-align:left; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; color:var(--muted); border-bottom:2px solid var(--border); white-space:nowrap; }
+td { padding:10px 14px; font-size:13px; color:var(--texto); border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+tbody tr:hover { background:var(--surface2); }
+.status-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700;
+}
+.status-badge.ok { background:var(--verde-bg); color:var(--verde); }
+.status-badge.warn { background:var(--warn-bg); color:var(--warn); }
+.status-badge.danger { background:var(--danger-bg); color:var(--danger); }
+.status-badge.inactive { background:rgba(100,116,139,0.1); color:var(--muted); }
+
+/* ── CHART CANVAS ── */
+.chart-wrap { position:relative; height:220px; padding:0 4px; }
+.chart-wrap-tall { position:relative; height:280px; padding:0 4px; }
+
+/* ── PROGRESS BARS ── */
+.prog-list { display:flex; flex-direction:column; gap:12px; }
+.prog-item { }
+.prog-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.prog-name { font-size:12px; font-weight:700; color:var(--texto); }
+.prog-val { font-size:12px; font-weight:800; }
+.prog-track { background:rgba(0,0,0,0.05); border-radius:8px; height:8px; overflow:hidden; }
+body.dark .prog-track { background:rgba(255,255,255,0.07); }
+.prog-fill { height:100%; border-radius:8px; transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0; z-index:9000;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(6px);
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--surface); border-radius:var(--radius-lg);
+  border:1px solid var(--border); box-shadow:var(--shadow-lg);
+  width:100%; max-width:560px;
+  animation:fadeInScale 0.25s cubic-bezier(0.4,0,0.2,1) both;
+  overflow:hidden;
+}
+.modal-header {
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-title { font-size:16px; font-weight:800; color:var(--texto); }
+.modal-close {
+  width:32px; height:32px; border-radius:10px; border:none; cursor:pointer;
+  background:rgba(0,0,0,0.05); color:var(--muted); font-size:18px;
+  display:flex; align-items:center; justify-content:center; transition:var(--transition);
+}
+body.dark .modal-close { background:rgba(255,255,255,0.07); }
+.modal-close:hover { background:var(--danger-bg); color:var(--danger); }
+.modal-body { padding:20px 24px 24px; }
+.modal-field { margin-bottom:14px; }
+.modal-field label { display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:5px; }
+.modal-field .val { font-size:14px; font-weight:700; color:var(--texto); }
+.modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.modal-divider { border:none; border-top:1px solid var(--border); margin:14px 0; }
+.modal-hist { display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto; }
+.hist-row { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--surface2); border-radius:8px; font-size:12px; }
+.hist-date { color:var(--muted); font-weight:600; }
+.hist-result { font-weight:700; }
+.hist-result.positivo { color:var(--danger); }
+.hist-result.negativo { color:var(--verde); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeInScale { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+@keyframes livePulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px) {
+  .main { padding:16px; }
+  .kpi-value { font-size:22px; }
+  .topbar { padding:0 16px; }
+  .topbar-sub { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ TOPBAR ══════════════ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a class="back-btn" href="portal-gerencia.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Portal
+    </a>
+    <div class="topbar-title-block">
+      <span class="topbar-title">Plano Control de Roedores</span>
+      <span class="topbar-sub">Frutos Tropicales Peru Export S.A.C. — Planta</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-date">
+      <div class="live-dot"></div>
+      <span id="fechaTop">—</span>
+    </div>
+    <div class="dark-toggle" onclick="toggleDark()">
+      <span id="darkIcon">🌙</span>
+      <span id="darkLabel">Oscuro</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main class="main">
+
+  <!-- KPI STRIP -->
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card verde" style="animation-delay:0s">
+      <div class="kpi-icon">🪤</div>
+      <div class="kpi-value" id="kpiTotal">36</div>
+      <div class="kpi-label">Estaciones Totales</div>
+      <div class="kpi-delta ok">▲ Cobertura 100%</div>
+    </div>
+    <div class="kpi-card verde" style="animation-delay:0.08s">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-value" id="kpiActivas">31</div>
+      <div class="kpi-label">Sin Actividad</div>
+      <div class="kpi-delta ok">86% negativas</div>
+    </div>
+    <div class="kpi-card warn" style="animation-delay:0.16s">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-value" id="kpiAlerta">4</div>
+      <div class="kpi-label">Con Señales Leves</div>
+      <div class="kpi-delta warn">Monitoreo activo</div>
+    </div>
+    <div class="kpi-card danger" style="animation-delay:0.24s">
+      <div class="kpi-icon">🚨</div>
+      <div class="kpi-value" id="kpiPositivas">1</div>
+      <div class="kpi-label">Actividad Positiva</div>
+      <div class="kpi-delta bad">Acción requerida</div>
+    </div>
+    <div class="kpi-card azul" style="animation-delay:0.32s">
+      <div class="kpi-icon">📅</div>
+      <div class="kpi-value" id="kpiProxInsp">3</div>
+      <div class="kpi-label">Días para Inspección</div>
+      <div class="kpi-delta ok">Próximo: 24 Mar 2026</div>
+    </div>
+    <div class="kpi-card naranja" style="animation-delay:0.40s">
+      <div class="kpi-icon">🔄</div>
+      <div class="kpi-value">Mar 21</div>
+      <div class="kpi-label">Última Revisión</div>
+      <div class="kpi-delta ok">Completada</div>
+    </div>
+  </div>
+
+  <!-- FLOOR PLAN -->
+  <div class="plano-wrapper">
+    <div class="plano-header">
+      <div class="plano-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Plano de Planta — Distribución de Estaciones
+      </div>
+      <div class="plano-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Sin actividad</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div> Señal leve</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> Actividad positiva</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#64748b;opacity:0.5"></div> Inactiva</div>
+      </div>
+    </div>
+    <div class="plano-svg-container">
+      <svg id="planoSVG" width="900" height="560" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- ── BACKGROUND ── -->
+        <rect width="900" height="560" fill="#f8fafc" rx="8"/>
+
+        <!-- ── OUTER PERIMETER ── -->
+        <rect x="30" y="30" width="840" height="500" rx="6" class="wall-outer" fill="#f1f5f9"/>
+
+        <!-- ── ROOMS ── -->
+        <!-- Sala de Proceso Principal -->
+        <rect x="30" y="30" width="480" height="320" rx="4" class="room-fill" fill="rgba(219,234,254,0.3)"/>
+        <rect x="30" y="30" width="480" height="320" class="wall" fill="none"/>
+        <text x="220" y="58" text-anchor="middle" class="room-label">SALA DE PROCESO PRINCIPAL</text>
+
+        <!-- Cámara Frigorífica 1 -->
+        <rect x="510" y="30" width="180" height="150" class="room-fill" fill="rgba(204,251,241,0.35)"/>
+        <rect x="510" y="30" width="180" height="150" class="wall" fill="none"/>
+        <text x="600" y="58" text-anchor="middle" class="room-label">CÁM. FRIG. 1</text>
+
+        <!-- Cámara Frigorífica 2 -->
+        <rect x="690" y="30" width="180" height="150" class="room-fill" fill="rgba(204,251,241,0.35)"/>
+        <rect x="690" y="30" width="180" height="150" class="wall" fill="none"/>
+        <text x="780" y="58" text-anchor="middle" class="room-label">CÁM. FRIG. 2</text>
+
+        <!-- Almacén Materiales -->
+        <rect x="510" y="180" width="180" height="170" class="room-fill" fill="rgba(254,243,199,0.35)"/>
+        <rect x="510" y="180" width="180" height="170" class="wall" fill="none"/>
+        <text x="600" y="206" text-anchor="middle" class="room-label">ALM. MATERIALES</text>
+
+        <!-- Almacén PT -->
+        <rect x="690" y="180" width="180" height="170" class="room-fill" fill="rgba(254,243,199,0.35)"/>
+        <rect x="690" y="180" width="180" height="170" class="wall" fill="none"/>
+        <text x="780" y="206" text-anchor="middle" class="room-label">ALM. PT</text>
+
+        <!-- Pasillo / Despacho -->
+        <rect x="510" y="350" width="360" height="80" class="room-fill" fill="rgba(226,232,240,0.4)"/>
+        <rect x="510" y="350" width="360" height="80" class="wall" fill="none"/>
+        <text x="690" y="395" text-anchor="middle" class="room-label">PASILLO / DESPACHO</text>
+
+        <!-- Área Lavado -->
+        <rect x="30" y="350" width="140" height="80" class="room-fill" fill="rgba(219,234,254,0.3)"/>
+        <rect x="30" y="350" width="140" height="80" class="wall" fill="none"/>
+        <text x="100" y="395" text-anchor="middle" class="room-label">LAVADO</text>
+
+        <!-- Vestuarios -->
+        <rect x="170" y="350" width="120" height="80" class="room-fill" fill="rgba(240,253,244,0.4)"/>
+        <rect x="170" y="350" width="120" height="80" class="wall" fill="none"/>
+        <text x="230" y="395" text-anchor="middle" class="room-label">VESTUARIO</text>
+
+        <!-- Laboratorio -->
+        <rect x="290" y="350" width="110" height="80" class="room-fill" fill="rgba(219,234,254,0.3)"/>
+        <rect x="290" y="350" width="110" height="80" class="wall" fill="none"/>
+        <text x="345" y="395" text-anchor="middle" class="room-label">LAB.</text>
+
+        <!-- Área exterior / Patio -->
+        <rect x="30" y="430" width="840" height="100" rx="4" fill="rgba(226,232,240,0.25)"/>
+        <rect x="30" y="430" width="840" height="100" class="wall" fill="none"/>
+        <text x="450" y="487" text-anchor="middle" class="room-label">PATIO EXTERIOR — PERÍMETRO</text>
+
+        <!-- Doors (dashed arcs) -->
+        <line x1="250" y1="350" x2="290" y2="350" class="door"/>
+        <line x1="510" y1="180" x2="510" y2="210" class="door"/>
+        <line x1="690" y1="180" x2="690" y2="210" class="door"/>
+        <line x1="510" y1="350" x2="510" y2="370" class="door"/>
+
+        <!-- ── STATIONS ── -->
+        <!-- Status: green=#16a34a, warn=#d97706, danger=#dc2626, inactive=#94a3b8 -->
+
+        <!-- Sala Proceso Principal — interior (E01–E12) -->
+        <g class="station" onclick="openStation('E-01','Sala Proceso - Línea A Izq.','Sin actividad','verde','2026-03-21','Sin evidencia','Cebo parcial consumido')">
+          <circle cx="70" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="70" cy="90" r="9" fill="#16a34a"/>
+          <text x="70" y="113" text-anchor="middle" class="station-label">E-01</text>
+        </g>
+        <g class="station" onclick="openStation('E-02','Sala Proceso - Línea A Der.','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="170" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="170" cy="90" r="9" fill="#16a34a"/>
+          <text x="170" y="113" text-anchor="middle" class="station-label">E-02</text>
+        </g>
+        <g class="station" onclick="openStation('E-03','Sala Proceso - Centro','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="270" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="270" cy="90" r="9" fill="#16a34a"/>
+          <text x="270" y="113" text-anchor="middle" class="station-label">E-03</text>
+        </g>
+        <g class="station" onclick="openStation('E-04','Sala Proceso - Línea B Izq.','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="370" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="370" cy="90" r="9" fill="#16a34a"/>
+          <text x="370" y="113" text-anchor="middle" class="station-label">E-04</text>
+        </g>
+        <g class="station" onclick="openStation('E-05','Sala Proceso - Línea B Der.','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="460" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="460" cy="90" r="9" fill="#16a34a"/>
+          <text x="460" y="113" text-anchor="middle" class="station-label">E-05</text>
+        </g>
+        <g class="station" onclick="openStation('E-06','Sala Proceso - Pared Sur Izq.','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="70" cy="200" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="70" cy="200" r="9" fill="#16a34a"/>
+          <text x="70" y="223" text-anchor="middle" class="station-label">E-06</text>
+        </g>
+        <g class="station" onclick="openStation('E-07','Sala Proceso - Pared Sur Centro','Señal leve','warn','2026-03-21','Heces encontradas','Reforzar inspección')">
+          <circle cx="200" cy="200" r="14" fill="#d97706" opacity="0.18" class="station-circle"/>
+          <circle cx="200" cy="200" r="9" fill="#d97706"/>
+          <text x="200" y="223" text-anchor="middle" class="station-label">E-07</text>
+        </g>
+        <g class="station" onclick="openStation('E-08','Sala Proceso - Pared Sur Der.','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="340" cy="200" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="340" cy="200" r="9" fill="#16a34a"/>
+          <text x="340" y="223" text-anchor="middle" class="station-label">E-08</text>
+        </g>
+        <g class="station" onclick="openStation('E-09','Sala Proceso - Pared Este','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="460" cy="200" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="460" cy="200" r="9" fill="#16a34a"/>
+          <text x="460" y="223" text-anchor="middle" class="station-label">E-09</text>
+        </g>
+        <g class="station" onclick="openStation('E-10','Sala Proceso - Esquina SE','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="460" cy="310" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="460" cy="310" r="9" fill="#16a34a"/>
+          <text x="460" y="333" text-anchor="middle" class="station-label">E-10</text>
+        </g>
+        <g class="station" onclick="openStation('E-11','Sala Proceso - Esquina SO','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="70" cy="310" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="70" cy="310" r="9" fill="#16a34a"/>
+          <text x="70" y="333" text-anchor="middle" class="station-label">E-11</text>
+        </g>
+        <g class="station" onclick="openStation('E-12','Sala Proceso - Centro Sur','Señal leve','warn','2026-03-21','Marca en cebo','Aumentar frecuencia')">
+          <circle cx="260" cy="310" r="14" fill="#d97706" opacity="0.18" class="station-circle"/>
+          <circle cx="260" cy="310" r="9" fill="#d97706"/>
+          <text x="260" y="333" text-anchor="middle" class="station-label">E-12</text>
+        </g>
+
+        <!-- Cámara Frigorífica 1 (E13–E15) -->
+        <g class="station" onclick="openStation('E-13','Cám. Frig. 1 - Esquina NW','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="545" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="545" cy="90" r="9" fill="#16a34a"/>
+          <text x="545" y="113" text-anchor="middle" class="station-label">E-13</text>
+        </g>
+        <g class="station" onclick="openStation('E-14','Cám. Frig. 1 - Centro','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="600" cy="140" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="600" cy="140" r="9" fill="#16a34a"/>
+          <text x="600" y="163" text-anchor="middle" class="station-label">E-14</text>
+        </g>
+        <g class="station" onclick="openStation('E-15','Cám. Frig. 1 - Esquina SE','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="670" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="670" cy="90" r="9" fill="#16a34a"/>
+          <text x="670" y="113" text-anchor="middle" class="station-label">E-15</text>
+        </g>
+
+        <!-- Cámara Frigorífica 2 (E16–E18) -->
+        <g class="station" onclick="openStation('E-16','Cám. Frig. 2 - Esquina NW','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="725" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="725" cy="90" r="9" fill="#16a34a"/>
+          <text x="725" y="113" text-anchor="middle" class="station-label">E-16</text>
+        </g>
+        <g class="station" onclick="openStation('E-17','Cám. Frig. 2 - Centro','Señal leve','warn','2026-03-21','Roedura leve en pared','Revisión próxima')">
+          <circle cx="780" cy="140" r="14" fill="#d97706" opacity="0.18" class="station-circle"/>
+          <circle cx="780" cy="140" r="9" fill="#d97706"/>
+          <text x="780" y="163" text-anchor="middle" class="station-label">E-17</text>
+        </g>
+        <g class="station" onclick="openStation('E-18','Cám. Frig. 2 - Esquina SE','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="850" cy="90" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="850" cy="90" r="9" fill="#16a34a"/>
+          <text x="850" y="113" text-anchor="middle" class="station-label">E-18</text>
+        </g>
+
+        <!-- Almacén Materiales (E19–E21) -->
+        <g class="station" onclick="openStation('E-19','Alm. Materiales - NW','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="545" cy="220" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="545" cy="220" r="9" fill="#16a34a"/>
+          <text x="545" y="243" text-anchor="middle" class="station-label">E-19</text>
+        </g>
+        <g class="station" onclick="openStation('E-20','Alm. Materiales - Centro','ACTIVIDAD POSITIVA','danger','2026-03-21','Cebo consumido + heces','ACCIÓN INMEDIATA')">
+          <circle cx="600" cy="270" r="16" fill="#dc2626" opacity="0.22" class="station-circle"/>
+          <circle cx="600" cy="270" r="11" fill="#dc2626"/>
+          <text x="600" y="295" text-anchor="middle" class="station-label" style="fill:#dc2626;font-size:9.5px;font-weight:900;">⚠ E-20</text>
+        </g>
+        <g class="station" onclick="openStation('E-21','Alm. Materiales - SE','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="670" cy="220" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="670" cy="220" r="9" fill="#16a34a"/>
+          <text x="670" y="243" text-anchor="middle" class="station-label">E-21</text>
+        </g>
+
+        <!-- Almacén PT (E22–E24) -->
+        <g class="station" onclick="openStation('E-22','Alm. PT - NW','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="725" cy="220" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="725" cy="220" r="9" fill="#16a34a"/>
+          <text x="725" y="243" text-anchor="middle" class="station-label">E-22</text>
+        </g>
+        <g class="station" onclick="openStation('E-23','Alm. PT - Centro','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="780" cy="270" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="780" cy="270" r="9" fill="#16a34a"/>
+          <text x="780" y="293" text-anchor="middle" class="station-label">E-23</text>
+        </g>
+        <g class="station" onclick="openStation('E-24','Alm. PT - SE','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="850" cy="220" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="850" cy="220" r="9" fill="#16a34a"/>
+          <text x="850" y="243" text-anchor="middle" class="station-label">E-24</text>
+        </g>
+
+        <!-- Pasillo/Despacho (E25–E27) -->
+        <g class="station" onclick="openStation('E-25','Pasillo - Izquierda','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="560" cy="390" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="560" cy="390" r="9" fill="#16a34a"/>
+          <text x="560" y="413" text-anchor="middle" class="station-label">E-25</text>
+        </g>
+        <g class="station" onclick="openStation('E-26','Pasillo - Centro','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="690" cy="390" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="690" cy="390" r="9" fill="#16a34a"/>
+          <text x="690" y="413" text-anchor="middle" class="station-label">E-26</text>
+        </g>
+        <g class="station" onclick="openStation('E-27','Pasillo - Derecha','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="830" cy="390" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="830" cy="390" r="9" fill="#16a34a"/>
+          <text x="830" y="413" text-anchor="middle" class="station-label">E-27</text>
+        </g>
+
+        <!-- Área Lavado (E28) -->
+        <g class="station" onclick="openStation('E-28','Área Lavado','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="100" cy="390" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="100" cy="390" r="9" fill="#16a34a"/>
+          <text x="100" y="413" text-anchor="middle" class="station-label">E-28</text>
+        </g>
+
+        <!-- Vestuario (E29) -->
+        <g class="station" onclick="openStation('E-29','Vestuario','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="230" cy="390" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="230" cy="390" r="9" fill="#16a34a"/>
+          <text x="230" y="413" text-anchor="middle" class="station-label">E-29</text>
+        </g>
+
+        <!-- Laboratorio (E30) -->
+        <g class="station" onclick="openStation('E-30','Laboratorio','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="345" cy="390" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="345" cy="390" r="9" fill="#16a34a"/>
+          <text x="345" y="413" text-anchor="middle" class="station-label">E-30</text>
+        </g>
+
+        <!-- Patio Exterior (E31–E36) -->
+        <g class="station" onclick="openStation('E-31','Patio Ext. - Esquina NO','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="70" cy="470" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="70" cy="470" r="9" fill="#16a34a"/>
+          <text x="70" y="493" text-anchor="middle" class="station-label">E-31</text>
+        </g>
+        <g class="station" onclick="openStation('E-32','Patio Ext. - Norte Izq.','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="230" cy="470" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="230" cy="470" r="9" fill="#16a34a"/>
+          <text x="230" y="493" text-anchor="middle" class="station-label">E-32</text>
+        </g>
+        <g class="station" onclick="openStation('E-33','Patio Ext. - Norte Centro','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="450" cy="470" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="450" cy="470" r="9" fill="#16a34a"/>
+          <text x="450" y="493" text-anchor="middle" class="station-label">E-33</text>
+        </g>
+        <g class="station" onclick="openStation('E-34','Patio Ext. - Norte Der.','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="640" cy="470" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="640" cy="470" r="9" fill="#16a34a"/>
+          <text x="640" y="493" text-anchor="middle" class="station-label">E-34</text>
+        </g>
+        <g class="station" onclick="openStation('E-35','Patio Ext. - Esquina NE','Sin actividad','verde','2026-03-21','Sin evidencia','Sin novedad')">
+          <circle cx="830" cy="470" r="14" fill="#16a34a" opacity="0.18" class="station-circle"/>
+          <circle cx="830" cy="470" r="9" fill="#16a34a"/>
+          <text x="830" y="493" text-anchor="middle" class="station-label">E-35</text>
+        </g>
+        <g class="station" onclick="openStation('E-36','Patio Ext. - Ingreso','Señal leve','warn','2026-03-21','Marca parcial cebo','Monitoreo frecuente')">
+          <circle cx="450" cy="520" r="14" fill="#d97706" opacity="0.18" class="station-circle"/>
+          <circle cx="450" cy="520" r="9" fill="#d97706"/>
+          <text x="450" y="543" text-anchor="middle" class="station-label">E-36</text>
+        </g>
+
+        <!-- Compass rose -->
+        <g transform="translate(858,52)">
+          <circle cx="0" cy="0" r="16" fill="rgba(255,255,255,0.7)" stroke="#cbd5e1" stroke-width="1"/>
+          <text x="0" y="-7" text-anchor="middle" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:800;fill:#64748b;">N</text>
+          <line x1="0" y1="-4" x2="0" y2="4" stroke="#64748b" stroke-width="1.5"/>
+          <line x1="-4" y1="0" x2="4" y2="0" stroke="#64748b" stroke-width="1"/>
+        </g>
+
+      </svg>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="grid-3">
+
+    <!-- Tendencia mensual -->
+    <div class="card" style="animation-delay:0.1s">
+      <div class="card-header">
+        <span class="card-title">📈 Tendencia de Actividad</span>
+        <span class="card-badge azul">Últimos 6 meses</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap">
+          <canvas id="chartTendencia"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actividad por área -->
+    <div class="card" style="animation-delay:0.18s">
+      <div class="card-header">
+        <span class="card-title">🏭 Actividad por Área</span>
+        <span class="card-badge warn">Mar 2026</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap">
+          <canvas id="chartAreas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado estaciones -->
+    <div class="card" style="animation-delay:0.26s">
+      <div class="card-header">
+        <span class="card-title">📊 Estado de Estaciones</span>
+        <span class="card-badge verde">Actual</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap">
+          <canvas id="chartEstado"></canvas>
+        </div>
+        <div class="prog-list" style="margin-top:18px">
+          <div class="prog-item">
+            <div class="prog-meta"><span class="prog-name">Sin actividad</span><span class="prog-val" style="color:var(--verde)">86%</span></div>
+            <div class="prog-track"><div class="prog-fill" style="width:86%;background:var(--verde)"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-meta"><span class="prog-name">Señal leve</span><span class="prog-val" style="color:var(--warn)">11%</span></div>
+            <div class="prog-track"><div class="prog-fill" style="width:11%;background:var(--warn)"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-meta"><span class="prog-name">Activ. positiva</span><span class="prog-val" style="color:var(--danger)">3%</span></div>
+            <div class="prog-track"><div class="prog-fill" style="width:3%;background:var(--danger)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="grid-2">
+
+    <!-- Registro de estaciones -->
+    <div class="card" style="animation-delay:0.3s">
+      <div class="card-header">
+        <span class="card-title">📋 Registro de Estaciones</span>
+        <span class="card-badge azul">36 estaciones</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <div class="tbl-wrap">
+          <table id="tblEstaciones">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ubicación</th>
+                <th>Estado</th>
+                <th>Última revisión</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody id="tblBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones correctivas -->
+    <div class="card" style="animation-delay:0.38s">
+      <div class="card-header">
+        <span class="card-title">🔧 Acciones Correctivas</span>
+        <span class="card-badge danger">1 activa</span>
+      </div>
+      <div class="card-body">
+
+        <div style="border:1.5px solid var(--danger);border-radius:12px;padding:14px 16px;margin-bottom:16px;background:var(--danger-bg)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:13px;font-weight:800;color:var(--danger)">🚨 ACCIÓN INMEDIATA — E-20</span>
+          </div>
+          <div style="font-size:12px;color:var(--texto);margin-bottom:6px"><b>Área:</b> Almacén Materiales — Centro</div>
+          <div style="font-size:12px;color:var(--texto);margin-bottom:6px"><b>Evidencia:</b> Cebo completamente consumido + presencia de heces</div>
+          <div style="font-size:12px;color:var(--texto);margin-bottom:8px"><b>Acción:</b> Recargar cebo, colocar trampas adicionales, inspección en 24h</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="status-badge danger">Pendiente</span>
+            <span style="font-size:11px;color:var(--muted)">Asignado: Área Calidad</span>
+          </div>
+        </div>
+
+        <div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:10px">Acciones en seguimiento</div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;border:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:700;color:var(--texto)">E-07 — Sala Proceso Sur Centro</span>
+              <span class="status-badge warn">En seguimiento</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted)">Heces encontradas — Cebo recargado 18/03/26 — Próxima revisión 24/03/26</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;border:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:700;color:var(--texto)">E-17 — Cám. Frig. 2 Centro</span>
+              <span class="status-badge warn">En seguimiento</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted)">Roedura leve — Sellado de grieta pendiente — Fecha límite 26/03/26</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;border:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:700;color:var(--texto)">E-36 — Patio Ingreso</span>
+              <span class="status-badge warn">En seguimiento</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted)">Marca parcial en cebo — Revisión frecuente — 28/03/26</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;border:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:700;color:var(--texto)">E-12 — Sala Proceso Centro Sur</span>
+              <span class="status-badge ok">Cerrado</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted)">Señal leve anterior — Resuelta 15/03/26</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:800;color:var(--texto);margin-bottom:12px">Calendario de Inspecciones 2026</div>
+          <div class="chart-wrap-tall">
+            <canvas id="chartCalendario"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ══════════════ MODAL ══════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Estación</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div class="modal-field">
+          <label>ID Estación</label>
+          <div class="val" id="mId">—</div>
+        </div>
+        <div class="modal-field">
+          <label>Estado Actual</label>
+          <div id="mStatus">—</div>
+        </div>
+        <div class="modal-field">
+          <label>Ubicación</label>
+          <div class="val" id="mUbicacion">—</div>
+        </div>
+        <div class="modal-field">
+          <label>Última Revisión</label>
+          <div class="val" id="mFecha">—</div>
+        </div>
+      </div>
+      <hr class="modal-divider">
+      <div class="modal-field">
+        <label>Evidencia Encontrada</label>
+        <div class="val" id="mEvidencia">—</div>
+      </div>
+      <div class="modal-field">
+        <label>Acción / Observación</label>
+        <div class="val" id="mAccion">—</div>
+      </div>
+      <hr class="modal-divider">
+      <div class="modal-field">
+        <label>Historial de Revisiones</label>
+        <div class="modal-hist" id="mHistorial"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════
+
+const stationData = [
+  {id:'E-01',loc:'Sala Proceso - Línea A Izq.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-02',loc:'Sala Proceso - Línea A Der.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-03',loc:'Sala Proceso - Centro',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-04',loc:'Sala Proceso - Línea B Izq.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-05',loc:'Sala Proceso - Línea B Der.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-06',loc:'Sala Proceso - Pared Sur Izq.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-07',loc:'Sala Proceso - Pared Sur Centro',status:'Señal leve',color:'warn',fecha:'2026-03-21',evidencia:'Heces encontradas',accion:'Reforzar inspección'},
+  {id:'E-08',loc:'Sala Proceso - Pared Sur Der.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-09',loc:'Sala Proceso - Pared Este',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-10',loc:'Sala Proceso - Esquina SE',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-11',loc:'Sala Proceso - Esquina SO',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-12',loc:'Sala Proceso - Centro Sur',status:'Señal leve',color:'warn',fecha:'2026-03-21',evidencia:'Marca en cebo',accion:'Aumentar frecuencia'},
+  {id:'E-13',loc:'Cám. Frig. 1 - Esquina NW',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-14',loc:'Cám. Frig. 1 - Centro',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-15',loc:'Cám. Frig. 1 - Esquina SE',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-16',loc:'Cám. Frig. 2 - Esquina NW',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-17',loc:'Cám. Frig. 2 - Centro',status:'Señal leve',color:'warn',fecha:'2026-03-21',evidencia:'Roedura leve en pared',accion:'Revisión próxima'},
+  {id:'E-18',loc:'Cám. Frig. 2 - Esquina SE',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-19',loc:'Alm. Materiales - NW',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-20',loc:'Alm. Materiales - Centro',status:'ACTIVIDAD POSITIVA',color:'danger',fecha:'2026-03-21',evidencia:'Cebo consumido + heces',accion:'ACCIÓN INMEDIATA'},
+  {id:'E-21',loc:'Alm. Materiales - SE',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-22',loc:'Alm. PT - NW',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-23',loc:'Alm. PT - Centro',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-24',loc:'Alm. PT - SE',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-25',loc:'Pasillo - Izquierda',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-26',loc:'Pasillo - Centro',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-27',loc:'Pasillo - Derecha',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-28',loc:'Área Lavado',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-29',loc:'Vestuario',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-30',loc:'Laboratorio',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-31',loc:'Patio Ext. - Esquina NO',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-32',loc:'Patio Ext. - Norte Izq.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-33',loc:'Patio Ext. - Norte Centro',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-34',loc:'Patio Ext. - Norte Der.',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-35',loc:'Patio Ext. - Esquina NE',status:'Sin actividad',color:'verde',fecha:'2026-03-21',evidencia:'Sin evidencia',accion:'Sin novedad'},
+  {id:'E-36',loc:'Patio Ext. - Ingreso',status:'Señal leve',color:'warn',fecha:'2026-03-21',evidencia:'Marca parcial cebo',accion:'Monitoreo frecuente'},
+];
+
+const historialSample = {
+  'E-07': [
+    {fecha:'2026-03-21',res:'Positivo leve'},
+    {fecha:'2026-03-07',res:'Negativo'},
+    {fecha:'2026-02-21',res:'Negativo'},
+    {fecha:'2026-02-07',res:'Negativo'},
+  ],
+  'E-17': [
+    {fecha:'2026-03-21',res:'Positivo leve'},
+    {fecha:'2026-03-07',res:'Negativo'},
+    {fecha:'2026-02-21',res:'Negativo'},
+  ],
+  'E-20': [
+    {fecha:'2026-03-21',res:'POSITIVO'},
+    {fecha:'2026-03-07',res:'Positivo leve'},
+    {fecha:'2026-02-21',res:'Negativo'},
+    {fecha:'2026-02-07',res:'Negativo'},
+  ],
+  'E-36': [
+    {fecha:'2026-03-21',res:'Positivo leve'},
+    {fecha:'2026-03-07',res:'Negativo'},
+    {fecha:'2026-02-21',res:'Negativo'},
+  ],
+};
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  updateDate();
+  buildTable();
+  initCharts();
+});
+
+function updateDate() {
+  const d = new Date();
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('fechaTop').textContent = d.toLocaleDateString('es-PE', opts);
+}
+
+// ── TABLE ──
+function buildTable() {
+  const tbody = document.getElementById('tblBody');
+  tbody.innerHTML = stationData.map(s => {
+    const cl = s.color === 'verde' ? 'ok' : s.color === 'warn' ? 'warn' : s.color === 'danger' ? 'danger' : 'inactive';
+    const dot = s.color === 'verde' ? '🟢' : s.color === 'warn' ? '🟡' : '🔴';
+    return `<tr>
+      <td style="font-weight:800">${s.id}</td>
+      <td>${s.loc}</td>
+      <td><span class="status-badge ${cl}">${dot} ${s.status}</span></td>
+      <td>${s.fecha}</td>
+      <td style="color:var(--muted);font-size:12px">${s.accion}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── CHARTS ──
+function initCharts() {
+  const isDark = document.body.classList.contains('dark');
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+  const labelColor = isDark ? '#94a3b8' : '#64748b';
+  const defaultOpts = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{}}},
+    scales:{
+      x:{grid:{color:gridColor},ticks:{color:labelColor,font:{size:10,family:'Plus Jakarta Sans'}}},
+      y:{grid:{color:gridColor},ticks:{color:labelColor,font:{size:10,family:'Plus Jakarta Sans'}}}
+    }
+  };
+
+  // Chart 1: Tendencia mensual
+  new Chart(document.getElementById('chartTendencia'), {
+    type:'line',
+    data:{
+      labels:['Oct','Nov','Dic','Ene','Feb','Mar'],
+      datasets:[
+        {label:'Activ. positiva',data:[3,2,4,2,1,1],borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,0.08)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#dc2626'},
+        {label:'Señal leve',data:[6,5,7,5,4,4],borderColor:'#d97706',backgroundColor:'rgba(217,119,6,0.07)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#d97706'},
+      ]
+    },
+    options:{...defaultOpts, plugins:{legend:{display:true,position:'top',labels:{color:labelColor,font:{size:10,family:'Plus Jakarta Sans'},usePointStyle:true,pointStyleWidth:8}}}}
+  });
+
+  // Chart 2: Actividad por área (bar)
+  new Chart(document.getElementById('chartAreas'), {
+    type:'bar',
+    data:{
+      labels:['Sala\nProceso','Cám.\nFrig.1','Cám.\nFrig.2','Alm.\nMat.','Alm.\nPT','Pasillo','Ext.'],
+      datasets:[{
+        label:'Estaciones con actividad',
+        data:[2,0,1,1,0,0,1],
+        backgroundColor:['#f97316','#16a34a','#d97706','#dc2626','#16a34a','#16a34a','#d97706'],
+        borderRadius:6,
+      }]
+    },
+    options:{...defaultOpts}
+  });
+
+  // Chart 3: Donut estado
+  new Chart(document.getElementById('chartEstado'), {
+    type:'doughnut',
+    data:{
+      labels:['Sin actividad','Señal leve','Activ. positiva'],
+      datasets:[{
+        data:[31,4,1],
+        backgroundColor:['#16a34a','#d97706','#dc2626'],
+        borderWidth:0, hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:'70%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} est.`}}
+      }
+    }
+  });
+
+  // Chart 4: Calendario inspecciones (bar horizontal)
+  new Chart(document.getElementById('chartCalendario'), {
+    type:'bar',
+    data:{
+      labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+      datasets:[
+        {label:'Programadas',data:[2,2,2,2,2,2,2,2,2,2,2,2],backgroundColor:'rgba(37,99,235,0.2)',borderColor:'#2563eb',borderWidth:1.5,borderRadius:5},
+        {label:'Realizadas',data:[2,2,1,0,0,0,0,0,0,0,0,0],backgroundColor:'rgba(22,163,74,0.5)',borderColor:'#16a34a',borderWidth:0,borderRadius:5},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:labelColor,font:{size:10,family:'Plus Jakarta Sans'},usePointStyle:true,pointStyleWidth:8}}},
+      scales:{
+        x:{grid:{color:gridColor},ticks:{color:labelColor,font:{size:9,family:'Plus Jakarta Sans'}}},
+        y:{grid:{color:gridColor},ticks:{color:labelColor,font:{size:9,family:'Plus Jakarta Sans'},stepSize:1,max:3}}
+      }
+    }
+  });
+}
+
+// ── MODAL ──
+function openStation(id, loc, status, color, fecha, evidencia, accion) {
+  document.getElementById('modalTitle').textContent = `Estación ${id}`;
+  document.getElementById('mId').textContent = id;
+  document.getElementById('mUbicacion').textContent = loc;
+  document.getElementById('mFecha').textContent = fecha;
+  document.getElementById('mEvidencia').textContent = evidencia;
+  document.getElementById('mAccion').textContent = accion;
+
+  const cl = color === 'verde' ? 'ok' : color === 'warn' ? 'warn' : color === 'danger' ? 'danger' : 'inactive';
+  document.getElementById('mStatus').innerHTML = `<span class="status-badge ${cl}">${status}</span>`;
+
+  const hist = historialSample[id] || [
+    {fecha:'2026-03-21',res:'Negativo'},
+    {fecha:'2026-03-07',res:'Negativo'},
+    {fecha:'2026-02-21',res:'Negativo'},
+    {fecha:'2026-02-07',res:'Negativo'},
+  ];
+  document.getElementById('mHistorial').innerHTML = hist.map(h => {
+    const isPos = h.res !== 'Negativo';
+    return `<div class="hist-row">
+      <span class="hist-date">${h.fecha}</span>
+      <span class="hist-result ${isPos?'positivo':'negativo'}">${isPos ? '⚠️' : '✅'} ${h.res}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+// ── DARK MODE ──
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  document.getElementById('darkIcon').textContent = isDark ? '☀️' : '🌙';
+  document.getElementById('darkLabel').textContent = isDark ? 'Claro' : 'Oscuro';
+  // Persist
+  localStorage.setItem('pcr_dark', isDark ? '1' : '0');
+}
+
+// Restore dark mode preference
+(function() {
+  if (localStorage.getItem('pcr_dark') === '1') {
+    document.body.classList.add('dark');
+    document.getElementById('darkIcon') && (document.getElementById('darkIcon').textContent = '☀️');
+    document.getElementById('darkLabel') && (document.getElementById('darkLabel').textContent = 'Claro');
+  }
+})();
+</script>
+</body>
+</html>
