@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -851,6 +850,13 @@
     body.print-mp .form-page-landscape {
       width: 100%;
     }
+    /* Eliminar página en blanco */
+    @media print {
+      html, body { height: auto !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important; }
+      body > *:not(.preview-wrap) { display: none !important; }
+      .preview-wrap { overflow: hidden !important; margin: 0 !important; padding: 0 !important; max-height: 100vh !important; }
+      .form-page.hidden, .form-page-landscape.hidden { display: none !important; height: 0 !important; margin: 0 !important; padding: 0 !important; border: none !important; }
+    }
 
     @media print {
       @page { size: A4; margin: 0; }
@@ -1187,7 +1193,7 @@
         </div>
       </div>
 
-      <!-- FIRMAS — más abajo, usar todo el espacio -->
+      <!-- FIRMAS -->
       <div class="firmas" style="margin-top:16mm;">
         <div class="firma">
           <div class="firma-line">&nbsp;</div>
