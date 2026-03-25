@@ -832,13 +832,18 @@
       .form-page-landscape .footer-doc { padding-top: 1mm; margin-top: 0; }
 
       .hidden { display: none !important; }
-      #chartEmpaqueTemp, #chartCamaraPT, #chartAcondicionado, #chartEmbandejado {
-        max-height: 18mm !important;
-        height: 18mm !important;
+      #chartEmpaqueTemp, #chartCamaraPT {
+        max-height: 24mm !important;
+        height: 24mm !important;
         overflow: hidden !important;
       }
-      .chart-pair-wrap { overflow: hidden !important; max-height: 22mm !important; }
-      .chart-pair-wrap canvas { max-height: 18mm !important; }
+      #chartAcondicionado, #chartEmbandejado {
+        max-height: 22mm !important;
+        height: 22mm !important;
+        overflow: hidden !important;
+      }
+      .chart-pair-wrap { overflow: visible !important; max-height: none !important; }
+      .chart-pair-wrap canvas { max-height: 22mm !important; }
     }
 
     /* Empaque print: portrait */
@@ -1045,30 +1050,34 @@
         </div>
       </div>
 
-      <!-- GRAFICOS + PARAMETROS -->
-      <div class="chart-pair-wrap" style="display:flex;gap:2mm;align-items:flex-start;margin-top:1mm;overflow:hidden;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">SALA DE EMPAQUE (&deg;C)</div>
-          <div style="position:relative;height:80px;overflow:hidden;"><canvas id="chartEmpaqueTemp"></canvas></div>
+      <!-- GRAFICOS + PARAMETROS: Gráficos apilados izquierda, Parámetros derecha -->
+      <div class="chart-pair-wrap" style="display:flex;gap:3mm;align-items:flex-start;margin-top:1mm;overflow:hidden;">
+        <!-- Columna izquierda: 2 gráficos apilados -->
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2mm;">
+          <div>
+            <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">SALA DE EMPAQUE (&deg;C)</div>
+            <div style="position:relative;height:100px;overflow:hidden;"><canvas id="chartEmpaqueTemp"></canvas></div>
+          </div>
+          <div>
+            <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">C&Aacute;MARA DE PRODUCTO TERMINADO (&deg;C)</div>
+            <div style="position:relative;height:100px;overflow:hidden;"><canvas id="chartCamaraPT"></canvas></div>
+          </div>
         </div>
-        <div style="flex:0 0 auto;font-size:6pt;">
+        <!-- Columna derecha: Parámetros original -->
+        <div style="flex:0 0 auto;align-self:center;">
           <table class="params-table" style="width:auto;">
-            <tr><th colspan="2" class="params-header" style="font-size:6pt;padding:1mm;">PAR&Aacute;METROS</th></tr>
-            <tr><th class="col-header" style="font-size:5.5pt;padding:0.8mm 1.5mm;">ZONA</th><th class="col-header" style="font-size:5.5pt;padding:0.8mm 1.5mm;">RANGO</th></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">PRODUCTO</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">-18 a -20</td></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">EMPAQUE</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">0 a 8</td></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">C&Aacute;MARA PT</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">-16 a -25</td></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">DESPACHO</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">0 a 5</td></tr>
+            <tr><th colspan="2" class="params-header" style="font-size:6.5pt;padding:1.2mm 2mm;font-weight:800;">PAR&Aacute;METROS DE TEMPERATURA (&deg;C)</th></tr>
+            <tr><th class="col-header" style="font-size:6.5pt;padding:1mm 2mm;font-weight:700;">ZONA</th><th class="col-header" style="font-size:6.5pt;padding:1mm 2mm;font-weight:700;">RANGO DE<br>TEMPERATURA (&deg;C)</th></tr>
+            <tr><td style="font-size:6.5pt;padding:1mm 2mm;font-weight:700;">TEMPERATURA DE PRODUCTO</td><td style="font-size:6.5pt;padding:1mm 2mm;text-align:center;">-18 a -20</td></tr>
+            <tr><td style="font-size:6.5pt;padding:1mm 2mm;font-weight:700;">SALA DE EMPAQUE</td><td style="font-size:6.5pt;padding:1mm 2mm;text-align:center;">0 a 8</td></tr>
+            <tr><td style="font-size:6.5pt;padding:1mm 2mm;font-weight:700;">CAMARA DE PRODUCTO TERMINADO</td><td style="font-size:6.5pt;padding:1mm 2mm;text-align:center;">-16 a -25</td></tr>
+            <tr><td style="font-size:6.5pt;padding:1mm 2mm;font-weight:700;">SALA DE DESPACHO</td><td style="font-size:6.5pt;padding:1mm 2mm;text-align:center;">0 a 5</td></tr>
           </table>
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">C&Aacute;MARA DE PRODUCTO TERMINADO (&deg;C)</div>
-          <div style="position:relative;height:80px;overflow:hidden;"><canvas id="chartCamaraPT"></canvas></div>
         </div>
       </div>
 
       <!-- FIRMAS -->
-      <div class="firmas" style="margin-top:8mm;">
+      <div class="firmas" style="margin-top:18mm;">
         <div class="firma">
           <div class="firma-line">&nbsp;</div>
           <div class="firma-nombre" id="firmaInspectorE">&nbsp;</div>
@@ -1290,30 +1299,34 @@
         </div>
       </div>
 
-      <!-- GRAFICOS + PARAMETROS -->
-      <div class="chart-pair-wrap" style="display:flex;gap:2mm;align-items:flex-start;margin-top:1mm;overflow:hidden;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">SALA DE ACONDICIONADO (&deg;C)</div>
-          <div style="position:relative;height:80px;overflow:hidden;"><canvas id="chartAcondicionado"></canvas></div>
+      <!-- GRAFICOS + PARAMETROS: Gráficos apilados a la izquierda, Parámetros a la derecha -->
+      <div class="chart-pair-wrap" style="display:flex;gap:3mm;align-items:flex-start;margin-top:1mm;overflow:hidden;">
+        <!-- Columna izquierda: 2 gráficos apilados -->
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2mm;">
+          <div>
+            <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">SALA DE ACONDICIONADO (&deg;C)</div>
+            <div style="position:relative;height:80px;overflow:hidden;"><canvas id="chartAcondicionado"></canvas></div>
+          </div>
+          <div>
+            <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">SALA DE EMBANDEJADO (&deg;C)</div>
+            <div style="position:relative;height:80px;overflow:hidden;"><canvas id="chartEmbandejado"></canvas></div>
+          </div>
         </div>
-        <div style="flex:0 0 auto;font-size:6pt;">
+        <!-- Columna derecha: Parámetros original -->
+        <div style="flex:0 0 auto;align-self:center;">
           <table class="params-table" style="width:auto;">
-            <tr><th colspan="2" class="params-header" style="font-size:6pt;padding:1mm;">PAR&Aacute;METROS</th></tr>
-            <tr><th class="col-header" style="font-size:5.5pt;padding:0.8mm 1.5mm;">ZONA</th><th class="col-header" style="font-size:5.5pt;padding:0.8mm 1.5mm;">RANGO</th></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">ACONDICIONADO</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">14 a 17</td></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">EMBANDEJADO</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">13 a 15</td></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">LAVADO BAND.</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">13 a 15</td></tr>
-            <tr><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">PRE-ENFRIADO</td><td style="font-size:5.5pt;padding:0.8mm 1.5mm;">0 a 10</td></tr>
+            <tr><th colspan="2" class="params-header" style="font-size:7.5pt;padding:1.5mm 3mm;font-weight:800;">PAR&Aacute;METROS DE TEMPERATURA (&deg;C)</th></tr>
+            <tr><th class="col-header" style="font-size:7pt;padding:1.2mm 3mm;font-weight:700;">ZONA</th><th class="col-header" style="font-size:7pt;padding:1.2mm 3mm;font-weight:700;">RANGO DE<br>TEMPERATURA (&deg;C)</th></tr>
+            <tr><td style="font-size:7pt;padding:1.2mm 3mm;font-weight:700;">ACONDICIONADO</td><td style="font-size:7pt;padding:1.2mm 3mm;text-align:center;">14 a 17</td></tr>
+            <tr><td style="font-size:7pt;padding:1.2mm 3mm;font-weight:700;">SALA DE ENBANDEJADO</td><td style="font-size:7pt;padding:1.2mm 3mm;text-align:center;">13 a 15</td></tr>
+            <tr><td style="font-size:7pt;padding:1.2mm 3mm;font-weight:700;">SALA DE LAVADO DE BANDEJAS</td><td style="font-size:7pt;padding:1.2mm 3mm;text-align:center;">13 a 15</td></tr>
+            <tr><td style="font-size:7pt;padding:1.2mm 3mm;font-weight:700;">SALA DE PRE-ENFRIADO</td><td style="font-size:7pt;padding:1.2mm 3mm;text-align:center;">0 a 10</td></tr>
           </table>
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:7pt;font-weight:700;text-align:center;margin-bottom:1mm;color:#000;">SALA DE EMBANDEJADO (&deg;C)</div>
-          <div style="position:relative;height:80px;overflow:hidden;"><canvas id="chartEmbandejado"></canvas></div>
         </div>
       </div>
 
       <!-- FIRMAS -->
-      <div class="firmas" style="margin-top:8mm;">
+      <div class="firmas" style="margin-top:18mm;">
         <div class="firma">
           <div class="firma-line">&nbsp;</div>
           <div class="firma-nombre" id="firmaInspectorNombreP">&nbsp;</div>
@@ -1375,7 +1388,8 @@
       'ACONDICIONADO': 'acondicionado',
       'EMBANDEJADO': 'embandejado',
       'LAVADO DE BANDEJAS': 'lavado',
-      'PRE-ENFRIADO': 'preenfriado'
+      'PRE-ENFRIADO': 'preenfriado',
+      'PRE ENFRIADO': 'preenfriado'
     };
 
     const PROCESO_COLUMNS = ['acondicionado', 'embandejado', 'lavado', 'preenfriado'];
@@ -1695,14 +1709,14 @@
       var yMin = Math.floor(Math.min(dataMin, lowerLimit) - 4);
       var yMax = Math.ceil(Math.max(dataMax, upperLimit) + 2);
 
-      /* Point colors: RED if out of range */
+      /* All points BLACK for B/W printing */
       var pointColors = data.map(function(t) {
         if (t === null || t === undefined) return '#94a3b8';
-        return (t >= lowerLimit && t <= upperLimit) ? lineColor : '#dc2626';
+        return '#000';
       });
       var pointBorderColors = data.map(function(t) {
         if (t === null || t === undefined) return '#94a3b8';
-        return (t >= lowerLimit && t <= upperLimit) ? '#000' : '#dc2626';
+        return '#000';
       });
 
       chartInstances[canvasId] = new Chart(canvas, {
@@ -1717,46 +1731,49 @@
             borderWidth: 1.5,
             pointBackgroundColor: pointColors,
             pointBorderColor: pointBorderColors,
-            pointBorderWidth: 1.5,
-            pointRadius: 4,
+            pointBorderWidth: 1,
+            pointRadius: 2,
             pointStyle: 'rectRot',
             fill: false,
             tension: 0.3,
             spanGaps: true
-          }, {
-            label: 'Sup ' + upperLimit + '\u00B0C',
-            data: shortLabels.map(function() { return upperLimit; }),
-            borderColor: '#dc2626',
-            borderWidth: 1.5,
-            borderDash: [6, 3],
-            pointRadius: 0,
-            fill: false
-          }, {
-            label: 'Inf ' + lowerLimit + '\u00B0C',
-            data: shortLabels.map(function() { return lowerLimit; }),
-            borderColor: '#2563eb',
-            borderWidth: 1.5,
-            borderDash: [6, 3],
-            pointRadius: 0,
-            fill: false
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           animation: false,
+          layout: { padding: { top: 14, right: 18 } },
           plugins: {
             legend: { display: false }
           },
           scales: {
             x: {
-              title: { display: true, text: 'Hora', font: { size: 7, weight: 'bold' }, color: '#000' },
-              ticks: { font: { size: 7, weight: 'bold' }, color: '#000', maxRotation: 0 },
+              title: { display: true, text: 'Hora', font: { size: 8, weight: 'bold' }, color: '#000' },
+              ticks: { font: { size: 8, weight: 'bold' }, color: '#000', maxRotation: 0 },
               grid: { color: 'rgba(0,0,0,0.08)' }
             },
             y: {
-              title: { display: true, text: 'Temperatura (\u00B0C)', font: { size: 7, weight: 'bold' }, color: '#000' },
-              ticks: { font: { size: 7, weight: 'bold' }, color: '#000', callback: function(v) { return v + '\u00B0C'; } },
+              title: { display: true, text: 'Temp (\u00B0C)', font: { size: 7, weight: 'bold' }, color: '#000' },
+              ticks: { font: { size: 8, weight: 'bold' }, color: '#000', callback: function(v) { return v + '\u00B0C'; } },
+              afterBuildTicks: function(axis) {
+                var vals = axis.ticks.map(function(t) { return t.value; });
+                /* Forzar que upperLimit y lowerLimit aparezcan en el eje */
+                [upperLimit, lowerLimit].forEach(function(lim) {
+                  if (vals.indexOf(lim) === -1) {
+                    axis.ticks.push({value: lim});
+                    vals.push(lim);
+                  }
+                });
+                axis.ticks.sort(function(a,b) { return a.value - b.value; });
+                /* Eliminar ticks duplicados */
+                var seen = {};
+                axis.ticks = axis.ticks.filter(function(t) {
+                  if (seen[t.value]) return false;
+                  seen[t.value] = true;
+                  return true;
+                });
+              },
               grid: { color: 'rgba(0,0,0,0.08)' },
               suggestedMin: yMin,
               suggestedMax: yMax
@@ -1769,17 +1786,15 @@
             var ctx = chart.ctx;
             var dataset = chart.data.datasets[0];
             var meta = chart.getDatasetMeta(0);
-            var lo = lowerLimit, hi = upperLimit;
             dataset.data.forEach(function(value, index) {
               if (value === null || value === undefined) return;
               var point = meta.data[index];
               if (!point) return;
               ctx.save();
-              ctx.font = 'bold 7px Arial';
-              var outOfRange = (value < lo || value > hi);
-              ctx.fillStyle = outOfRange ? '#dc2626' : '#000';
+              ctx.font = 'bold 8px Arial';
+              ctx.fillStyle = '#000';
               ctx.textAlign = 'center';
-              ctx.fillText(Number(value).toFixed(1), point.x, point.y - 8);
+              ctx.fillText(Number(value).toFixed(1), point.x, point.y - 6);
               ctx.restore();
             });
           }
@@ -1826,19 +1841,9 @@
             borderColor: '#000', backgroundColor: 'rgba(0,0,0,0.03)',
             borderWidth: 1.5,
             pointBackgroundColor: '#000', pointBorderColor: '#000',
-            pointBorderWidth: 1.5, pointRadius: 4,
+            pointBorderWidth: 1, pointRadius: 2,
             pointStyle: pointStyles,
             fill: false, tension: 0.3, spanGaps: true
-          }, {
-            label: 'Sup ' + upperLimit + '\u00B0C',
-            data: shortLabels.map(function() { return upperLimit; }),
-            borderColor: '#000', borderWidth: 1, borderDash: [6, 3],
-            pointRadius: 0, fill: false
-          }, {
-            label: 'Inf ' + lowerLimit + '\u00B0C',
-            data: shortLabels.map(function() { return lowerLimit; }),
-            borderColor: '#000', borderWidth: 1, borderDash: [3, 3],
-            pointRadius: 0, fill: false
           }]
         },
         options: {
@@ -1860,10 +1865,10 @@
               var point = meta.data[index];
               if (!point) return;
               ctx.save();
-              ctx.font = 'bold 9px Arial';
+              ctx.font = 'bold 8px Arial';
               ctx.fillStyle = '#000';
               ctx.textAlign = 'center';
-              ctx.fillText(Number(value).toFixed(1), point.x, point.y - 10);
+              ctx.fillText(Number(value).toFixed(1), point.x, point.y - 5);
               ctx.restore();
             });
           }
