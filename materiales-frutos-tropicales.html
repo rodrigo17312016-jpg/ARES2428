@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Materiales — Frutos Tropicales Peru</title>
+    <title>Control de Materiales — Frutos Tropicales Peru Export S.A.C.</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -191,6 +191,7 @@
             font-size: 7px; color: rgba(212,175,55,0.8); text-transform: uppercase;
             letter-spacing: 2px; font-weight: 800; position: relative; z-index: 1;
         }
+        [data-theme="light"] .sig-dev-label { color: rgba(139,105,20,0.8); }
         .sig-name {
             font-size: 14px; font-weight: 900; letter-spacing: 0.3px;
             background: linear-gradient(135deg,#d4af37 0%,#f5e6a3 25%,#c0c0c0 50%,#f5e6a3 75%,#d4af37 100%);
@@ -199,10 +200,15 @@
             animation: sigShimmer 4s ease infinite;
             position: relative; z-index: 1; line-height: 1.3;
         }
+        [data-theme="light"] .sig-name {
+            background: linear-gradient(135deg,#8B6914 0%,#b8941f 25%,#6b5b3a 50%,#b8941f 75%,#8B6914 100%);
+            background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
         .sig-role {
             font-size: 9px; font-weight: 700; color: #22c55e;
             letter-spacing: 0.5px; margin-top: 1px; position: relative; z-index: 1;
         }
+        [data-theme="light"] .sig-role { color: #15803d; }
 
         .btn {
             display: inline-flex;
@@ -864,7 +870,7 @@
                 <img src="LOGO.png" alt="Frutos Tropicales Peru" class="logo-img">
                 <div class="header-title">
                     <h1>Control de Materiales</h1>
-                    <span>Frutos Tropicales Peru — Dashboard de Gestión</span>
+                    <span>Frutos Tropicales Peru Export S.A.C. — Dashboard de Gestión</span>
                 </div>
             </div>
             <div class="header-right">
@@ -958,7 +964,7 @@
 <!-- FOOTER -->
 <footer class="footer">
     <div class="container">
-        <p><span class="ft-brand">Frutos Tropicales Peru S.A.C.</span> — Sistema de Gestión Integral</p>
+        <p><span class="ft-brand">Frutos Tropicales Peru Export S.A.C.</span> — Sistema de Gestión Integral</p>
     </div>
 </footer>
 
