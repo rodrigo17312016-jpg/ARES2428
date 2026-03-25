@@ -146,33 +146,30 @@
       }
 
       .sig-block {
-        text-align: right;
+        display:flex;flex-direction:column;align-items:center;gap:3px;
+        padding:8px 22px;border-radius:20px;
+        background:linear-gradient(145deg,rgba(245,240,225,.85),rgba(255,250,240,.9),rgba(245,240,225,.85));
+        border:1px solid rgba(212,175,55,.3);
+        position:relative;overflow:hidden;
+        animation:firmaBorderGlow 4s ease infinite;
+        box-shadow:0 0 20px rgba(212,175,55,.08),inset 0 1px 0 rgba(255,255,255,.06);
       }
-
+      .sig-block::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(212,175,55,.08),rgba(255,255,255,.05),transparent);animation:firmaShineRF 5s ease-in-out infinite;pointer-events:none}
+      @keyframes firmaShineRF{0%{left:-100%}50%,100%{left:200%}}
+      @keyframes firmaBorderGlow{0%,100%{border-color:rgba(212,175,55,.2);box-shadow:0 2px 12px rgba(0,0,0,.1)}50%{border-color:rgba(212,175,55,.45);box-shadow:0 2px 20px rgba(212,175,55,.12)}}
+      .sig-block>*{position:relative;z-index:1}
       .sig-label {
-        font-size: 9px;
-        font-weight: 700;
-        color: var(--text-muted);
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        margin-bottom: 2px;
+        font-size:7px;font-weight:800;color:rgba(139,105,20,.8);
+        letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;
       }
-
       .sig-name {
-        background: linear-gradient(90deg, #f59e0b, #fbbf24, #fde68a, #fbbf24, #f59e0b);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: shimmer 3s linear infinite;
-        font-weight: 800;
-        font-size: 16px;
+        background:linear-gradient(135deg,#8B6914 0%,#b8941f 25%,#6b5b3a 50%,#b8941f 75%,#8B6914 100%);
+        background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+        animation:sigShimmerRF 4s ease infinite;font-weight:900;font-size:14px;
       }
-
+      @keyframes sigShimmerRF{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
       .sig-role {
-        font-size: 10px;
-        font-weight: 600;
-        color: var(--accent);
-        letter-spacing: 0.3px;
+        font-size:9px;font-weight:700;color:#15803d;letter-spacing:0.5px;
       }
 
       /* ── THEME TOGGLE ── */
