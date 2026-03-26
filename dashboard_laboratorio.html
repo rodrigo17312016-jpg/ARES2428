@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Stock Laboratorio | Frutos Tropicales</title>
+<link rel="icon" href="LOGO.png" type="image/png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
@@ -88,6 +89,37 @@ h1{
 .theme-btn:hover{background:rgba(255,255,255,.12);color:var(--t)}
 [data-theme="light"] .theme-btn{background:rgba(0,0,0,.05)}
 [data-theme="light"] .theme-btn:hover{background:rgba(0,0,0,.1);color:var(--t)}
+
+/* ─── LOGO ─── */
+.hlogo-img{width:48px;height:48px;object-fit:contain;border-radius:8px;flex-shrink:0}
+.btn-portal-premium{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  text-decoration:none;color:#fff;
+  background:linear-gradient(135deg,#0d6b4e,#10b981,#0d6b4e);
+  background-size:200% 200%;animation:btnShimmer 3s ease-in-out infinite;
+  padding:5px 14px;border-radius:20px;
+  border:1px solid rgba(16,185,129,.4);
+  box-shadow:0 2px 8px rgba(16,185,129,.25),inset 0 1px 0 rgba(255,255,255,.15);
+  transition:all .3s ease;
+}
+.btn-portal-premium:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(16,185,129,.4);filter:brightness(1.15)}
+@keyframes btnShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* ─── FIRMA ─── */
+@keyframes firmaShine{0%{left:-100%}50%,100%{left:200%}}
+@keyframes firmaBorderGlow{0%,100%{border-color:rgba(212,175,55,.2);box-shadow:0 2px 12px rgba(0,0,0,.15)}50%{border-color:rgba(212,175,55,.45);box-shadow:0 2px 24px rgba(212,175,55,.15),0 4px 16px rgba(0,0,0,.2)}}
+@keyframes signatureShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.topbar-dev-signature{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 22px;border-radius:20px;background:linear-gradient(145deg,rgba(10,18,32,.85),rgba(20,30,48,.9),rgba(15,25,40,.85));border:1px solid rgba(212,175,55,.3);position:relative;overflow:hidden;backdrop-filter:blur(16px);animation:firmaBorderGlow 4s ease infinite}
+.topbar-dev-signature::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(212,175,55,.08),rgba(255,255,255,.05),transparent);animation:firmaShine 5s ease-in-out infinite;pointer-events:none}
+.topbar-dev-signature>*{position:relative;z-index:1}
+.topbar-sig-label{font-size:7px;color:rgba(212,175,55,.7);text-transform:uppercase;letter-spacing:2px;font-weight:800}
+.signature-name{font-size:13px;font-weight:900;letter-spacing:.3px;background:linear-gradient(135deg,#d4af37 0%,#f5e6a3 25%,#c0c0c0 50%,#f5e6a3 75%,#d4af37 100%);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:signatureShimmer 4s ease infinite;line-height:1.3}
+.signature-role{font-size:9px;font-weight:700;color:#22c55e;letter-spacing:.5px}
+[data-theme="light"] .topbar-dev-signature{background:linear-gradient(145deg,rgba(245,240,225,.85),rgba(255,250,240,.9),rgba(245,240,225,.85))}
+[data-theme="light"] .topbar-sig-label{color:rgba(139,105,20,.8)}
+[data-theme="light"] .signature-name{background:linear-gradient(135deg,#8B6914 0%,#b8941f 25%,#6b5b3a 50%,#b8941f 75%,#8B6914 100%);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+[data-theme="light"] .signature-role{color:#15803d}
 
 /* ═══ KPIs ═══ */
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
@@ -296,18 +328,25 @@ tbody tr.sel td{background:rgba(255,255,255,.07)}
 <!-- ══ HEADER ══ -->
 <header>
   <div class="hlogo">
-    <div class="hicon">🧪</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <img src="LOGO.png" alt="Frutos Tropicales" class="hlogo-img">
+      <a href="portal-gerencia.html" class="btn-portal-premium">&#x2190; Portal</a>
+    </div>
     <div>
       <h1>Stock de Laboratorio · Microbiología</h1>
-      <div class="hsubt">Frutos Tropicales · Área de Calidad</div>
+      <div class="hsubt">Frutos Tropicales Peru Export S.A.C. · Área de Calidad</div>
     </div>
   </div>
   <div class="hright">
-    <div class="hdate">📅 18/03/2026</div>
     <button class="theme-btn" onclick="toggleTheme()">
       <span id="themeIcon">☀️</span>
       <span class="theme-text" id="themeText">Modo claro</span>
     </button>
+    <div class="topbar-dev-signature">
+      <div class="topbar-sig-label">DESARROLLADO POR:</div>
+      <div class="signature-name">Rodrigo Garcia</div>
+      <div class="signature-role">Systems Analyst &amp; Developer-QA</div>
+    </div>
   </div>
 </header>
 
