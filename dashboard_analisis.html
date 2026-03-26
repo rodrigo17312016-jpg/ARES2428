@@ -144,7 +144,7 @@ body::before {
 .sig-badge {
   display:flex; flex-direction:column; align-items:center; gap:3px;
   padding:8px 22px; border-radius:20px;
-  background:linear-gradient(145deg,rgba(245,240,225,.85),rgba(255,250,240,.9),rgba(245,240,225,.85));
+  background:linear-gradient(145deg,rgba(10,18,32,.85),rgba(20,30,48,.9),rgba(15,25,40,.85));
   border:1px solid rgba(212,175,55,.3);
   position:relative; overflow:hidden; backdrop-filter:blur(16px);
   animation: sigBorderGlow 4s ease infinite;
@@ -158,25 +158,18 @@ body::before {
 }
 @keyframes firmaShine { 0%{left:-100%} 50%,100%{left:200%} }
 .sig-badge > * { position:relative; z-index:1; }
-body.dark .sig-badge { background:linear-gradient(145deg,rgba(10,18,32,.85),rgba(20,30,48,.9),rgba(15,25,40,.85)); }
 .sig-dev {
-  font-size:7px; color:rgba(139,105,20,.8);
+  font-size:7px; color:rgba(212,175,55,.7);
   text-transform:uppercase; letter-spacing:2px; font-weight:800;
 }
-body.dark .sig-dev { color:rgba(212,175,55,.7); }
 .sig-name {
-  background:linear-gradient(135deg,#8B6914 0%,#b8941f 25%,#6b5b3a 50%,#b8941f 75%,#8B6914 100%);
+  background:linear-gradient(135deg,#d4af37 0%,#f5e6a3 25%,#c0c0c0 50%,#f5e6a3 75%,#d4af37 100%);
   background-size:300%;
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
   animation: sigShimmer 4s ease infinite;
   font-size:14px; font-weight:900; white-space:nowrap;
 }
-body.dark .sig-name {
-  background:linear-gradient(135deg,#d4af37 0%,#f5e6a3 25%,#c0c0c0 50%,#f5e6a3 75%,#d4af37 100%);
-  background-size:300%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-}
-.sig-role { color:#15803d; font-size:9px; font-weight:700; white-space:nowrap; }
-body.dark .sig-role { color:#22c55e; }
+.sig-role { color:#22c55e; font-size:9px; font-weight:700; white-space:nowrap; }
 
 /* Botón regresar */
 .btn-back {
