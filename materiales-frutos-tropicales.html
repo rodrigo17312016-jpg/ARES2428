@@ -210,6 +210,19 @@
         }
         [data-theme="light"] .sig-role { color: #15803d; }
 
+        .btn-portal-premium {
+            display:inline-flex;align-items:center;gap:6px;
+            font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+            text-decoration:none;color:#fff;
+            background:linear-gradient(135deg,#0d6b4e,#10b981,#0d6b4e);
+            background-size:200% 200%;animation:btnShimmer 3s ease-in-out infinite;
+            padding:8px 18px;border-radius:20px;border:1px solid rgba(16,185,129,.4);
+            box-shadow:0 2px 8px rgba(16,185,129,.25),inset 0 1px 0 rgba(255,255,255,.15);
+            transition:all .3s ease;
+        }
+        .btn-portal-premium:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(16,185,129,.4);filter:brightness(1.15)}
+        @keyframes btnShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -867,7 +880,10 @@
     <div class="container">
         <div class="header-inner">
             <div class="header-left">
-                <img src="LOGO.png" alt="Frutos Tropicales Peru" class="logo-img">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+                    <img src="LOGO.png" alt="Frutos Tropicales Peru" class="logo-img">
+                    <a href="portal-gerencia.html" class="btn-portal-premium" style="font-size:9px;padding:5px 14px;">&#x2190; Portal de Gerencia</a>
+                </div>
                 <div class="header-title">
                     <h1>Control de Materiales</h1>
                     <span>Frutos Tropicales Peru Export S.A.C. — Dashboard de Gestión</span>
@@ -879,7 +895,6 @@
                     <span class="sig-name">Rodrigo Garcia</span>
                     <span class="sig-role">Systems Analyst &amp; Developer-QA</span>
                 </div>
-                <a href="index.html" class="btn">← Portal</a>
                 <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
             </div>
         </div>
