@@ -1020,7 +1020,8 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
         </button>
       </div>
 
-      <div class="kpi-grid" id="kpiResumen">
+      <!-- KPIs principales -->
+      <div class="kpi-grid" id="kpiResumen" style="grid-template-columns:repeat(5,1fr);">
         <div class="kpi-card verde">
           <div class="kpi-label">Producción hoy</div>
           <div class="kpi-value verde" id="kpiProd">—</div>
@@ -1041,38 +1042,24 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
           <div class="kpi-value danger" id="kpiAlertas">—</div>
           <div class="kpi-sub">fuera de rango</div>
         </div>
+        <div class="kpi-card" style="border-top:3px solid #8b5cf6">
+          <div class="kpi-label">TN Exportadas</div>
+          <div class="kpi-value" style="color:#8b5cf6">535</div>
+          <div class="kpi-sub">22 FCL despachados</div>
+        </div>
       </div>
 
-      <div class="card">
-          <div class="card-header">
-            <div class="card-title">🌡️ Temperaturas por área — hoy</div>
-            <span class="card-tag tag-verde">En tiempo real</span>
-          </div>
-          <div id="tempResumen" class="loading-bar">Cargando...</div>
-        </div>
-
+      <!-- Temperaturas en tiempo real -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title">⚠️ Últimas alertas de temperatura</div>
-          <a href="#" onclick="showPanel('alertas',null)" style="font-size:12px;color:var(--azul);font-weight:700;text-decoration:none;">Ver todas →</a>
+          <div class="card-title">🌡️ Temperaturas por área — hoy</div>
+          <span class="card-tag tag-verde">En tiempo real</span>
         </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Hora</th><th>Área</th><th>Temp.</th><th>Estado</th><th>Inspector</th></tr></thead>
-            <tbody id="tablaAlertasResumen"></tbody>
-          </table>
-        </div>
+        <div id="tempResumen" class="loading-bar">Cargando...</div>
       </div>
 
-      <!-- Resumen ejecutivo -->
-      <div style="margin-top:16px">
-        <div style="font-size:13px;font-weight:800;color:var(--texto);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-          <span style="width:3px;height:18px;background:var(--verde);border-radius:2px;display:inline-block;"></span>
-          Resumen ejecutivo
-        </div>
-      </div>
-
-      <div class="grid2" style="margin-bottom:14px">
+      <!-- FILA 1: Producción + Gráfico de rendimiento -->
+      <div class="grid2" style="margin-bottom:16px">
         <div class="card" style="cursor:pointer" onclick="showPanel('prod-dia',null)">
           <div class="card-header">
             <div class="card-title">🏭 Producción — Campaña 2026</div>
@@ -1091,24 +1078,38 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
               <div style="font-size:20px;font-weight:900;color:#ec4899">39.6</div>
               <div style="font-size:9px;color:var(--muted);font-weight:600">TN Granada</div>
             </div>
-            <div style="text-align:center;padding:12px;background:var(--verde-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--verde)">45.6%</div>
-              <div style="font-size:9px;color:var(--muted);font-weight:600">Rend. Mango</div>
-            </div>
-            <div style="text-align:center;padding:12px;background:var(--verde-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--verde)">96.0%</div>
-              <div style="font-size:9px;color:var(--muted);font-weight:600">Rend. Arándano</div>
-            </div>
-            <div style="text-align:center;padding:12px;background:var(--warn-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--warn)">36.4%</div>
-              <div style="font-size:9px;color:var(--muted);font-weight:600">Rend. Granada</div>
-            </div>
           </div>
+          <div style="height:180px;padding:0 14px 14px"><canvas id="chartResRendimiento"></canvas></div>
         </div>
 
+        <div class="card" style="cursor:pointer" onclick="showPanel('contenedores',null)">
+          <div class="card-header">
+            <div class="card-title">🚢 Exportación — Contenedores FCL</div>
+            <span class="card-tag tag-naranja" style="font-size:10px">Ver más →</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px;">
+            <div style="text-align:center;padding:12px;background:var(--azul-bg);border-radius:14px;">
+              <div style="font-size:22px;font-weight:900;color:var(--azul)">22</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">FCL Despachados</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--naranja-bg);border-radius:14px;">
+              <div style="font-size:22px;font-weight:900;color:var(--naranja)">535</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">TN Exportadas</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--verde-bg);border-radius:14px;">
+              <div style="font-size:22px;font-weight:900;color:var(--verde)">5</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Destinos</div>
+            </div>
+          </div>
+          <div style="height:180px;padding:0 14px 14px"><canvas id="chartResExport"></canvas></div>
+        </div>
+      </div>
+
+      <!-- FILA 2: Laboratorio + Certificaciones -->
+      <div class="grid2" style="margin-bottom:16px">
         <div class="card" style="cursor:pointer" onclick="showPanel('lab-micro',null)">
           <div class="card-header">
-            <div class="card-title">🔬 Laboratorio — Insumos microbiológicos</div>
+            <div class="card-title">🔬 Laboratorio — Stock Microbiología</div>
             <span class="card-tag tag-verde" style="font-size:10px">Ver más →</span>
           </div>
           <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
@@ -1125,46 +1126,114 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
               <div style="font-size:9px;color:var(--muted);font-weight:600">OK / Moderado</div>
             </div>
           </div>
+          <div style="height:170px;padding:0 14px 14px"><canvas id="chartResLab"></canvas></div>
         </div>
-      </div>
 
-      <div class="grid2">
         <div class="card" style="cursor:pointer" onclick="showPanel('certificaciones',null)">
           <div class="card-header">
-            <div class="card-title">🏅 Certificaciones</div>
+            <div class="card-title">🏅 Certificaciones Vigentes</div>
             <span class="card-tag tag-verde" style="font-size:10px">Ver más →</span>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;padding:8px 0;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;padding:14px;">
             <div style="flex:1;min-width:80px;text-align:center;padding:12px;background:var(--verde-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--verde)">8</div>
+              <div style="font-size:22px;font-weight:900;color:var(--verde)">8</div>
               <div style="font-size:9px;color:var(--muted);font-weight:600">Vigentes</div>
             </div>
             <div style="flex:1;min-width:80px;text-align:center;padding:12px;background:var(--warn-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--warn)">3</div>
-              <div style="font-size:9px;color:var(--muted);font-weight:600">Próximas</div>
+              <div style="font-size:22px;font-weight:900;color:var(--warn)">3</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Próx. vencer</div>
             </div>
             <div style="flex:1;min-width:80px;text-align:center;padding:12px;background:var(--danger-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--danger)">1</div>
+              <div style="font-size:22px;font-weight:900;color:var(--danger)">1</div>
               <div style="font-size:9px;color:var(--muted);font-weight:600">Vencida</div>
             </div>
           </div>
+          <div style="height:170px;padding:0 14px 14px"><canvas id="chartResCert"></canvas></div>
         </div>
+      </div>
 
-        <div class="card" style="cursor:pointer" onclick="showPanel('contenedores',null)">
+      <!-- FILA 3: Consumo Calidad + Alertas Temperatura -->
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="card" style="cursor:pointer" onclick="showPanel('consumos',null)">
           <div class="card-header">
-            <div class="card-title">🚢 Contenedores — Exportación</div>
-            <span class="card-tag tag-naranja" style="font-size:10px">Ver más →</span>
+            <div class="card-title">📋 Consumo Calidad — Sem 1→13</div>
+            <span class="card-tag tag-verde" style="font-size:10px">511 registros</span>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 0;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px;">
             <div style="text-align:center;padding:12px;background:var(--azul-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--azul)">22</div>
-              <div style="font-size:9px;color:var(--muted);font-weight:600">FCL Despachados</div>
+              <div style="font-size:20px;font-weight:900;color:var(--azul)">3,541</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Total consumido</div>
             </div>
             <div style="text-align:center;padding:12px;background:var(--naranja-bg);border-radius:14px;">
-              <div style="font-size:20px;font-weight:900;color:var(--naranja)">535 TN</div>
-              <div style="font-size:9px;color:var(--muted);font-weight:600">Exportadas</div>
+              <div style="font-size:20px;font-weight:900;color:var(--naranja)">8</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Subgrupos</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:rgba(168,85,247,0.08);border-radius:14px;">
+              <div style="font-size:20px;font-weight:900;color:#a855f7">5</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Centros costo</div>
             </div>
           </div>
+          <div style="height:170px;padding:0 14px 14px"><canvas id="chartResConsumo"></canvas></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚠️ Últimas alertas de temperatura</div>
+            <a href="#" onclick="showPanel('alertas',null)" style="font-size:12px;color:var(--azul);font-weight:700;text-decoration:none;">Ver todas →</a>
+          </div>
+          <div class="tbl-wrap" style="max-height:320px;overflow-y:auto">
+            <table>
+              <thead><tr><th>Hora</th><th>Área</th><th>Temp.</th><th>Estado</th><th>Inspector</th></tr></thead>
+              <tbody id="tablaAlertasResumen"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILA 4: Cámara PT + Costos Análisis -->
+      <div class="grid2">
+        <div class="card" style="cursor:pointer" onclick="window.open('CAMARA-PT/index.html','_blank')">
+          <div class="card-header">
+            <div class="card-title">❄️ Cámara Producto Terminado</div>
+            <span class="card-tag" style="font-size:10px;background:rgba(6,182,212,0.1);color:#06b6d4">Abrir →</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;padding:14px;">
+            <div style="text-align:center;padding:12px;background:rgba(6,182,212,0.08);border-radius:14px;">
+              <div style="font-size:20px;font-weight:900;color:#06b6d4">215</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Pos. ocupadas</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--verde-bg);border-radius:14px;">
+              <div style="font-size:20px;font-weight:900;color:var(--verde)">18,453</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Cajas</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:rgba(139,92,246,0.08);border-radius:14px;">
+              <div style="font-size:20px;font-weight:900;color:#8b5cf6">184 TN</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Kilos</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--danger-bg);border-radius:14px;">
+              <div style="font-size:20px;font-weight:900;color:var(--danger)">52</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Observados</div>
+            </div>
+          </div>
+          <div style="height:140px;padding:0 14px 14px"><canvas id="chartResCamara"></canvas></div>
+        </div>
+
+        <div class="card" style="cursor:pointer" onclick="showPanel('costos-analisis',null)">
+          <div class="card-header">
+            <div class="card-title">💰 Costos de Análisis</div>
+            <span class="card-tag tag-naranja" style="font-size:10px">Ver más →</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px;">
+            <div style="text-align:center;padding:12px;background:var(--naranja-bg);border-radius:14px;">
+              <div style="font-size:20px;font-weight:900;color:var(--naranja)">S/ 80,196</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Inversión total</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--azul-bg);border-radius:14px;">
+              <div style="font-size:20px;font-weight:900;color:var(--azul)">5</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">Laboratorios</div>
+            </div>
+          </div>
+          <div style="height:140px;padding:0 14px 14px"><canvas id="chartResCostos"></canvas></div>
         </div>
       </div>
 
@@ -2876,6 +2945,70 @@ async function initApp() {
   const el1=document.getElementById('resLmCrit'); if(el1) el1.textContent=crit;
   const el2=document.getElementById('resLmBajo'); if(el2) el2.textContent=bajo;
   const el3=document.getElementById('resLmOk');   if(el3) el3.textContent=ok;
+
+  // Inicializar gráficos del resumen
+  initResumenCharts(crit, bajo, ok);
+}
+
+function initResumenCharts(labCrit, labBajo, labOk) {
+  var dk = document.body.classList.contains('dark-mode');
+  var gc = dk ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.04)';
+  var tc = dk ? '#94a3b8' : '#64748b';
+  var mkBase = function(extra) {
+    return Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:9}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:9}}}}}, extra||{});
+  };
+
+  // 1) Rendimiento por fruta (bar chart)
+  var ctx1 = document.getElementById('chartResRendimiento');
+  if(ctx1) new Chart(ctx1, {type:'bar', data:{
+    labels:['Mango','Arándano','Granada'],
+    datasets:[
+      {label:'Recibido (TN)',data:[1604,145,39.6],backgroundColor:['#f97316','#6366f1','#ec4899'],borderRadius:6,borderSkipped:false},
+      {label:'Rendimiento %',data:[45.6,96.0,36.4],backgroundColor:['rgba(249,115,22,0.3)','rgba(99,102,241,0.3)','rgba(236,72,153,0.3)'],borderRadius:6,borderSkipped:false}
+    ]
+  }, options:mkBase({plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:8,padding:8,font:{size:9},color:tc}},datalabels:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:9,weight:'bold'}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:9}}}}})});
+
+  // 2) Exportación (doughnut)
+  var ctx2 = document.getElementById('chartResExport');
+  if(ctx2) new Chart(ctx2, {type:'doughnut', data:{
+    labels:['Mango Chunks','Mango Entero','Arándano','Arilos','Granada'],
+    datasets:[{data:[280,120,85,30,20],backgroundColor:['#f97316','#eab308','#6366f1','#10b981','#ec4899'],borderWidth:2,borderColor:dk?'#1e293b':'#fff',hoverOffset:6}]
+  }, options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:8,padding:6,font:{size:9},color:tc}},datalabels:{display:false}}}});
+
+  // 3) Lab semáforo (doughnut)
+  var ctx3 = document.getElementById('chartResLab');
+  if(ctx3) new Chart(ctx3, {type:'doughnut', data:{
+    labels:['Crítico','Bajo','OK/Moderado'],
+    datasets:[{data:[labCrit,labBajo,labOk],backgroundColor:['#dc2626','#f59e0b','#16a34a'],borderWidth:2,borderColor:dk?'#1e293b':'#fff',hoverOffset:6}]
+  }, options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:8,padding:6,font:{size:9},color:tc}},datalabels:{display:false}}}});
+
+  // 4) Certificaciones (polar area)
+  var ctx4 = document.getElementById('chartResCert');
+  if(ctx4) new Chart(ctx4, {type:'polarArea', data:{
+    labels:['BRC','HACCP','BASC','Global G.A.P.','Orgánico','SMETA','Kosher','FDA'],
+    datasets:[{data:[95,90,85,100,88,75,92,80],backgroundColor:['rgba(16,185,129,0.6)','rgba(99,102,241,0.6)','rgba(245,158,11,0.6)','rgba(6,182,212,0.6)','rgba(139,92,246,0.6)','rgba(236,72,153,0.6)','rgba(249,115,22,0.6)','rgba(34,211,238,0.6)'],borderWidth:1,borderColor:dk?'#1e293b':'#fff'}]
+  }, options:{responsive:true,maintainAspectRatio:false,scales:{r:{ticks:{display:false},grid:{color:gc}}},plugins:{legend:{display:true,position:'right',labels:{boxWidth:8,padding:4,font:{size:8},color:tc}},datalabels:{display:false}}}});
+
+  // 5) Consumo por semana (line chart)
+  var ctx5 = document.getElementById('chartResConsumo');
+  if(ctx5) new Chart(ctx5, {type:'line', data:{
+    labels:['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','S11','S12','S13'],
+    datasets:[{data:[60,164,247,175,202.5,220,286.25,387.7,569.3,256,338.1,477.55,157.55],borderColor:'#4f6ef7',backgroundColor:'rgba(79,110,247,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#4f6ef7',borderWidth:2}]
+  }, options:mkBase({scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:8}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:8},callback:function(v){return v.toLocaleString()}}}}})});
+
+  // 6) Cámara PT por producto (horizontal bar)
+  var ctx6 = document.getElementById('chartResCamara');
+  if(ctx6) new Chart(ctx6, {type:'bar', data:{
+    labels:['Mango K. Org.','Arándano','Mango K. Conv.','Mango Entero','Arilos'],
+    datasets:[{data:[12058,2064,1816,1809,706],backgroundColor:['#f97316','#8b5cf6','#eab308','#d97706','#10b981'],borderRadius:4,borderSkipped:false}]
+  }, options:mkBase({indexAxis:'y',scales:{x:{grid:{color:gc},ticks:{color:tc,font:{size:8},callback:function(v){return(v/1000).toFixed(0)+'k'}}},y:{grid:{display:false},ticks:{color:tc,font:{size:8,weight:'bold'}}}}})});
+
+  // 7) Costos por laboratorio (doughnut)
+  var ctx7 = document.getElementById('chartResCostos');
+  if(ctx7) new Chart(ctx7, {type:'doughnut', data:{
+    labels:['GROEN','AGQ','NSF','SGS','MERIEUX'],
+    datasets:[{data:[28140,21710,14850,9596,5900],backgroundColor:['#16a34a','#0ea5e9','#f59e0b','#8b5cf6','#ec4899'],borderWidth:2,borderColor:dk?'#1e293b':'#fff',hoverOffset:6}]
+  }, options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:8,padding:4,font:{size:8},color:tc}},datalabels:{display:false}}}});
 }
 
 // ── AUTO-RESTORE SESSION ON PAGE LOAD ──
