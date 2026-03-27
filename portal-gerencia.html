@@ -1049,15 +1049,6 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
         </div>
       </div>
 
-      <!-- Temperaturas en tiempo real -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🌡️ Temperaturas por área — hoy</div>
-          <span class="card-tag tag-verde">En tiempo real</span>
-        </div>
-        <div id="tempResumen" class="loading-bar">Cargando...</div>
-      </div>
-
       <!-- FILA 1: Producción + Gráfico de rendimiento -->
       <div class="grid2" style="margin-bottom:16px">
         <div class="card" style="cursor:pointer" onclick="showPanel('prod-dia',null)">
@@ -1235,6 +1226,15 @@ body.dark-mode .quick-action-btn { background:var(--surface); border-color:var(-
           </div>
           <div style="height:140px;padding:0 14px 14px"><canvas id="chartResCostos"></canvas></div>
         </div>
+      </div>
+
+      <!-- Temperaturas en tiempo real (al final) -->
+      <div class="card" style="margin-top:16px">
+        <div class="card-header">
+          <div class="card-title">🌡️ Temperaturas por área — hoy</div>
+          <span class="card-tag tag-verde">En tiempo real</span>
+        </div>
+        <div id="tempResumen" class="loading-bar">Cargando...</div>
       </div>
 
     </div>
