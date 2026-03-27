@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control de Temperaturas · FrutaFría Export</title>
+<link rel="icon" href="LOGO.png" type="image/png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
@@ -342,6 +343,61 @@
   }
   .btn-primary:hover { background: #00eec0; transform: translateY(-1px); }
   .btn-primary:active { transform: translateY(0); }
+
+  /* Area checkbox chips */
+  .area-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 7px 14px; border-radius: 10px; cursor: pointer;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2px;
+    border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text);
+    transition: all 0.2s ease; user-select: none;
+  }
+  .area-chip:hover { border-color: var(--accent); background: rgba(0,214,178,0.06); }
+  .area-chip.selected {
+    background: rgba(0,214,178,0.12); border-color: var(--accent); color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(0,214,178,0.15);
+  }
+  .area-chip input[type="checkbox"] { display: none; }
+  .area-chip .chip-dot {
+    width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--muted);
+    transition: all 0.2s;
+  }
+  .area-chip.selected .chip-dot {
+    background: var(--accent); border-color: var(--accent);
+    box-shadow: 0 0 4px rgba(0,214,178,0.4);
+  }
+
+  /* Dynamic temp field cards */
+  .multi-temp-card {
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 8px;
+    display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+    animation: slideIn 0.25s ease;
+  }
+  .multi-temp-card .mtc-area {
+    font-size: 12px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .multi-temp-card .mtc-area .mtc-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  .multi-temp-card .mtc-rango {
+    font-size: 9px; color: var(--muted); margin-top: 2px;
+  }
+  .multi-temp-card .mtc-input-wrap {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .multi-temp-card .mtc-input {
+    width: 80px; text-align: center; font-size: 16px; font-weight: 700;
+    font-family: 'DM Mono', monospace; padding: 8px; border-radius: 10px;
+    border: 1.5px solid var(--border2); background: var(--surface); color: var(--text);
+  }
+  .multi-temp-card .mtc-input:focus { border-color: var(--accent); outline: none; }
+  .multi-temp-card .mtc-unit { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .multi-temp-card .mtc-status {
+    font-size: 10px; margin-top: 4px; min-height: 16px;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
   .btn-secondary {
     background: var(--surface2);
     color: var(--text);
@@ -1042,49 +1098,37 @@
         <input type="date" id="fecha" />
       </div>
     </div>
-    <div class="form-grid" style="margin-bottom:16px;grid-template-columns:1fr 1fr;">
-      <div class="form-group">
-        <!-- La etiqueta cambia según el formato seleccionado -->
-        <label id="areaLabel">ZONA / REEFERS</label>
-        <select id="area" onchange="updateAreaInfo()">
-          <option value="">— Seleccionar —</option>
-          <!-- Las opciones se generan dinámicamente con selectFormato() -->
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Inspector responsable</label>
-        <select id="operario">
-          <option value="">— Seleccionar —</option>
-          <option>LUIS APONTE</option>
-          <option>MAYDA APONTE</option>
-          <option>SHEYLA CAMONES</option>
-          <option>JOHNNY PAJUELO</option>
-          <option>BLANCA MALVACEDA</option>
-          <option>CHRISTY JIMENEZ</option>
-        </select>
-      </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Inspector responsable</label>
+      <select id="operario">
+        <option value="">— Seleccionar —</option>
+        <option>LUIS APONTE</option>
+        <option>MAYDA APONTE</option>
+        <option>SHEYLA CAMONES</option>
+        <option>JOHNNY PAJUELO</option>
+        <option>BLANCA MALVACEDA</option>
+        <option>CHRISTY JIMENEZ</option>
+      </select>
     </div>
 
-    <div class="form-grid" style="margin-bottom:16px; align-items:start">
-      <div class="form-group">
-        <label>Temperatura registrada</label>
-        <div class="temp-input-wrap">
-          <input type="number" id="temperatura" placeholder="0.0" step="0.1" min="-50" max="50" oninput="updateTempStatus()" />
-          <span class="temp-unit">°C</span>
-        </div>
-        <div class="temp-indicator" id="tempIndicator"></div>
-        <div id="tempStatus" style="margin-top:6px;min-height:24px"></div>
-        <div style="margin-top:6px; font-size:11px; color:var(--muted)" id="rangoInfo"></div>
-      </div>
-      <div class="form-group">
-        <label>Observaciones (opcional)</label>
-        <textarea id="observaciones" rows="4" placeholder="Ej: Puerta abierta 2 min. por ingreso de pallets. Equipo funcionando con normalidad..."></textarea>
-      </div>
+    <!-- Selección múltiple de áreas -->
+    <div class="form-group" style="margin-bottom:16px">
+      <label id="areaLabel" style="margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        ZONA / REEFERS
+        <span id="areaCount" style="font-size:10px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:10px;display:none">0 seleccionadas</span>
+      </label>
+      <div id="areaCheckboxes" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
     </div>
 
+    <!-- Campos dinámicos de temperatura por área -->
+    <div id="multiTempFields" style="margin-bottom:16px"></div>
 
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Observaciones (opcional — aplica a todos)</label>
+      <textarea id="observaciones" rows="2" placeholder="Ej: Puerta abierta 2 min. por ingreso de pallets..."></textarea>
+    </div>
 
-    <button class="btn btn-primary" onclick="guardarRegistro()">✓ Guardar registro</button>
+    <button class="btn btn-primary" onclick="guardarRegistroMultiple()">✓ Guardar registro</button>
   </div>
 
   <!-- Últimos registros -->
@@ -1572,33 +1616,114 @@ var FORMATO_AREAS = {
   ]
 };
 
-// Función para cambiar el formato activo y actualizar las opciones del dropdown de áreas
+// Función para cambiar el formato activo y generar checkboxes de áreas
 function selectFormato(fmt) {
   currentFormato = fmt;
-  // Actualizar pestaña activa
   document.querySelectorAll('.format-tab').forEach(function(btn) {
     btn.classList.toggle('active', btn.dataset.fmt === fmt);
   });
 
-  // Cambiar etiqueta según el formato — "ZONA / REEFERS" para materia prima, "Área" para los demás
   var areaLabel = document.getElementById('areaLabel');
   if (areaLabel) {
-    areaLabel.textContent = (fmt === 'mp') ? 'ZONA / REEFERS' : 'Área';
+    areaLabel.childNodes[0].textContent = (fmt === 'mp') ? 'ZONA / REEFERS ' : 'ÁREAS ';
   }
 
-  // Reconstruir opciones del select de área
-  var select = document.getElementById('area');
-  select.innerHTML = '<option value="">— Seleccionar —</option>';
+  // Generar checkboxes
+  var container = document.getElementById('areaCheckboxes');
+  container.innerHTML = '';
   FORMATO_AREAS[fmt].forEach(function(a) {
-    var opt = document.createElement('option');
-    opt.value = a.value;
-    opt.textContent = a.label;
-    select.appendChild(opt);
+    var chip = document.createElement('label');
+    chip.className = 'area-chip';
+    chip.innerHTML = '<input type="checkbox" value="' + a.value + '" onchange="onAreaToggle()"><span class="chip-dot"></span>' + a.label;
+    container.appendChild(chip);
   });
 
-  // Limpiar selección actual
-  select.value = '';
-  updateAreaInfo();
+  // Limpiar campos dinámicos
+  document.getElementById('multiTempFields').innerHTML = '';
+  updateAreaCount();
+}
+
+function onAreaToggle() {
+  // Toggle visual state
+  document.querySelectorAll('.area-chip').forEach(function(chip) {
+    var cb = chip.querySelector('input[type="checkbox"]');
+    chip.classList.toggle('selected', cb.checked);
+  });
+  updateAreaCount();
+  renderMultiTempFields();
+}
+
+function getSelectedAreas() {
+  var areas = [];
+  document.querySelectorAll('#areaCheckboxes input[type="checkbox"]:checked').forEach(function(cb) {
+    areas.push(cb.value);
+  });
+  return areas;
+}
+
+function updateAreaCount() {
+  var count = getSelectedAreas().length;
+  var badge = document.getElementById('areaCount');
+  if (count > 0) {
+    badge.style.display = 'inline';
+    badge.textContent = count + ' seleccionada' + (count > 1 ? 's' : '');
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderMultiTempFields() {
+  var areas = getSelectedAreas();
+  var container = document.getElementById('multiTempFields');
+
+  // Preserve existing values
+  var existing = {};
+  container.querySelectorAll('.multi-temp-card').forEach(function(card) {
+    var key = card.dataset.area;
+    var input = card.querySelector('.mtc-input');
+    if (input && input.value) existing[key] = input.value;
+  });
+
+  if (areas.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:12px;padding:16px;border:1.5px dashed var(--border2);border-radius:14px">Selecciona una o más áreas arriba para registrar temperaturas</div>';
+    return;
+  }
+
+  container.innerHTML = areas.map(function(areaVal) {
+    var r = rangos[areaVal];
+    var rangoText = '';
+    if (r && !areaVal.startsWith('REEFER') && areaVal !== 'TEMPERATURA DE PRODUCTO(MP)') {
+      rangoText = 'Límite: ' + r.limite + '°C · Crítico: ' + r.critico + '°C';
+    }
+    var prev = existing[areaVal] || '';
+    return '<div class="multi-temp-card" data-area="' + areaVal + '">' +
+      '<div>' +
+        '<div class="mtc-area"><span class="mtc-dot"></span>' + areaVal + '</div>' +
+        (rangoText ? '<div class="mtc-rango">' + rangoText + '</div>' : '') +
+        '<div class="mtc-status" id="mts-' + areaVal.replace(/[^a-zA-Z0-9]/g,'_') + '"></div>' +
+      '</div>' +
+      '<div class="mtc-input-wrap">' +
+        '<input type="number" class="mtc-input" placeholder="0.0" step="0.1" min="-50" max="50" value="' + prev + '" oninput="updateMultiStatus(this,\'' + areaVal.replace(/'/g,"\\'") + '\')">' +
+        '<span class="mtc-unit">°C</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function updateMultiStatus(input, areaVal) {
+  var val = parseFloat(input.value);
+  var safeId = 'mts-' + areaVal.replace(/[^a-zA-Z0-9]/g,'_');
+  var el = document.getElementById(safeId);
+  if (!el) return;
+  if (isNaN(val)) { el.innerHTML = ''; return; }
+  var estado = getEstado(areaVal, val);
+  if (estado === 'OK') {
+    el.innerHTML = '<span class="status-badge status-ok" style="font-size:10px"><span class="dot"></span>OK</span>';
+  } else if (estado === 'ALERTA') {
+    el.innerHTML = '<span class="status-badge status-warn" style="font-size:10px"><span class="dot"></span>⚠ Alerta</span>';
+  } else {
+    el.innerHTML = '<span class="status-badge status-danger" style="font-size:10px"><span class="dot"></span>🚨 Crítico</span>';
+  }
 }
 
 // ====== INIT ======
@@ -1668,76 +1793,98 @@ function updateTempStatus() {
   }
 }
 
-// ====== GUARDAR REGISTRO ======
-async function guardarRegistro() {
-  const area = document.getElementById('area').value;
+// ====== GUARDAR REGISTRO MÚLTIPLE ======
+async function guardarRegistroMultiple() {
+  const areas = getSelectedAreas();
   const operario = document.getElementById('operario').value;
-  const temp = parseFloat(document.getElementById('temperatura').value);
   const hora = document.getElementById('hora').value;
   const fecha = document.getElementById('fecha').value;
   const obs = document.getElementById('observaciones').value;
   const turno = document.getElementById('turno').value;
 
-  if (!area || !operario || isNaN(temp) || !hora || !fecha) {
-    showToast('❌', 'Campos incompletos', 'Completa área, operario, temperatura y hora', 'danger');
+  if (areas.length === 0) {
+    showToast('❌', 'Sin áreas', 'Selecciona al menos un área', 'danger');
+    return;
+  }
+  if (!operario || !hora || !fecha) {
+    showToast('❌', 'Campos incompletos', 'Completa inspector, hora y fecha', 'danger');
     return;
   }
 
-  const estado = getEstado(area, temp);
-  // Solo los campos que acepta Supabase — sin id ni created_at (los genera automáticamente)
-  const registro = {
-    fecha,
-    hora,
-    area,
-    temperatura: parseFloat(temp),
-    estado,
-    operario,
-    turno: turno || null,
-    observaciones: obs.trim() !== '' ? obs.trim() : null
-  };
+  // Recopilar temperaturas de cada área
+  var registrosToSave = [];
+  var missing = [];
+  areas.forEach(function(areaVal) {
+    var card = document.querySelector('.multi-temp-card[data-area="' + areaVal + '"]');
+    if (!card) return;
+    var input = card.querySelector('.mtc-input');
+    var temp = parseFloat(input.value);
+    if (isNaN(temp)) { missing.push(areaVal); return; }
+    registrosToSave.push({
+      fecha: fecha,
+      hora: hora,
+      area: areaVal,
+      temperatura: temp,
+      estado: getEstado(areaVal, temp),
+      operario: operario,
+      turno: turno || null,
+      observaciones: obs.trim() !== '' ? obs.trim() : null
+    });
+  });
 
-  // Guardar local como respaldo
-  const localReg = {...registro, id: Date.now(), created_at: new Date().toISOString()};
-  if (!config.sbUrl || !config.sbKey) {
-    registros.push(localReg);
-    localStorage.setItem('temp_registros', JSON.stringify(registros));
+  if (missing.length > 0) {
+    showToast('❌', 'Temperaturas faltantes', missing.join(', '), 'danger');
+    return;
   }
 
-  // Enviar a Supabase si está configurado
+  // Guardar en Supabase o local
+  var ok = 0, fail = 0;
   if (config.sbUrl && config.sbKey) {
     try {
-      const res = await fetch(`${config.sbUrl}/rest/v1/registros_temperatura`, {
+      const res = await fetch(config.sbUrl + '/rest/v1/registros_temperatura', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'apikey': config.sbKey,
-          'Authorization': `Bearer ${config.sbKey}`,
+          'Authorization': 'Bearer ' + config.sbKey,
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify(registro)
+        body: JSON.stringify(registrosToSave)
       });
       if (res.ok) {
-        showToast('✅', 'Registro guardado en Supabase', `${area} · ${temp}°C · ${hora}`);
+        ok = registrosToSave.length;
+        showToast('✅', ok + ' registro' + (ok > 1 ? 's' : '') + ' guardado' + (ok > 1 ? 's' : ''), registrosToSave.map(function(r){ return r.area + ' ' + r.temperatura + '°C'; }).join(' · '));
         await cargarRegistrosSupabase();
       } else {
-        const errText = await res.text();
+        var errText = await res.text();
         console.error('Supabase error:', res.status, errText);
         showToast('⚠️', 'Error ' + res.status, errText.slice(0, 120));
+        fail = registrosToSave.length;
       }
     } catch (e) {
       console.error('Fetch error:', e);
-      showToast('⚠️', 'Guardado local', 'Sin conexión a Supabase');
+      showToast('⚠️', 'Sin conexión', 'Guardando localmente');
+      registrosToSave.forEach(function(r) {
+        registros.push(Object.assign({}, r, {id: Date.now() + Math.random(), created_at: new Date().toISOString()}));
+      });
+      localStorage.setItem('temp_registros', JSON.stringify(registros));
+      ok = registrosToSave.length;
     }
   } else {
-    showToast('✅', 'Registro guardado localmente', `${area} · ${temp}°C · ${hora}`);
+    registrosToSave.forEach(function(r) {
+      registros.push(Object.assign({}, r, {id: Date.now() + Math.random(), created_at: new Date().toISOString()}));
+    });
+    localStorage.setItem('temp_registros', JSON.stringify(registros));
+    ok = registrosToSave.length;
+    showToast('✅', ok + ' registro' + (ok > 1 ? 's' : '') + ' guardado' + (ok > 1 ? 's' : ''), 'Almacenamiento local');
   }
 
-  // Reset temp y obs
-  document.getElementById('temperatura').value = '';
+  // Reset: deseleccionar áreas, limpiar campos
+  document.querySelectorAll('#areaCheckboxes input[type="checkbox"]').forEach(function(cb) { cb.checked = false; });
+  document.querySelectorAll('.area-chip').forEach(function(c) { c.classList.remove('selected'); });
+  document.getElementById('multiTempFields').innerHTML = '';
   document.getElementById('observaciones').value = '';
-  document.getElementById('tempStatus').innerHTML = '';
-  document.getElementById('tempIndicator').style.background = 'var(--muted)';
-  // Hora se mantiene como fue registrada (no se resetea a hora actual)
+  updateAreaCount();
 
   if (!config.sbUrl || !config.sbKey) {
     renderTablaHoy();
