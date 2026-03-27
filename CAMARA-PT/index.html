@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d1117">
+<title>Cámara FTP 2026</title>
+<link rel="icon" href="../LOGO.png" type="image/png">
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #1c2230;
+  --bg4: #21283a;
+  --border: #30363d;
+  --accent: #00c9a7;
+  --accent2: #0ea5e9;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --danger: #f85149;
+  --warn: #d29922;
+  --success: #3fb950;
+  --radius: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,.5);
+  --nav-h: 56px;
+  --bottom-nav-h: 60px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* Product colors */
+  --c-mango-org: #f97316;
+  --c-mango-conv: #eab308;
+  --c-arandano: #8b5cf6;
+  --c-arilos: #10b981;
+  --c-empty: #1e2d3d;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  touch-action: manipulation;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ══════════════════════════════════
+   HEADER (desktop top / mobile top)
+══════════════════════════════════ */
+.app-header {
+  height: var(--nav-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.logo-text { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.logo-sub  { font-size: 10px; color: var(--text2); white-space: nowrap; }
+.btn-portal-back {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+  text-decoration: none; color: #fff;
+  background: linear-gradient(135deg, #0d6b4e, #10b981, #0d6b4e);
+  background-size: 200% 200%;
+  animation: goldShimmer 3s ease-in-out infinite;
+  padding: 5px 12px; border-radius: 16px;
+  border: 1px solid rgba(16,185,129,0.4);
+  box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+  transition: all 0.3s ease; flex-shrink: 0;
+}
+.btn-portal-back:hover { transform: translateY(-1px); filter: brightness(1.15); }
+
+/* Desktop tabs in header */
+.header-tabs {
+  display: flex; gap: 2px; margin-left: 16px; overflow-x: auto;
+  scrollbar-width: none;
+}
+.header-tabs::-webkit-scrollbar { display: none; }
+.header-tab {
+  padding: 7px 14px; border-radius: 6px; cursor: pointer;
+  font-size: 13px; color: var(--text2); border: none; background: none;
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.header-tab:hover { background: var(--bg3); color: var(--text); }
+.header-tab.active { background: var(--bg3); color: var(--accent); }
+.header-right {
+  margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.stats-pill {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 10px; font-size: 11px; color: var(--text2);
+  display: flex; align-items: center; gap: 5px; white-space: nowrap;
+}
+.stats-pill span { color: var(--accent); font-weight: 700; }
+
+/* Developer Signature */
+.dev-signature {
+  background: rgba(13,17,23,0.7);
+  border: 1px solid rgba(0,201,167,0.3);
+  border-radius: 12px;
+  padding: 6px 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.dev-label {
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text2);
+  margin-bottom: 1px;
+}
+.dev-name {
+  font-size: 13px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #c9a84c, #f5d780, #c9a84c);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 3s ease-in-out infinite;
+}
+.dev-role {
+  font-size: 9px;
+  font-weight: 600;
+  color: #10b981;
+}
+@keyframes goldShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* hamburger for mobile */
+.btn-ham {
+  display: none; background: none; border: none; color: var(--text);
+  font-size: 22px; cursor: pointer; padding: 6px; border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ══════════════════════════════════
+   BODY LAYOUT
+══════════════════════════════════ */
+.app-body {
+  display: flex; flex: 1; overflow: hidden; position: relative;
+}
+
+/* ══════════════════════════════════
+   SIDEBAR
+══════════════════════════════════ */
+.sidebar {
+  width: 230px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  flex-shrink: 0; overflow-y: auto;
+  transition: width .25s ease, transform .25s ease;
+  z-index: 50;
+}
+.sidebar.collapsed { width: 0; overflow: hidden; border-right: none; }
+.sidebar-toggle {
+  position: absolute; top: 8px; left: 230px; z-index: 51;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text2); cursor: pointer; font-size: 14px;
+  width: 24px; height: 28px; border-radius: 0 6px 6px 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: left .25s ease, background .15s;
+}
+.sidebar-toggle:hover { background: var(--bg3); color: var(--text); }
+.sidebar-section { padding: 12px; border-bottom: 1px solid var(--border); }
+.sidebar-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text2); margin-bottom: 8px;
+}
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
+.filter-label { font-size: 11px; color: var(--text2); }
+.filter-select, .search-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); border-radius: 6px; padding: 8px 10px;
+  font-size: 13px; font-family: inherit;
+}
+.filter-select:focus, .search-input:focus { outline: none; border-color: var(--accent); }
+.search-input::placeholder { color: var(--text2); }
+.color-mode { display: flex; gap: 4px; }
+.cm-btn {
+  flex: 1; padding: 7px 4px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--bg3);
+  color: var(--text2); cursor: pointer; font-size: 12px; text-align: center;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.cm-btn.active { background: var(--accent); color: #0d1117; border-color: var(--accent); font-weight: 700; }
+.legend { display: flex; flex-direction: column; gap: 5px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text2); padding: 3px 4px; border-radius: 4px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.legend-count { margin-left: auto; background: var(--bg3); border-radius: 10px; padding: 1px 6px; font-size: 10px; }
+.sb-clear {
+  width: 100%; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--bg3);
+  color: var(--text2); cursor: pointer; font-size: 12px; font-weight: 600;
+}
+.sb-clear:hover { background: var(--bg4); color: var(--text); }
+
+/* sidebar overlay backdrop (mobile) */
+.sidebar-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.6); z-index: 49;
+}
+
+/* ══════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════ */
+.main { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+
+/* panels */
+.panel { display: none; flex: 1; overflow-y: auto; padding: 16px; }
+.panel.active { display: block; }
+.panel-map {
+  display: none; flex: 1; overflow: hidden;
+  flex-direction: column;
+}
+.panel-map.active { display: flex; }
+
+/* ══════════════════════════════════
+   BOTTOM NAV (mobile only)
+══════════════════════════════════ */
+.bottom-nav {
+  display: none;
+  height: var(--bottom-nav-h);
+  padding-bottom: var(--safe-bottom);
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none;
+  z-index: 100;
+}
+.bottom-nav::-webkit-scrollbar { display: none; }
+.bottom-nav-inner {
+  display: flex; height: 100%; min-width: max-content;
+}
+.bn-tab {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; padding: 6px 14px;
+  cursor: pointer; border: none; background: none;
+  color: var(--text2); font-size: 10px; font-weight: 600;
+  min-width: 64px; transition: color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bn-tab .bn-icon { font-size: 20px; }
+.bn-tab.active { color: var(--accent); }
+
+/* ══════════════════════════════════
+   BUTTONS
+══════════════════════════════════ */
+.btn {
+  padding: 8px 14px; border-radius: var(--radius);
+  border: none; cursor: pointer; font-size: 13px; font-weight: 600;
+  transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary { background: var(--accent); color: #0d1117; }
+.btn-primary:hover, .btn-primary:active { background: #00e5be; }
+.btn-danger  { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #ff6b64; }
+.btn-ghost   { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg3); color: var(--text); }
+.btn-warn    { background: var(--warn); color: #fff; }
+.btn-warn:hover { background: #f0b429; }
+.btn-accent2 { background: var(--accent2); color: #fff; }
+
+/* ══════════════════════════════════
+   DASHBOARD
+══════════════════════════════════ */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px; margin-bottom: 16px;
+}
+.dash-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+}
+.dash-card .dc-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+.dash-card .dc-value { font-size: 26px; font-weight: 700; line-height: 1.1; }
+.dash-card .dc-sub { font-size: 11px; color: var(--text2); margin-top: 4px; }
+.dash-card .dc-bar { height: 4px; background: var(--bg3); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.dash-card .dc-bar-fill { height: 100%; border-radius: 2px; transition: width .5s; }
+.dash-2col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px; margin-bottom: 16px;
+}
+.dash-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+}
+.dash-section h3 {
+  font-size: 13px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--border); padding-bottom: 8px;
+}
+.bar-chart { display: flex; flex-direction: column; gap: 9px; }
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-row-label { width: 130px; font-size: 11px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+.bar-track { flex: 1; height: 16px; background: var(--bg3); border-radius: 4px; overflow: hidden; min-width: 60px; }
+.bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; font-size: 10px; color: rgba(0,0,0,.7); font-weight: 700; transition: width .6s; }
+.bar-row-val { font-size: 11px; color: var(--text2); width: 40px; text-align: right; flex-shrink: 0; }
+.activity-feed { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
+.activity-item { display: flex; gap: 10px; padding: 8px; border-radius: 6px; border: 1px solid var(--border); }
+.activity-icon { font-size: 16px; flex-shrink: 0; }
+.ab-title { font-size: 12px; color: var(--text); }
+.ab-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* ══════════════════════════════════
+   MAP
+══════════════════════════════════ */
+.map-toolbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--bg2);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.map-toolbar select {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); border-radius: 6px; padding: 6px 8px; font-size: 13px;
+}
+.map-toolbar select:focus { outline: none; border-color: var(--accent); }
+.tl-label { font-size: 11px; color: var(--text2); white-space: nowrap; }
+.map-occ  { font-size: 13px; color: var(--accent); font-weight: 700; }
+.map-body { flex: 1; overflow: auto; padding: 14px; }
+
+.zone-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text2); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.zone-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Central racks grid — adaptive columns */
+.central-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px; margin-bottom: 20px;
+}
+.rack-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.rack-header {
+  padding: 5px 10px; background: var(--bg3);
+  font-size: 11px; font-weight: 700; color: var(--text2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rack-header .rh-name { color: var(--accent); }
+.rack-levels { padding: 5px; display: flex; flex-direction: column; gap: 3px; }
+.rack-level  { display: flex; gap: 3px; align-items: center; }
+.level-label { font-size: 9px; color: var(--text2); width: 14px; text-align: center; flex-shrink: 0; }
+.positions   { display: flex; gap: 3px; flex: 1; }
+
+/* Position cell */
+.pos-cell {
+  flex: 1; height: 34px; border-radius: 4px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; font-size: 8px; color: rgba(255,255,255,.85);
+  transition: all .1s; border: 1px solid transparent;
+  position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.pos-cell:active { transform: scale(.92); }
+.pos-cell.empty  { background: var(--c-empty); border: 1px dashed #2a3f5a; color: var(--text2); }
+.pos-cell.selected { box-shadow: 0 0 0 2px #fff; z-index: 5; }
+.pos-cell.dimmed { opacity: .18; }
+.pos-cell.highlighted { box-shadow: 0 0 0 2px #fff200; }
+.pc-num { font-size: 9px; font-weight: 700; line-height: 1; }
+.pc-qty { font-size: 7.5px; opacity: .9; line-height: 1; margin-top: 1px; }
+.obs-dot { position: absolute; top: 2px; right: 2px; width: 5px; height: 5px; background: var(--danger); border-radius: 50%; }
+.fcl-dot { position: absolute; top: 2px; left: 2px; width: 5px; height: 5px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); }
+
+/* Reefer grid */
+.reefer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+.reefer-card {
+  background: var(--bg2); border: 1px solid var(--accent2);
+  border-radius: var(--radius); overflow: hidden;
+}
+.reefer-header {
+  padding: 5px 10px; background: rgba(14,165,233,.12);
+  font-size: 11px; font-weight: 700; color: var(--accent2);
+  border-bottom: 1px solid rgba(14,165,233,.2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.reefer-levels { padding: 5px; display: flex; flex-direction: column; gap: 3px; }
+.reefer-pos-row { display: flex; gap: 3px; align-items: center; }
+.reefer-pos-row .positions .pos-cell { height: 28px; }
+
+/* ══════════════════════════════════
+   DETAIL PANEL (right slide / mobile bottom sheet)
+══════════════════════════════════ */
+.detail-panel {
+  width: 0; background: var(--bg2);
+  border-left: 1px solid var(--border);
+  overflow: hidden; transition: width .25s ease;
+  flex-shrink: 0; position: relative;
+}
+.detail-panel.open { width: 300px; }
+.dp-inner { padding: 14px; overflow-y: auto; height: 100%; width: 300px; }
+.dp-close {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 50%;
+  width: 28px; height: 28px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+}
+.dp-pos-badge {
+  display: inline-flex; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px; font-size: 11px;
+  color: var(--accent); font-weight: 700; margin-bottom: 10px;
+}
+.dp-section { margin-bottom: 14px; }
+.dp-section-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: var(--text2); margin-bottom: 7px;
+  border-bottom: 1px solid var(--border); padding-bottom: 5px;
+}
+.dp-field {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 5px 0; border-bottom: 1px solid var(--border); gap: 8px;
+}
+.dp-field:last-child { border-bottom: none; }
+.dp-field-key { font-size: 11px; color: var(--text2); flex-shrink: 0; }
+.dp-field-val { font-size: 12px; color: var(--text); text-align: right; font-weight: 500; word-break: break-all; }
+.dp-product-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg3); border-radius: 20px; padding: 5px 12px;
+  font-size: 12px; font-weight: 700; margin-bottom: 12px;
+}
+.chip-dot { width: 10px; height: 10px; border-radius: 50%; }
+.obs-warn {
+  background: rgba(248,81,73,.1); border: 1px solid rgba(248,81,73,.3);
+  border-radius: 6px; padding: 8px 10px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--danger); margin-bottom: 10px;
+}
+.dp-actions { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.dp-empty-msg { text-align: center; color: var(--text2); font-size: 13px; margin-top: 40px; }
+
+/* mobile bottom sheet for detail */
+.detail-bottom-sheet {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg2); border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  z-index: 200; transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  max-height: 80vh; overflow-y: auto;
+  padding-bottom: calc(16px + var(--safe-bottom));
+}
+.detail-bottom-sheet.open { transform: translateY(0); }
+.sheet-handle {
+  width: 36px; height: 4px; background: var(--border);
+  border-radius: 2px; margin: 10px auto 14px; cursor: pointer;
+}
+.sheet-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 199;
+}
+
+/* ══════════════════════════════════
+   TABLE / KARDEX
+══════════════════════════════════ */
+.table-toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 0; flex-wrap: wrap; margin-bottom: 4px;
+}
+.table-wrap {
+  overflow: auto; border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead { position: sticky; top: 0; z-index: 5; }
+th {
+  background: var(--bg3); color: var(--text2); font-size: 10px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none; white-space: nowrap;
+}
+th:hover { color: var(--text); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text); white-space: nowrap; }
+tr:hover td { background: var(--bg3); }
+tr:last-child td { border-bottom: none; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700;
+}
+.badge-green  { background: rgba(63,185,80,.15);  color: var(--success); }
+.badge-yellow { background: rgba(210,153,34,.15); color: var(--warn); }
+.badge-red    { background: rgba(248,81,73,.15);  color: var(--danger); }
+.badge-blue   { background: rgba(88,166,255,.15); color: #58a6ff; }
+.badge-gray   { background: rgba(139,148,158,.15);color: var(--text2); }
+.badge-purple { background: rgba(139,92,246,.15); color: #a78bfa; }
+
+.pagination {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 0; justify-content: flex-end; flex-shrink: 0; flex-wrap: wrap;
+}
+.page-btn {
+  padding: 5px 10px; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--bg3);
+  color: var(--text2); cursor: pointer; font-size: 12px;
+}
+.page-btn:hover { background: var(--bg4); }
+.page-btn.active { background: var(--accent); color: #0d1117; border-color: var(--accent); }
+.page-info { font-size: 12px; color: var(--text2); }
+
+/* ══════════════════════════════════
+   FORM
+══════════════════════════════════ */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-label { font-size: 11px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.form-input, .form-select, .form-textarea {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); border-radius: 6px; padding: 9px 10px;
+  font-size: 14px; width: 100%; font-family: inherit;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent); }
+.form-input::placeholder { color: var(--text2); }
+.form-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+}
+.form-section-title {
+  font-size: 13px; font-weight: 700; margin-bottom: 14px;
+  border-bottom: 1px solid var(--border); padding-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.form-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  margin-top: 6px; flex-wrap: wrap;
+}
+
+/* ══════════════════════════════════
+   DISPATCH / FCL CARDS
+══════════════════════════════════ */
+.dispatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+.fcl-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; cursor: pointer;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.fcl-card:active { transform: scale(.98); }
+.fcl-card.selected-fcl { background: rgba(0,201,167,.05); }
+.fc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.fc-name   { font-size: 18px; font-weight: 700; }
+.fc-client { font-size: 12px; color: var(--text2); }
+.fcl-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.fcl-stat  { text-align: center; background: var(--bg3); border-radius: 6px; padding: 8px; }
+.fs-val    { font-size: 18px; font-weight: 700; }
+.fs-lab    { font-size: 10px; color: var(--text2); }
+.dispatch-actions {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 14px;
+  display: none;
+}
+.dispatch-actions.visible { display: block; }
+.dispatch-pallet-list {
+  max-height: 280px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 4px; margin: 10px 0;
+}
+.dp-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; background: var(--bg3); border-radius: 6px; font-size: 12px;
+}
+.dpi-rack { color: var(--accent); font-weight: 700; min-width: 58px; }
+.dpi-qty  { margin-left: auto; font-weight: 700; }
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  z-index: 300; display: none; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 22px; width: 100%; max-width: 460px;
+  box-shadow: var(--shadow);
+}
+.modal h2 { font-size: 16px; margin-bottom: 10px; }
+.modal p  { font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+.toast-container {
+  position: fixed; bottom: 80px; right: 16px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 400;
+}
+.toast {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px;
+  font-size: 13px; color: var(--text);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 10px;
+  animation: slideIn .2s ease; min-width: 260px; max-width: 340px;
+}
+.toast.success { border-left: 3px solid var(--success); }
+.toast.error   { border-left: 3px solid var(--danger); }
+.toast.info    { border-left: 3px solid var(--accent2); }
+@keyframes slideIn  { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(110%); opacity: 0; } }
+
+/* empty state */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text2); }
+.es-icon  { font-size: 44px; margin-bottom: 12px; }
+.es-title { font-size: 15px; color: var(--text); margin-bottom: 6px; }
+
+/* util */
+.ml-auto { margin-left: auto; }
+.flex { display: flex; }
+.gap-8 { gap: 8px; }
+
+/* ══════════════════════════════════
+   RESPONSIVE — TABLET
+══════════════════════════════════ */
+@media (max-width: 900px) {
+  .stats-pill { display: none; }
+  .detail-panel.open { width: 260px; }
+  .dp-inner { width: 260px; }
+}
+
+/* ══════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 700px)
+══════════════════════════════════ */
+@media (max-width: 700px) {
+  /* Hide desktop tabs, show bottom nav */
+  .header-tabs { display: none; }
+  .bottom-nav  { display: flex; }
+  .btn-ham     { display: flex; }
+
+  /* Slim header */
+  .app-header { padding: 0 12px; height: 50px; }
+  .logo-sub { display: none; }
+  .logo-text { font-size: 14px; }
+
+  /* Sidebar as drawer */
+  .sidebar {
+    position: fixed; top: 50px; left: 0; bottom: 60px;
+    z-index: 50; transform: translateX(-100%);
+    width: 240px;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-backdrop { display: block; }
+  .sidebar-backdrop.open { display: block; opacity: 1; }
+  .sidebar-backdrop:not(.open) { opacity: 0; pointer-events: none; }
+
+  /* Hide desktop detail panel, use bottom sheet */
+  .detail-panel { display: none !important; }
+  .detail-bottom-sheet { display: block; }
+  .sheet-backdrop { display: block; }
+  .sheet-backdrop:not(.open) { opacity: 0; pointer-events: none; }
+
+  /* Panel padding */
+  .panel      { padding: 12px; }
+  .map-body   { padding: 10px; }
+
+  /* Dashboard */
+  .dash-grid  { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dash-2col  { grid-template-columns: 1fr; }
+  .dash-card .dc-value { font-size: 22px; }
+
+  /* Map — fewer columns so each rack is bigger */
+  .central-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .reefer-grid  { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .pos-cell     { height: 30px; }
+
+  /* Form */
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+
+  /* Kardex toolbar */
+  .table-toolbar { gap: 6px; }
+  .table-toolbar .ml-auto { width: 100%; display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Dispatch */
+  .dispatch-grid { grid-template-columns: 1fr; }
+
+  /* Toasts at bottom */
+  .toast-container { bottom: 72px; left: 12px; right: 12px; }
+  .toast { min-width: 0; max-width: none; width: 100%; }
+
+  /* Map toolbar wraps */
+  .map-toolbar { padding: 8px 12px; gap: 8px; }
+
+  /* bar chart label */
+  .bar-row-label { width: 100px; }
+
+  /* Hide desktop toggle on mobile */
+  .sidebar-toggle { display: none; }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+  .dash-grid { grid-template-columns: 1fr; }
+  .central-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="app-header">
+  <button class="btn-ham" id="ham-btn" onclick="toggleSidebar()">☰</button>
+  <div class="logo">
+    <img src="../LOGO.png" alt="Frutos Tropicales" style="width:38px;height:38px;border-radius:8px;object-fit:contain;flex-shrink:0;">
+    <div>
+      <div class="logo-text">Cámara FTP 2026</div>
+      <div class="logo-sub">Frutos Tropicales Peru Export S.A.C.</div>
+    </div>
+  </div>
+  <a href="../portal-gerencia.html" class="btn-portal-back" title="Regresar al Portal">← Portal</a>
+  <nav class="header-tabs">
+    <button class="header-tab active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="header-tab" data-tab="mapa"      onclick="switchTab('mapa')">🗺️ Mapa Cámara</button>
+    <button class="header-tab" data-tab="kardex"    onclick="switchTab('kardex')">📋 Kardex</button>
+    <button class="header-tab" data-tab="nuevo"     onclick="switchTab('nuevo')">➕ Nuevo Ingreso</button>
+    <button class="header-tab" data-tab="despachos" onclick="switchTab('despachos')">🚚 Despachos</button>
+    <button class="header-tab" data-tab="historial" onclick="switchTab('historial')">📜 Historial</button>
+  </nav>
+  <div class="header-right">
+    <div class="stats-pill">Ocupadas: <span id="hdr-occ">—</span>/<span id="hdr-total">—</span></div>
+    <div class="stats-pill">Cajas: <span id="hdr-cajas">—</span></div>
+    <div class="stats-pill">Kg: <span id="hdr-kg">—</span></div>
+    <div class="dev-signature">
+      <div class="dev-label">DESARROLLADO POR:</div>
+      <div class="dev-name">Rodrigo Garcia</div>
+      <div class="dev-role">Systems Analyst & Developer-QA</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ BODY ═══════════ -->
+<div class="app-body">
+
+  <!-- SIDEBAR BACKDROP -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR TOGGLE (desktop) -->
+  <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebarDesktop()" title="Ocultar/Mostrar filtros">◀</button>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Buscar</div>
+      <input type="text" class="search-input" id="pos-search" placeholder="Posición / pallet / producto…" oninput="debounceFilter()">
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Modo de Color</div>
+      <div class="color-mode">
+        <button class="cm-btn active" id="cm-producto" onclick="setColorMode('producto')">Producto</button>
+        <button class="cm-btn" id="cm-cliente" onclick="setColorMode('cliente')">Cliente</button>
+        <button class="cm-btn" id="cm-fcl" onclick="setColorMode('fcl')">FCL</button>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Filtrar por Cliente</div>
+      <select class="filter-select" id="filter-cliente" onchange="applyFilters()">
+        <option value="">Todos los clientes</option>
+      </select>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Filtrar por FCL</div>
+      <select class="filter-select" id="filter-fcl" onchange="applyFilters()">
+        <option value="">Todos los FCL</option>
+      </select>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Filtrar por Producto</div>
+      <select class="filter-select" id="filter-producto" onchange="applyFilters()">
+        <option value="">Todos los productos</option>
+      </select>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Estado</div>
+      <select class="filter-select" id="filter-estado" onchange="applyFilters()">
+        <option value="">Todos</option>
+        <option value="PRODUCTO TERMINADO">Producto Terminado</option>
+        <option value="obs">Con Observación</option>
+        <option value="empty">Solo Vacíos</option>
+        <option value="occupied">Solo Ocupados</option>
+      </select>
+    </div>
+    <div class="sidebar-section">
+      <button class="sb-clear" onclick="clearFilters()">✕ Limpiar filtros</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Leyenda</div>
+      <div class="legend" id="legend-container"></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Resumen</div>
+      <div id="zone-summary" style="font-size:12px;color:var(--text2);display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="dash-grid" id="dash-cards"></div>
+      <div class="dash-2col">
+        <div class="dash-section">
+          <h3>📦 Por Producto (cajas)</h3>
+          <div class="bar-chart" id="chart-producto"></div>
+        </div>
+        <div class="dash-section">
+          <h3>👤 Por Cliente (cajas)</h3>
+          <div class="bar-chart" id="chart-cliente"></div>
+        </div>
+      </div>
+      <div class="dash-2col">
+        <div class="dash-section">
+          <h3>🚢 Por Contenedor FCL</h3>
+          <div class="bar-chart" id="chart-fcl"></div>
+        </div>
+        <div class="dash-section">
+          <h3>🕒 Últimos Movimientos</h3>
+          <div class="activity-feed" id="activity-feed"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAPA -->
+    <div class="panel-map" id="panel-mapa">
+      <div class="map-toolbar">
+        <span class="tl-label">Zona:</span>
+        <select id="zone-select" onchange="renderMap()">
+          <option value="all">Toda la Cámara</option>
+          <option value="CENTRAL">Solo Central</option>
+          <option value="REEFER">Solo Reefers</option>
+        </select>
+        <span class="map-occ" id="map-occ-info"></span>
+        <div class="ml-auto flex gap-8">
+          <button class="btn btn-ghost" onclick="switchTab('nuevo')" style="font-size:12px;padding:6px 10px;">➕ Ingreso</button>
+          <button class="btn btn-warn"  onclick="switchTab('despachos')" style="font-size:12px;padding:6px 10px;">🚚 Despacho</button>
+          <!-- mobile: filter button -->
+          <button class="btn btn-ghost" id="map-filter-btn" onclick="toggleSidebar()" style="display:none;font-size:12px;padding:6px 10px;">⚙ Filtros</button>
+        </div>
+      </div>
+      <div class="map-body" id="map-body"></div>
+    </div>
+
+    <!-- KARDEX -->
+    <div class="panel" id="panel-kardex">
+      <div class="table-toolbar">
+        <input type="text" class="search-input" id="kardex-search" placeholder="🔍 Buscar…" oninput="renderKardex()" style="min-width:140px;flex:1;">
+        <select class="filter-select" id="kf-cliente" onchange="renderKardex()" style="min-width:120px;">
+          <option value="">Todos</option>
+        </select>
+        <select class="filter-select" id="kf-turno" onchange="renderKardex()" style="min-width:100px;">
+          <option value="">Turno</option>
+          <option>DIA</option>
+          <option>NOCHE</option>
+        </select>
+        <div class="ml-auto flex gap-8" style="flex-wrap:wrap;">
+          <span id="kardex-count" style="font-size:12px;color:var(--text2);line-height:30px;"></span>
+          <button class="btn btn-ghost" onclick="exportKardex()" style="font-size:12px;padding:6px 10px;">⬇ CSV</button>
+          <button class="btn btn-primary" onclick="switchTab('nuevo')" style="font-size:12px;padding:6px 10px;">➕ Nuevo</button>
+        </div>
+      </div>
+      <div class="table-wrap" style="flex:1;overflow:auto;">
+        <table id="kardex-table">
+          <thead>
+            <tr>
+              <th onclick="sortKardex('fecha')">Fecha ↕</th>
+              <th onclick="sortKardex('turno')">Turno</th>
+              <th onclick="sortKardex('movimiento')">Mov.</th>
+              <th onclick="sortKardex('palletOrigen')">Pallet ↕</th>
+              <th onclick="sortKardex('producto')">Producto ↕</th>
+              <th>Variedad</th>
+              <th>Corte</th>
+              <th onclick="sortKardex('tipo')">Tipo</th>
+              <th onclick="sortKardex('cliente')">Cliente ↕</th>
+              <th onclick="sortKardex('nFCL')">FCL ↕</th>
+              <th onclick="sortKardex('cantidad')">Cajas ↕</th>
+              <th onclick="sortKardex('totalKilos')">Kilos ↕</th>
+              <th onclick="sortKardex('estado')">Estado ↕</th>
+              <th>Lote</th>
+              <th>Obs.</th>
+            </tr>
+          </thead>
+          <tbody id="kardex-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="kardex-pagination"></div>
+    </div>
+
+    <!-- NUEVO INGRESO -->
+    <div class="panel" id="panel-nuevo">
+      <h2 style="margin-bottom:16px;font-size:17px;">➕ Registrar Nuevo Ingreso</h2>
+      <form id="nuevo-form" onsubmit="submitNuevo(event)">
+        <div class="form-section">
+          <div class="form-section-title">📋 General</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Fecha *</label><input type="date" class="form-input" id="n-fecha" required></div>
+            <div class="form-group"><label class="form-label">Turno *</label>
+              <select class="form-select" id="n-turno" required>
+                <option value="">Seleccionar…</option><option>DIA</option><option>NOCHE</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">N° Pallet *</label><input type="number" class="form-input" id="n-pallet" placeholder="Ej: 1050" required></div>
+            <div class="form-group"><label class="form-label">Movimiento</label>
+              <select class="form-select" id="n-movimiento">
+                <option>INGRESO</option><option>SALIDA</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">🥭 Producto</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Producto *</label>
+              <select class="form-select" id="n-producto" required>
+                <option value="">Seleccionar…</option><option>MANGO</option><option>ARANDANO</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Variedad *</label>
+              <select class="form-select" id="n-variedad" required>
+                <option value="">Seleccionar…</option><option>KENT</option><option>ENTERO</option><option>ARILOS</option><option>CONVENCIONAL</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Tipo *</label>
+              <select class="form-select" id="n-tipo" required>
+                <option value="">Seleccionar…</option><option>ORGANICO</option><option>CONVENCIONAL</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Corte</label>
+              <select class="form-select" id="n-corte">
+                <option>20 X 20</option><option>R . I</option><option>ENTERO</option><option>ARILOS</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Presentación</label>
+              <select class="form-select" id="n-presentacion">
+                <option>1 CAJA X 1 BLS X 9 KG</option><option>1 CAJA X 1 BLS X 10 KG</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Peso (kg/caja)</label>
+              <select class="form-select" id="n-peso"><option>9</option><option>10</option></select>
+            </div>
+            <div class="form-group full"><label class="form-label">Lote / Trazabilidad *</label>
+              <input type="text" class="form-input" id="n-lote" placeholder="Ej: 6045OFT1031 (0406MK)" required>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">📦 Destino y Cantidad</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Cliente</label>
+              <select class="form-select" id="n-cliente">
+                <option>SIN CLIENTE</option><option>GREENYARD 3</option><option>GREENYARD 4</option>
+                <option>GREENYARD 5</option><option>HG FOOD</option><option>HG FOODS</option><option>NATURE STOUCH</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">N° FCL</label>
+              <select class="form-select" id="n-fcl">
+                <option value="">SIN FCL</option><option>1</option><option>2</option>
+                <option>3</option><option>4</option><option>5</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Cajas *</label>
+              <input type="number" class="form-input" id="n-cantidad" placeholder="Ej: 120" required>
+            </div>
+            <div class="form-group"><label class="form-label">Estado</label>
+              <select class="form-select" id="n-estado">
+                <option>PRODUCTO TERMINADO</option><option>OBSERVADO</option>
+              </select>
+            </div>
+            <div class="form-group full"><label class="form-label">Posición en Cámara</label>
+              <select class="form-select" id="n-posicion"><option value="">Sin asignar</option></select>
+            </div>
+            <div class="form-group full"><label class="form-label">Observación</label>
+              <textarea class="form-textarea" id="n-observacion" rows="2" placeholder="Observaciones de calidad…"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="resetForm()">↺ Limpiar</button>
+          <button type="submit" class="btn btn-primary">✓ Registrar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- DESPACHOS -->
+    <div class="panel" id="panel-despachos">
+      <div style="margin-bottom:16px;">
+        <h2 style="font-size:17px;margin-bottom:4px;">🚚 Gestión de Despachos</h2>
+        <p style="color:var(--text2);font-size:13px;">Selecciona un FCL para ver sus pallets y confirmar el despacho.</p>
+      </div>
+      <div class="dispatch-actions" id="dispatch-actions">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <h3 id="da-title" style="font-size:14px;"></h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" onclick="clearFCLSelection()">✕ Cancelar</button>
+            <button class="btn btn-danger" onclick="confirmDispatch()">🚚 Confirmar Despacho</button>
+          </div>
+        </div>
+        <div class="dispatch-pallet-list" id="dispatch-pallet-list"></div>
+        <div id="da-summary" style="font-size:13px;color:var(--text2);border-top:1px solid var(--border);padding-top:8px;margin-top:4px;"></div>
+      </div>
+      <div class="dispatch-grid" id="fcl-cards"></div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="panel" id="panel-historial">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+        <div>
+          <h2 style="font-size:17px;margin-bottom:3px;">📜 Historial de Despachos</h2>
+          <p style="color:var(--text2);font-size:13px;">Registro permanente de contenedores despachados.</p>
+        </div>
+        <button class="btn btn-ghost" onclick="exportHistory()" style="font-size:12px;">⬇ CSV</button>
+      </div>
+      <div id="historial-body"></div>
+    </div>
+
+  </main><!-- /main -->
+
+  <!-- DESKTOP DETAIL PANEL -->
+  <aside class="detail-panel" id="detail-panel">
+    <div style="position:relative;height:100%;">
+      <button class="dp-close" onclick="event.stopPropagation();closeDetail()">✕</button>
+      <div class="dp-inner" id="dp-inner"></div>
+    </div>
+  </aside>
+
+</div><!-- /app-body -->
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bn-tab active" data-tab="dashboard" onclick="switchTab('dashboard')"><span class="bn-icon">📊</span>Dashboard</button>
+    <button class="bn-tab" data-tab="mapa"      onclick="switchTab('mapa')"><span class="bn-icon">🗺️</span>Mapa</button>
+    <button class="bn-tab" data-tab="kardex"    onclick="switchTab('kardex')"><span class="bn-icon">📋</span>Kardex</button>
+    <button class="bn-tab" data-tab="nuevo"     onclick="switchTab('nuevo')"><span class="bn-icon">➕</span>Ingreso</button>
+    <button class="bn-tab" data-tab="despachos" onclick="switchTab('despachos')"><span class="bn-icon">🚚</span>Despacho</button>
+    <button class="bn-tab" data-tab="historial" onclick="switchTab('historial')"><span class="bn-icon">📜</span>Historial</button>
+  </div>
+</nav>
+
+<!-- MOBILE DETAIL BOTTOM SHEET -->
+<div class="sheet-backdrop" id="sheet-backdrop" onclick="closeDetail()"></div>
+<div class="detail-bottom-sheet" id="detail-sheet">
+  <div class="sheet-handle" onclick="closeDetail()"></div>
+  <div style="padding:0 16px 16px;" id="ds-inner"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title"></h2>
+    <p id="modal-body"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-danger" id="modal-confirm-btn" onclick="modalConfirm()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<script>
+// ════════════════════════════════════
+// DATA & STATE
+// ════════════════════════════════════
+let POSITIONS = [], KARDEX = [];
+let DISPATCHED    = JSON.parse(localStorage.getItem('cam_dispatched')    || '[]');
+let KARDEX_EXTRA  = JSON.parse(localStorage.getItem('cam_kardex_extra')  || '[]');
+let _activeCache = null;
+let _renderTimer = null;
+
+let state = {
+  tab: 'dashboard',
+  colorMode: 'producto',
+  filters: { cliente:'', fcl:'', producto:'', estado:'', search:'' },
+  selectedPos: null,
+  dispatchFCL: null,
+  kardexSortCol: 'fecha',
+  kardexSortDir: { fecha: -1 },
+  kardexPage: 1,
+  kardexPerPage: 20,
+};
+
+const PRODUCT_COLORS = {
+  'MANGO K . ORGANICO':   '#f97316',
+  'MANGO K ORGANICO':     '#f97316',
+  'MANGO KENT ORGANICO':  '#fb923c',
+  'MANGO K CONVENCIONAL': '#eab308',
+  'MANGO CONVENCIONAL':   '#d97706',
+  'MANGO E CONVENCIONAL': '#d97706',
+  'ARANDANO':             '#8b5cf6',
+  'ARILOS':               '#10b981',
+};
+const CLIENT_COLORS = {
+  'GREENYARD 3':  '#22c55e',
+  'GREENYARD 4':  '#16a34a',
+  'GREENYARD 5':  '#15803d',
+  'HG FOOD':      '#3b82f6',
+  'HG FOODS':     '#3b82f6',
+  'SIN CLIENTE':  '#475569',
+  'SIN CLIENTE 1':'#475569',
+  'NATURE STOUCH':'#a855f7',
+};
+const FCL_COLORS = { '1':'#06b6d4','2':'#f59e0b','3':'#10b981','4':'#f43f5e','5':'#8b5cf6' };
+
+// ════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════
+function getFCL(pos) {
+  if (pos.cliente) {
+    const m = pos.cliente.match(/\s(\d+)$/);
+    if (m) return m[1];
+  }
+  return '';
+}
+
+function normProduct(p) {
+  if (!p) return '';
+  p = p.toUpperCase().trim();
+  if (p.includes('ARILOS'))   return 'ARILOS';
+  if (p.includes('ARANDANO') || p.includes('ARÁNDANO')) return 'ARÁNDANO';
+  if (p.includes('MANGO')) {
+    if ((p.includes('K') || p.includes('KENT')) && p.includes('ORGAN')) return 'MANGO K. ORGÁNICO';
+    if ((p.includes('K') || p.includes('KENT')) && p.includes('CONV'))  return 'MANGO K. CONV.';
+    if (p.includes('E') || p.includes('ENTERO')) return 'MANGO ENTERO CONV.';
+    if (p.includes('CONV')) return 'MANGO CONVENCIONAL';
+    if (p.includes('ORGAN')) return 'MANGO K. ORGÁNICO';
+    return 'MANGO';
+  }
+  return p;
+}
+
+function getPositionColor(pos) {
+  if (!pos.nPalet) return null;
+  if (state.colorMode === 'producto') return PRODUCT_COLORS[pos.producto] || '#64748b';
+  if (state.colorMode === 'cliente')  return CLIENT_COLORS[pos.cliente]  || '#64748b';
+  if (state.colorMode === 'fcl') {
+    const f = getFCL(pos);
+    return f ? (FCL_COLORS[f] || '#64748b') : '#475569';
+  }
+  return '#64748b';
+}
+
+function getActivePositions() {
+  if (!_activeCache) _activeCache = POSITIONS.filter(p => !p._dispatched_history);
+  return _activeCache;
+}
+function invalidateCache() { _activeCache = null; }
+
+function isMobile() { return window.innerWidth <= 700; }
+
+// ════════════════════════════════════
+// INIT
+// ════════════════════════════════════
+async function init() {
+  try {
+    // Try localStorage first (has user modifications), fallback to JSON files
+    const savedPos = localStorage.getItem('cam_positions');
+    const savedKar = localStorage.getItem('cam_kardex');
+
+    if (savedPos) {
+      POSITIONS = JSON.parse(savedPos);
+    } else {
+      const pr = await fetch('positions.json');
+      POSITIONS = await pr.json();
+    }
+
+    const kr = await fetch('kardex.json');
+    KARDEX = await kr.json();
+
+    // Restore dispatched positions
+    const dispIds = new Set(DISPATCHED.flatMap(d => d.positions.map(p => p.id)));
+    POSITIONS.forEach(p => { if (dispIds.has(p.id)) p._dispatched_history = true; });
+
+    KARDEX = [...KARDEX, ...KARDEX_EXTRA];
+
+    populateFilters();
+    populateKardexFilters();
+    populateNuevoForm();
+    renderDashboard();
+    renderMap();
+    renderKardex();
+    renderFCLCards();
+    renderHistory();
+    updateHeader();
+
+    // Show mobile filter button on map
+    if (isMobile()) document.getElementById('map-filter-btn').style.display = 'inline-flex';
+  } catch(e) {
+    showToast('Error al cargar: ' + e.message, 'error');
+  }
+}
+
+function updateHeader() {
+  const active = getActivePositions();
+  const occ  = active.filter(p => p.nPalet).length;
+  const total = active.length;
+  const cajas = active.filter(p=>p.nPalet).reduce((s,p)=>s+(p.cantidad||0),0);
+  const kg    = active.filter(p=>p.nPalet).reduce((s,p)=>s+(parseFloat(p.peso2)||0),0);
+  document.getElementById('hdr-occ').textContent   = occ;
+  document.getElementById('hdr-total').textContent = total;
+  document.getElementById('hdr-cajas').textContent = cajas.toLocaleString();
+  document.getElementById('hdr-kg').textContent    = Math.round(kg).toLocaleString() + ' kg';
+  document.getElementById('map-occ-info').textContent = `${occ}/${total} (${Math.round(occ/total*100)}%)`;
+}
+
+// ════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════
+function switchTab(tab) {
+  state.tab = tab;
+  // header tabs
+  document.querySelectorAll('.header-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  // bottom nav tabs
+  document.querySelectorAll('.bn-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  // panels
+  document.querySelectorAll('.panel').forEach(p => { p.style.display='none'; p.classList.remove('active'); });
+  const mapPanel = document.getElementById('panel-mapa');
+  mapPanel.style.display = 'none'; mapPanel.classList.remove('active');
+
+  if (tab === 'mapa') {
+    mapPanel.style.display = 'flex'; mapPanel.classList.add('active');
+    // show sidebar toggle on mobile
+    document.getElementById('ham-btn').style.display = 'flex';
+  } else {
+    document.getElementById('ham-btn').style.display = isMobile() ? 'flex' : 'none';
+    const p = document.getElementById('panel-' + tab);
+    if (p) { p.style.display = 'block'; p.classList.add('active'); }
+  }
+
+  // close sidebar on mobile after tab change
+  if (isMobile()) closeSidebar();
+
+  if (tab === 'mapa')      renderMap();
+  if (tab === 'kardex')    renderKardex();
+  if (tab === 'despachos') renderFCLCards();
+  if (tab === 'historial') renderHistory();
+  if (tab === 'dashboard') renderDashboard();
+}
+
+// ════════════════════════════════════
+// SIDEBAR
+// ════════════════════════════════════
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebar-backdrop');
+  const open = sb.classList.toggle('open');
+  bd.classList.toggle('open', open);
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('open');
+}
+function toggleSidebarDesktop() {
+  if (isMobile()) { toggleSidebar(); return; }
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('sidebar-toggle');
+  const collapsed = sb.classList.toggle('collapsed');
+  btn.textContent = collapsed ? '▶' : '◀';
+  btn.style.left = collapsed ? '0' : '230px';
+}
+
+// ════════════════════════════════════
+// POPULATE FILTERS
+// ════════════════════════════════════
+function populateFilters() {
+  const occ = getActivePositions().filter(p => p.nPalet);
+  const makeOpts = (id, vals) => {
+    const el = document.getElementById(id); const cur = el.value;
+    while (el.options.length > 1) el.remove(1);
+    vals.forEach(v => el.add(new Option(v, v)));
+    if (cur) el.value = cur;
+  };
+  makeOpts('filter-cliente', [...new Set(occ.map(p=>p.cliente).filter(Boolean))].sort());
+  makeOpts('filter-fcl',     [...new Set(occ.map(p=>getFCL(p)).filter(Boolean))].sort().map(f=>`FCL ${f}`));
+  makeOpts('filter-producto',[...new Set(occ.map(p=>p.producto).filter(Boolean))].sort());
+  updateLegend(); updateZoneSummary();
+}
+function populateKardexFilters() {
+  const el = document.getElementById('kf-cliente'); while(el.options.length>1) el.remove(1);
+  [...new Set(KARDEX.map(k=>k.cliente).filter(Boolean))].sort().forEach(c=>el.add(new Option(c,c)));
+}
+function populateNuevoForm() {
+  document.getElementById('n-fecha').value = new Date().toISOString().split('T')[0];
+  const sel = document.getElementById('n-posicion'); while(sel.options.length>1) sel.remove(1);
+  getActivePositions().filter(p=>!p.nPalet).forEach(p=>sel.add(new Option(p.ubicacion||p.id, p.id)));
+}
+
+// ════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════
+function renderDashboard() {
+  const active = getActivePositions();
+  const occ    = active.filter(p => p.nPalet);
+  const cajas  = occ.reduce((s,p)=>s+(p.cantidad||0),0);
+  const kg     = occ.reduce((s,p)=>s+(parseFloat(p.peso2)||0),0);
+  const obs    = occ.filter(p=>p.observacion && p.observacion!=='PRODUCTO TERMINADO').length;
+  const pct    = Math.round(occ.length/active.length*100);
+
+  // Desglose por zona
+  const central = active.filter(p=>p.place==='CENTRAL');
+  const cOcc = central.filter(p=>p.nPalet).length;
+  const cFree = central.length - cOcc;
+  const reefer = active.filter(p=>p.place==='REEFER');
+  const rOcc = reefer.filter(p=>p.nPalet).length;
+  const rFree = reefer.length - rOcc;
+
+  const cards = [
+    { label:'Posiciones Ocupadas', value:occ.length, sub:`${active.length} total · ${pct}% ocupación`, color:'#00c9a7', bar:occ.length/active.length },
+    { label:'Total Cajas',         value:cajas.toLocaleString(), sub:`En ${occ.length} pallets activos`, color:'#0ea5e9', bar:.75 },
+    { label:'Total Kilos',         value:Math.round(kg).toLocaleString()+' kg', sub:'Producto en cámara', color:'#8b5cf6', bar:.8 },
+    { label:'Con Observación',     value:obs, sub:'Pallets requieren revisión', color:'#ef4444', bar:occ.length?obs/occ.length:0 },
+    { label:'Cámara Central', value:`${cOcc}/${central.length}`, sub:`${cFree} libres · ${Math.round(cOcc/central.length*100)}% ocupación`, color:'#f59e0b', bar:cOcc/central.length },
+    { label:'Reefers', value:`${rOcc}/${reefer.length}`, sub:`${rFree} libres · ${Math.round(rOcc/reefer.length*100)}% ocupación`, color:'#06b6d4', bar:rOcc/reefer.length },
+  ];
+  document.getElementById('dash-cards').innerHTML = cards.map(c=>`
+    <div class="dash-card">
+      <div class="dc-label">${c.label}</div>
+      <div class="dc-value" style="color:${c.color}">${c.value}</div>
+      <div class="dc-sub">${c.sub}</div>
+      <div class="dc-bar"><div class="dc-bar-fill" style="width:${Math.round((c.bar||0)*100)}%;background:${c.color}"></div></div>
+    </div>`).join('');
+
+  const byProd = {}, byClient = {}, byFCL = {};
+  occ.forEach(p => {
+    const k = normProduct(p.producto); byProd[k] = (byProd[k]||0)+(p.cantidad||0);
+    byClient[p.cliente||'—'] = (byClient[p.cliente||'—']||0)+(p.cantidad||0);
+    const f = getFCL(p); const fk = f?`FCL ${f}`:'Sin FCL';
+    byFCL[fk] = (byFCL[fk]||0)+(p.cantidad||0);
+  });
+  renderBarChart('chart-producto', byProd, {
+    'MANGO K. ORGÁNICO':'#f97316','ARÁNDANO':'#8b5cf6','MANGO K. CONV.':'#eab308',
+    'MANGO ENTERO CONV.':'#d97706','ARILOS':'#10b981'
+  });
+  renderBarChart('chart-cliente', byClient, CLIENT_COLORS);
+  renderBarChart('chart-fcl', byFCL, {'FCL 1':'#06b6d4','FCL 2':'#f59e0b','FCL 3':'#10b981','FCL 4':'#f43f5e','FCL 5':'#8b5cf6','Sin FCL':'#475569'});
+
+  const recent = [...KARDEX].slice(-12).reverse();
+  document.getElementById('activity-feed').innerHTML = recent.map(k=>`
+    <div class="activity-item">
+      <span class="activity-icon">${k.movimiento==='INGRESO'?'📥':'📤'}</span>
+      <div>
+        <div class="ab-title">${k.movimiento} · Pallet ${k.palletOrigen} · ${k.cantidad} cajas</div>
+        <div class="ab-sub">${k.fecha} · ${k.turno} · ${k.cliente||'—'} · ${k.producto} ${k.variedad}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderBarChart(id, data, colorMap) {
+  const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  const max = sorted[0]?.[1] || 1;
+  document.getElementById(id).innerHTML = sorted.map(([label,val])=>{
+    const pct = Math.round(val/max*100);
+    const color = colorMap[label] || '#64748b';
+    return `<div class="bar-row">
+      <div class="bar-row-label" title="${label}">${label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}">${val>max*.12?val.toLocaleString():''}</div></div>
+      <div class="bar-row-val">${val.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════
+// MAP
+// ════════════════════════════════════
+let _filterTimer = null;
+function debounceFilter() {
+  clearTimeout(_filterTimer);
+  _filterTimer = setTimeout(applyFilters, 150);
+}
+function applyFilters() {
+  state.filters.search   = (document.getElementById('pos-search')?.value||'').toLowerCase();
+  state.filters.cliente  = document.getElementById('filter-cliente')?.value||'';
+  state.filters.fcl      = (document.getElementById('filter-fcl')?.value||'').replace('FCL ','');
+  state.filters.producto = document.getElementById('filter-producto')?.value||'';
+  state.filters.estado   = document.getElementById('filter-estado')?.value||'';
+  renderMap();
+}
+function clearFilters() {
+  ['pos-search','filter-cliente','filter-fcl','filter-producto','filter-estado'].forEach(id=>{
+    const e = document.getElementById(id); if(e) e.value='';
+  });
+  state.filters = { cliente:'',fcl:'',producto:'',estado:'',search:'' };
+  renderMap();
+}
+function setColorMode(mode) {
+  state.colorMode = mode;
+  ['producto','cliente','fcl'].forEach(m=>document.getElementById('cm-'+m).classList.toggle('active',m===mode));
+  updateLegend(); renderMap();
+}
+function hasActiveFilter() { return Object.values(state.filters).some(v=>v); }
+
+function posMatchesFilter(pos) {
+  const f = state.filters;
+  if (f.search) {
+    const s = f.search;
+    if (!pos.id.toLowerCase().includes(s) &&
+        !pos.nPalet.toString().includes(s) &&
+        !(pos.producto||'').toLowerCase().includes(s) &&
+        !(pos.cliente||'').toLowerCase().includes(s)) return false;
+  }
+  if (f.cliente && pos.cliente !== f.cliente) return false;
+  if (f.fcl     && getFCL(pos)  !== f.fcl)    return false;
+  if (f.producto && pos.producto !== f.producto) return false;
+  if (f.estado==='obs'      && (pos.observacion==='PRODUCTO TERMINADO'||!pos.observacion)) return false;
+  if (f.estado==='empty'    && pos.nPalet)  return false;
+  if (f.estado==='occupied' && !pos.nPalet) return false;
+  if (f.estado==='PRODUCTO TERMINADO' && pos.observacion!=='PRODUCTO TERMINADO') return false;
+  return true;
+}
+
+function updateLegend() {
+  const active = getActivePositions().filter(p=>p.nPalet);
+  let items = [];
+  if (state.colorMode==='producto') {
+    const counts = {}; active.forEach(p=>{ counts[p.producto||'']=(counts[p.producto||'']||0)+1; });
+    items = Object.entries(PRODUCT_COLORS).map(([k,c])=>({label:normProduct(k),color:c,count:counts[k]||0})).filter(i=>i.count>0);
+  } else if (state.colorMode==='cliente') {
+    const counts = {}; active.forEach(p=>{ counts[p.cliente||'']=(counts[p.cliente||'']||0)+1; });
+    items = Object.entries(CLIENT_COLORS).map(([k,c])=>({label:k,color:c,count:counts[k]||0})).filter(i=>i.count>0);
+  } else {
+    items = Object.entries(FCL_COLORS).map(([k,c])=>({label:`FCL ${k}`,color:c,count:active.filter(p=>getFCL(p)===k).length})).filter(i=>i.count>0);
+  }
+  items.push({label:'Vacío',color:'#1e2d3d',count:getActivePositions().filter(p=>!p.nPalet).length});
+  document.getElementById('legend-container').innerHTML = items.map(i=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${i.color}"></div>
+      <span>${i.label}</span>
+      <span class="legend-count">${i.count}</span>
+    </div>`).join('');
+}
+
+function updateZoneSummary() {
+  const a = getActivePositions();
+  const cOcc = a.filter(p=>p.place==='CENTRAL'&&p.nPalet).length;
+  const cTot = a.filter(p=>p.place==='CENTRAL').length;
+  const rOcc = a.filter(p=>p.place==='REEFER'&&p.nPalet).length;
+  const rTot = a.filter(p=>p.place==='REEFER').length;
+  document.getElementById('zone-summary').innerHTML = `
+    <div style="display:flex;justify-content:space-between"><span>Central:</span><span style="color:var(--accent)">${cOcc}/${cTot}</span></div>
+    <div style="display:flex;justify-content:space-between"><span>Reefers:</span><span style="color:var(--accent2)">${rOcc}/${rTot}</span></div>
+    <div style="display:flex;justify-content:space-between"><span>Observados:</span><span style="color:var(--danger)">${a.filter(p=>p.observacion&&p.observacion!=='PRODUCTO TERMINADO'&&p.nPalet).length}</span></div>`;
+}
+
+function renderMap() {
+  if (_renderTimer) cancelAnimationFrame(_renderTimer);
+  _renderTimer = requestAnimationFrame(function() {
+    updateLegend(); updateZoneSummary(); updateHeader();
+    const zone = document.getElementById('zone-select')?.value||'all';
+    const body = document.getElementById('map-body'); if(!body) return;
+    const active = getActivePositions();
+    const showFilter = hasActiveFilter();
+    // Pre-index by rack for faster lookups
+    const byRack = {};
+    active.forEach(function(p) { if (!byRack[p.rack]) byRack[p.rack]=[]; byRack[p.rack].push(p); });
+    let html = '';
+    if (zone==='all'||zone==='CENTRAL') {
+      html += '<div class="zone-label">🏭 Zona Central — Racks 1 al 16</div><div class="central-grid">';
+      for (let r=1;r<=16;r++) html += renderRack(String(r), byRack[String(r)]||[], showFilter);
+      html += '</div>';
+    }
+    if (zone==='all'||zone==='REEFER') {
+      html += '<div class="zone-label">🚢 Zona Reefers — R1 al R6</div><div class="reefer-grid">';
+      for (let r=1;r<=6;r++) html += renderReefer('R'+r, byRack['R'+r]||[], showFilter);
+      html += '</div>';
+    }
+    body.innerHTML = html;
+    _renderTimer = null;
+  });
+}
+
+function renderRack(rackNum, positions, showFilter) {
+  const occ = positions.filter(p=>p.nPalet).length;
+  let html = `<div class="rack-card">
+    <div class="rack-header">
+      <span class="rh-name">RACK ${rackNum}</span>
+      <span style="font-size:10px;color:${occ===15?'var(--danger)':occ>10?'var(--warn)':'var(--text2)'}">${occ}/15</span>
+    </div><div class="rack-levels">`;
+  ['C','B','A'].forEach(nivel=>{
+    const lp = positions.filter(p=>p.nivel===nivel).sort((a,b)=>parseInt(a.posicion)-parseInt(b.posicion));
+    html += `<div class="rack-level"><div class="level-label">${nivel}</div><div class="positions">`;
+    lp.forEach(pos=>{ html+=renderPosCell(pos,showFilter); });
+    html += `</div></div>`;
+  });
+  return html + `</div></div>`;
+}
+
+function renderReefer(rackName, positions, showFilter) {
+  const occ = positions.filter(p=>p.nPalet).length;
+  let html = `<div class="reefer-card">
+    <div class="reefer-header"><span>${rackName}</span><span style="font-size:10px;opacity:.7">${occ}/20</span></div>
+    <div class="reefer-levels">`;
+  ['I','D'].forEach(nivel=>{
+    const lp = positions.filter(p=>p.nivel===nivel).sort((a,b)=>parseInt(a.posicion)-parseInt(b.posicion));
+    html += `<div class="reefer-pos-row">
+      <div class="level-label" style="width:20px">${nivel==='I'?'Izq':'Der'}</div>
+      <div class="positions">`;
+    lp.forEach(pos=>{ html+=renderPosCell(pos,showFilter); });
+    html += `</div></div>`;
+  });
+  return html + `</div></div>`;
+}
+
+function renderPosCell(pos, showFilter) {
+  const isOcc = !!pos.nPalet;
+  const matches = posMatchesFilter(pos);
+  const dimmed = showFilter && !matches;
+  const highlighted = showFilter && matches && isOcc;
+  const selected = state.selectedPos === pos.id;
+  const color = isOcc ? getPositionColor(pos) : null;
+  const hasObs = pos.observacion && pos.observacion!=='PRODUCTO TERMINADO' && isOcc;
+  const fcl = getFCL(pos);
+  const cls = ['pos-cell', !isOcc?'empty':'', dimmed?'dimmed':'', highlighted&&showFilter?'highlighted':'', selected?'selected':''].filter(Boolean).join(' ');
+  const style = color ? `background:${color};border-color:${color}88` : '';
+  return `<div class="${cls}" style="${style}" onclick="selectPosition('${pos.id}')"
+    title="${isOcc?`Pallet: ${pos.nPalet}\n${normProduct(pos.producto)}\n${pos.cliente}\nCajas: ${pos.cantidad}`:'Vacío: '+pos.id}">
+    ${hasObs?'<div class="obs-dot"></div>':''}
+    ${fcl?`<div class="fcl-dot" style="background:${FCL_COLORS[fcl]||'#fff'}"></div>`:''}
+    <div class="pc-num">${isOcc?pos.nPalet.substring(0,4):'+'}</div>
+    ${isOcc?`<div class="pc-qty">${pos.cantidad}c</div>`:''}
+  </div>`;
+}
+
+// ════════════════════════════════════
+// DETAIL PANEL
+// ════════════════════════════════════
+function selectPosition(posId) {
+  state.selectedPos = posId;
+  const pos = POSITIONS.find(p=>p.id===posId); if(!pos) return;
+  const html = buildDetailHTML(pos);
+
+  if (isMobile()) {
+    document.getElementById('ds-inner').innerHTML = html;
+    document.getElementById('detail-sheet').classList.add('open');
+    document.getElementById('sheet-backdrop').classList.add('open');
+  } else {
+    document.getElementById('dp-inner').innerHTML = html;
+    document.getElementById('detail-panel').classList.add('open');
+  }
+  renderMap();
+}
+
+function buildDetailHTML(pos) {
+  const isOcc = !!pos.nPalet;
+  const color = isOcc ? getPositionColor(pos) : null;
+  const hasObs = pos.observacion && pos.observacion!=='PRODUCTO TERMINADO';
+  let html = `<div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+    <div class="dp-pos-badge">📍 ${pos.ubicacion||pos.id}</div>
+    <div style="font-size:11px;color:var(--text2);">Zona: ${pos.place} · ${pos.point}</div>
+  </div>`;
+
+  if (!isOcc) {
+    return html + `<div class="dp-empty-msg">
+      <div style="font-size:38px;margin-bottom:8px">📭</div>
+      <div style="font-size:14px;color:var(--text);margin-bottom:6px">Posición Vacía</div>
+      <div style="font-size:12px;margin-bottom:16px">Sin pallet asignado.</div>
+      <button class="btn btn-primary" onclick="switchTab('nuevo')">➕ Nuevo Ingreso</button>
+    </div>`;
+  }
+
+  if (hasObs) html += `<div class="obs-warn">⚠️ ${pos.observacion}</div>`;
+
+  const prodColor = color||'#64748b';
+  html += `<div class="dp-product-chip" style="border:1px solid ${prodColor}44;">
+    <div class="chip-dot" style="background:${prodColor}"></div>
+    <span style="color:${prodColor}">${normProduct(pos.producto)}</span>
+  </div>`;
+
+  const f = field;
+  html += `<div class="dp-section"><div class="dp-section-title">📦 Pallet</div>
+    ${f('N° Pallet',pos.nPalet)} ${f('Cantidad',pos.cantidad+' cajas')}
+    ${f('Peso total',(parseFloat(pos.peso2)||0).toLocaleString()+' kg')} ${f('Presentación',pos.presentacion)}
+  </div>
+  <div class="dp-section"><div class="dp-section-title">🥭 Producto</div>
+    ${f('Producto',pos.producto)} ${f('Corte',pos.corte)} ${f('Kg/caja',pos.peso+' kg')}
+  </div>
+  <div class="dp-section"><div class="dp-section-title">👤 Destino</div>
+    ${f('Cliente',pos.cliente)} ${f('FCL',getFCL(pos)?'FCL '+getFCL(pos):'—')}
+  </div>
+  <div class="dp-section"><div class="dp-section-title">✅ Estado</div>
+    ${f('Observación',pos.observacion||'Sin obs.')}
+  </div>`;
+
+  const ke = KARDEX.find(k=>k.palletOrigen===pos.nPalet);
+  if (ke) html += `<div class="dp-section"><div class="dp-section-title">📋 Kardex</div>
+    ${f('Fecha',ke.fecha)} ${f('Turno',ke.turno)} ${f('Lote',ke.lote)} ${f('Tipo',ke.tipo)}
+  </div>`;
+
+  const fcl = getFCL(pos);
+  html += `<div class="dp-actions">
+    ${fcl?`<button class="btn btn-ghost" style="width:100%" onclick="highlightFCL('${fcl}')">🔍 Ver todo FCL ${fcl}</button>`:''}
+    <button class="btn btn-warn" style="width:100%" onclick="quickDispatch('${pos.id}')">📤 Despachar este pallet</button>
+  </div>`;
+  return html;
+}
+
+function field(key, val) {
+  return `<div class="dp-field"><span class="dp-field-key">${key}</span><span class="dp-field-val">${val||'—'}</span></div>`;
+}
+
+function closeDetail() {
+  state.selectedPos = null;
+  document.getElementById('detail-panel').classList.remove('open');
+  document.getElementById('detail-sheet').classList.remove('open');
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  renderMap();
+}
+
+function highlightFCL(fcl) {
+  document.getElementById('filter-fcl').value = `FCL ${fcl}`;
+  state.filters.fcl = fcl; renderMap(); closeDetail();
+  if (isMobile()) closeSidebar();
+}
+
+function quickDispatch(posId) {
+  const pos = POSITIONS.find(p=>p.id===posId); if(!pos||!pos.nPalet) return;
+  openModal(`Despachar Pallet ${pos.nPalet}`,
+    `¿Confirmas despachar el pallet ${pos.nPalet} (${pos.cantidad} cajas, ${normProduct(pos.producto)}) de la posición ${pos.id}?`,
+    ()=>{
+      const d = { id:Date.now(), fecha:new Date().toISOString().split('T')[0], tipo:'INDIVIDUAL',
+        positions:[{...pos}], totalCajas:pos.cantidad, totalKg:parseFloat(pos.peso2)||0,
+        cliente:pos.cliente, fcl:getFCL(pos) };
+      DISPATCHED.push(d); localStorage.setItem('cam_dispatched',JSON.stringify(DISPATCHED));
+      pos.nPalet=''; pos.cantidad=0; pos.producto=''; pos.cliente='';
+      pos.corte=''; pos.observacion=''; pos.peso2='0'; pos.destino='';
+      localStorage.setItem('cam_positions',JSON.stringify(POSITIONS));
+      invalidateCache();
+      closeDetail(); renderMap(); renderFCLCards(); renderHistory(); updateHeader();
+      showToast(`Pallet despachado ✓`,'success');
+    });
+}
+
+// ════════════════════════════════════
+// KARDEX
+// ════════════════════════════════════
+let kardexSortDir = { fecha:-1 };
+let kardexSortCol = 'fecha';
+
+function sortKardex(col) {
+  if (kardexSortCol===col) kardexSortDir[col]*=-1;
+  else { kardexSortCol=col; if(!kardexSortDir[col]) kardexSortDir[col]=1; }
+  state.kardexPage=1; renderKardex();
+}
+
+function getFilteredKardex() {
+  const search  = (document.getElementById('kardex-search')?.value||'').toLowerCase();
+  const cliente = document.getElementById('kf-cliente')?.value||'';
+  const turno   = document.getElementById('kf-turno')?.value||'';
+  let data = KARDEX.filter(k=>{
+    if (cliente && k.cliente!==cliente) return false;
+    if (turno   && k.turno!==turno)     return false;
+    if (search && !JSON.stringify(k).toLowerCase().includes(search)) return false;
+    return true;
+  });
+  data.sort((a,b)=>{
+    let av=a[kardexSortCol]||'', bv=b[kardexSortCol]||'';
+    if (!isNaN(parseFloat(av))&&!isNaN(parseFloat(bv))) { av=parseFloat(av); bv=parseFloat(bv); }
+    if (av<bv) return -1*(kardexSortDir[kardexSortCol]||1);
+    if (av>bv) return  1*(kardexSortDir[kardexSortCol]||1);
+    return 0;
+  });
+  return data;
+}
+
+function renderKardex() {
+  const data = getFilteredKardex();
+  const pp = state.kardexPerPage, pg = state.kardexPage;
+  const totalPages = Math.ceil(data.length/pp);
+  const slice = data.slice((pg-1)*pp, pg*pp);
+  document.getElementById('kardex-count').textContent = `${data.length} registros`;
+
+  const mb  = m=>m==='INGRESO'?'badge-green':'badge-blue';
+  const eb  = e=>e==='PRODUCTO TERMINADO'?'badge-green':e==='OBSERVADO'?'badge-yellow':'badge-gray';
+  const cb  = c=>!c||c.includes('SIN')?'badge-gray':c.includes('GREEN')?'badge-green':c.includes('HG')?'badge-blue':c.includes('NATURE')?'badge-purple':'badge-gray';
+
+  document.getElementById('kardex-tbody').innerHTML = slice.map(k=>`
+    <tr>
+      <td>${k.fecha}</td>
+      <td><span class="badge ${k.turno==='DIA'?'badge-yellow':'badge-blue'}">${k.turno}</span></td>
+      <td><span class="badge ${mb(k.movimiento)}">${k.movimiento}</span></td>
+      <td style="color:var(--accent);font-weight:700">${k.palletOrigen}</td>
+      <td>${k.producto}</td><td>${k.variedad}</td>
+      <td style="color:var(--text2)">${k.corte}</td>
+      <td><span class="badge ${k.tipo==='ORGANICO'?'badge-green':'badge-yellow'}">${k.tipo}</span></td>
+      <td><span class="badge ${cb(k.cliente)}">${k.cliente||'—'}</span></td>
+      <td style="color:var(--accent2);font-weight:700">${k.nFCL?'FCL '+k.nFCL:'—'}</td>
+      <td style="text-align:right;font-weight:700">${(k.cantidad||0).toLocaleString()}</td>
+      <td style="text-align:right;color:var(--text2)">${(k.totalKilos||0).toLocaleString()}</td>
+      <td><span class="badge ${eb(k.estado)}">${k.estado||'—'}</span></td>
+      <td style="color:var(--text2);font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis" title="${k.lote}">${k.lote||'—'}</td>
+      <td style="color:${k.observacion&&k.observacion!=='nan'?'var(--warn)':'var(--text2)'};font-size:11px">${k.observacion&&k.observacion!=='nan'?k.observacion:'—'}</td>
+    </tr>`).join('') || '<tr><td colspan="15" style="text-align:center;padding:40px;color:var(--text2)">Sin registros</td></tr>';
+
+  let ph='';
+  if (totalPages>1) {
+    ph += `<span class="page-info">Pág ${pg}/${totalPages}</span>`;
+    ph += `<button class="page-btn" onclick="goPage(1)" ${pg<=1?'disabled':''}>«</button>`;
+    ph += `<button class="page-btn" onclick="goPage(${pg-1})" ${pg<=1?'disabled':''}>‹</button>`;
+    for (let i=Math.max(1,pg-2);i<=Math.min(totalPages,pg+2);i++) ph+=`<button class="page-btn ${i===pg?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    ph += `<button class="page-btn" onclick="goPage(${pg+1})" ${pg>=totalPages?'disabled':''}>›</button>`;
+    ph += `<button class="page-btn" onclick="goPage(${totalPages})" ${pg>=totalPages?'disabled':''}>»</button>`;
+  }
+  document.getElementById('kardex-pagination').innerHTML = ph;
+}
+
+function goPage(p) { state.kardexPage=p; renderKardex(); }
+
+function exportKardex() {
+  const h=['Fecha','Turno','Movimiento','Pallet','Producto','Variedad','Corte','Tipo','Cliente','FCL','Cajas','Kilos','Estado','Lote','Obs'];
+  const rows=getFilteredKardex().map(k=>[k.fecha,k.turno,k.movimiento,k.palletOrigen,k.producto,k.variedad,k.corte,k.tipo,k.cliente,k.nFCL,k.cantidad,k.totalKilos,k.estado,k.lote,k.observacion].map(v=>`"${v||''}"`).join(','));
+  downloadCSV([h.join(','),...rows].join('\n'),'kardex.csv');
+}
+
+// ════════════════════════════════════
+// NUEVO INGRESO
+// ════════════════════════════════════
+function submitNuevo(e) {
+  e.preventDefault();
+  const g = id=>document.getElementById(id).value;
+  const fecha=g('n-fecha'), turno=g('n-turno'), pallet=g('n-pallet'), mov=g('n-movimiento');
+  const producto=g('n-producto'), variedad=g('n-variedad'), tipo=g('n-tipo'), corte=g('n-corte');
+  const presentacion=g('n-presentacion'), peso=g('n-peso'), lote=g('n-lote');
+  const cliente=g('n-cliente'), fcl=g('n-fcl'), estado=g('n-estado'), posId=g('n-posicion'), obs=g('n-observacion');
+  const cantidad=parseInt(g('n-cantidad'));
+
+  if (!turno||!producto||!variedad||!tipo||!lote||isNaN(cantidad)||cantidad<=0) {
+    showToast('Completa todos los campos requeridos *','error'); return;
+  }
+  const entry = { id:KARDEX.length+1,fecha,turno,movimiento:mov,palletOrigen:pallet,
+    producto,variedad,presentacion,corte,peso,tipo,lote,cliente,nFCL:fcl,empaque:'CAJAS',
+    cantidad,totalKilos:cantidad*parseInt(peso),estado,proceso:estado,estatus:'CAMARA',observacion:obs };
+  KARDEX.push(entry); KARDEX_EXTRA.push(entry);
+  localStorage.setItem('cam_kardex_extra',JSON.stringify(KARDEX_EXTRA));
+
+  if (posId) {
+    const pos = POSITIONS.find(p=>p.id===posId);
+    if (pos) {
+      pos.nPalet=pallet; pos.cantidad=cantidad;
+      pos.producto=`${producto} ${variedad==='KENT'?'K':variedad} . ${tipo}`;
+      pos.cliente=cliente+(fcl?' '+fcl:''); pos.corte=corte;
+      pos.observacion=estado==='OBSERVADO'?obs||'OBSERVADO':'PRODUCTO TERMINADO';
+      pos.presentacion='CAJAS'; pos.peso=peso;
+      pos.peso2=String(cantidad*parseInt(peso));
+      pos.destino=fcl?`FCL ${fcl}`:'SIN DESTINO';
+      localStorage.setItem('cam_positions',JSON.stringify(POSITIONS));
+    }
+  }
+  invalidateCache();
+  showToast(`Ingreso registrado: Pallet ${pallet} · ${cantidad} cajas ✓`,'success');
+  resetForm(); populateFilters(); updateHeader(); renderDashboard();
+}
+function resetForm() {
+  document.getElementById('nuevo-form').reset();
+  document.getElementById('n-fecha').value=new Date().toISOString().split('T')[0];
+  populateNuevoForm();
+}
+
+// ════════════════════════════════════
+// DESPACHOS
+// ════════════════════════════════════
+function renderFCLCards() {
+  const active = getActivePositions().filter(p=>p.nPalet);
+  const groups = {};
+  active.forEach(p=>{ const f=getFCL(p); if(f) { if(!groups[f])groups[f]=[]; groups[f].push(p); } });
+
+  const container = document.getElementById('fcl-cards'); if(!container) return;
+  const keys = Object.keys(groups).sort();
+  if (!keys.length) {
+    container.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
+      <div class="es-icon">🎉</div><div class="es-title">Sin contenedores activos</div>
+    </div>`; return;
+  }
+  container.innerHTML = keys.map(fcl=>{
+    const ps=groups[fcl], clientes=[...new Set(ps.map(p=>p.cliente))].join(', ');
+    const cajas=ps.reduce((s,p)=>s+(p.cantidad||0),0);
+    const kg=ps.reduce((s,p)=>s+(parseFloat(p.peso2)||0),0);
+    const prods=[...new Set(ps.map(p=>normProduct(p.producto)))].join(', ');
+    const isSelected=state.dispatchFCL===fcl;
+    const fc=FCL_COLORS[fcl]||'#64748b';
+    return `<div class="fcl-card ${isSelected?'selected-fcl':''}"
+      onclick="event.stopPropagation();selectFCL('${fcl}')"
+      style="border-color:${isSelected?fc:'var(--border)'}">
+      <div class="fc-header"><div class="fc-name" style="color:${fc}">FCL ${fcl}</div><div class="fc-client">${clientes}</div></div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">${prods}</div>
+      <div class="fcl-stats">
+        <div class="fcl-stat"><div class="fs-val">${ps.length}</div><div class="fs-lab">Pallets</div></div>
+        <div class="fcl-stat"><div class="fs-val">${cajas.toLocaleString()}</div><div class="fs-lab">Cajas</div></div>
+        <div class="fcl-stat"><div class="fs-val">${Math.round(kg/1000).toFixed(1)}t</div><div class="fs-lab">Toneladas</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectFCL(fcl) {
+  state.dispatchFCL=fcl; renderFCLCards();
+  const ps=getActivePositions().filter(p=>getFCL(p)===fcl&&p.nPalet);
+  const cajas=ps.reduce((s,p)=>s+(p.cantidad||0),0);
+  const kg=ps.reduce((s,p)=>s+(parseFloat(p.peso2)||0),0);
+  const clientes=[...new Set(ps.map(p=>p.cliente))].join(', ');
+  const da=document.getElementById('dispatch-actions'); da.classList.add('visible');
+  document.getElementById('da-title').textContent=`Pallets del FCL ${fcl} (${ps.length} pallets)`;
+  document.getElementById('da-summary').textContent=`Total: ${cajas.toLocaleString()} cajas · ${Math.round(kg).toLocaleString()} kg · Clientes: ${clientes}`;
+  document.getElementById('dispatch-pallet-list').innerHTML=ps.map(p=>`
+    <div class="dp-item">
+      <span class="dpi-rack">${p.id}</span>
+      <span style="color:var(--text);font-size:11px">${normProduct(p.producto)}</span>
+      <span class="dpi-palet" style="color:var(--text2)">Pallet ${p.nPalet}</span>
+      <span class="dpi-qty">${p.cantidad} c</span>
+    </div>`).join('');
+  // Scroll to actions
+  da.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function clearFCLSelection() {
+  state.dispatchFCL=null;
+  document.getElementById('dispatch-actions').classList.remove('visible');
+  renderFCLCards();
+}
+
+function confirmDispatch() {
+  const fcl=state.dispatchFCL; if(!fcl) return;
+  const ps=getActivePositions().filter(p=>getFCL(p)===fcl&&p.nPalet);
+  const cajas=ps.reduce((s,p)=>s+(p.cantidad||0),0);
+  const kg=ps.reduce((s,p)=>s+(parseFloat(p.peso2)||0),0);
+  openModal(`🚚 Despachar FCL ${fcl}`,
+    `Se despacharán ${ps.length} pallets (${cajas.toLocaleString()} cajas · ${(kg/1000).toFixed(2)} t). ¿Confirmar?`,
+    ()=>{
+      const d={id:Date.now(),fecha:new Date().toISOString().split('T')[0],tipo:'FCL',fcl,
+        cliente:[...new Set(ps.map(p=>p.cliente))].join(', '),
+        positions:ps.map(p=>({...p})),totalCajas:cajas,totalKg:kg};
+      DISPATCHED.push(d); localStorage.setItem('cam_dispatched',JSON.stringify(DISPATCHED));
+      ps.forEach(p=>{ p._dispatched_history=true; p.nPalet=''; p.cantidad=0; p.producto=''; p.cliente=''; p.corte=''; p.observacion=''; p.peso2='0'; p.destino=''; });
+      localStorage.setItem('cam_positions',JSON.stringify(POSITIONS));
+      invalidateCache();
+      state.dispatchFCL=null;
+      document.getElementById('dispatch-actions').classList.remove('visible');
+      renderFCLCards(); updateHeader(); renderHistory(); renderDashboard();
+      showToast(`FCL ${fcl} despachado · ${ps.length} pallets registrados ✓`,'success');
+    });
+}
+
+// ════════════════════════════════════
+// HISTORY
+// ════════════════════════════════════
+function renderHistory() {
+  const c=document.getElementById('historial-body'); if(!c) return;
+  if (!DISPATCHED.length) {
+    c.innerHTML=`<div class="empty-state"><div class="es-icon">📜</div><div class="es-title">Sin historial</div><p>Los despachos confirmados aparecerán aquí.</p></div>`; return;
+  }
+  c.innerHTML=[...DISPATCHED].reverse().map(d=>`
+    <div class="dash-section" style="margin-bottom:12px">
+      <h3 style="display:flex;align-items:center;justify-content:space-between">
+        <span>${d.tipo==='FCL'?`🚢 FCL ${d.fcl}`:'📦 Individual'}</span>
+        <span style="font-size:11px;color:var(--text2);font-weight:400">${d.fecha}</span>
+      </h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0">
+        <div class="fcl-stat"><div class="fs-val">${d.positions.length}</div><div class="fs-lab">Pallets</div></div>
+        <div class="fcl-stat"><div class="fs-val">${(d.totalCajas||0).toLocaleString()}</div><div class="fs-lab">Cajas</div></div>
+        <div class="fcl-stat"><div class="fs-val">${((d.totalKg||0)/1000).toFixed(1)}t</div><div class="fs-lab">Ton.</div></div>
+        <div class="fcl-stat"><div class="fs-val" style="font-size:11px;color:var(--text2)">${d.cliente||'—'}</div><div class="fs-lab">Cliente</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">${d.positions.map(p=>`<span class="badge badge-gray" title="${p.cantidad} cajas">${p.id}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+function exportHistory() {
+  const h=['Fecha','Tipo','FCL','Cliente','Pallets','Cajas','Kg','Posicion','Producto'];
+  const rows=DISPATCHED.flatMap(d=>d.positions.map(p=>[d.fecha,d.tipo,d.fcl||'—',d.cliente,d.positions.length,p.cantidad||0,p.peso2||0,p.id,p.producto].map(v=>`"${v||''}"`).join(',')));
+  downloadCSV([h.join(','),...rows].join('\n'),'historial.csv');
+}
+
+// ════════════════════════════════════
+// MODAL
+// ════════════════════════════════════
+let _modalCb=null;
+function openModal(title,body,cb) {
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').textContent=body;
+  document.getElementById('modal-overlay').classList.add('open');
+  _modalCb=cb;
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); _modalCb=null; }
+function modalConfirm() { if(_modalCb) _modalCb(); closeModal(); }
+
+// ════════════════════════════════════
+// TOAST
+// ════════════════════════════════════
+function showToast(msg,type='info') {
+  const tc=document.getElementById('toast-container');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span>${type==='success'?'✅':type==='error'?'❌':'ℹ️'}</span><span>${msg}</span>`;
+  tc.appendChild(t);
+  setTimeout(()=>{ t.style.animation='slideOut .3s ease forwards'; setTimeout(()=>t.remove(),300); },4000);
+}
+
+// ════════════════════════════════════
+// UTILS
+// ════════════════════════════════════
+function downloadCSV(content,filename) {
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8;'})),
+    download:filename
+  }); a.click();
+}
+
+// ════════════════════════════════════
+// BOOT
+// ════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  // Initial tab — hide sidebar on non-map tabs
+  document.getElementById('sidebar').style.cssText=''; // let CSS handle it
+  // On mobile, ham button always visible
+  if (isMobile()) {
+    document.getElementById('ham-btn').style.display='flex';
+  } else {
+    document.getElementById('ham-btn').style.display='none';
+  }
+  init();
+});
+
+window.addEventListener('resize',()=>{
+  const mobile=isMobile();
+  document.getElementById('ham-btn').style.display=mobile?'flex':'none';
+  if (!mobile) document.getElementById('sidebar').classList.remove('open');
+});
+</script>
+</body>
+</html>
