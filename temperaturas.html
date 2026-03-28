@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -908,6 +909,37 @@
     font-size:9px; font-weight:700; color:#15803d; letter-spacing:.5px;
   }
   body:not(.light-mode) .topbar-sig-role { color:#22c55e; }
+
+  /* ===== INDICADOR SUPABASE ===== */
+  .sb-status {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:4px 10px; border-radius:20px; font-size:10px; font-weight:700;
+    letter-spacing:.5px; cursor:default; transition:all .3s ease;
+    margin-top:4px;
+  }
+  .sb-dot {
+    width:8px; height:8px; border-radius:50%; display:inline-block;
+  }
+  /* Verificando */
+  .sb-checking .sb-dot { background:#f59e0b; box-shadow:0 0 6px #f59e0b; animation:sb-pulse 1.2s infinite; }
+  .sb-checking .sb-text { color:#f59e0b; }
+  .sb-checking { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); }
+  /* Conectado */
+  .sb-connected .sb-dot { background:#22c55e; box-shadow:0 0 8px #22c55e; }
+  .sb-connected .sb-text { color:#22c55e; }
+  .sb-connected { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); }
+  /* Desconectado */
+  .sb-error .sb-dot { background:#ef4444; box-shadow:0 0 6px #ef4444; }
+  .sb-error .sb-text { color:#ef4444; }
+  .sb-error { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); }
+  /* Light mode */
+  body.light-mode .sb-connected { background:rgba(22,163,74,0.08); border-color:rgba(22,163,74,0.3); }
+  body.light-mode .sb-connected .sb-text { color:#15803d; }
+  body.light-mode .sb-connected .sb-dot { background:#16a34a; box-shadow:0 0 6px #16a34a; }
+  @keyframes sb-pulse {
+    0%,100% { opacity:1; } 50% { opacity:.3; }
+  }
+
   /* Clock theme-aware colors */
   body:not(.light-mode) #registroClock { color: #00d4aa !important; }
   body.light-mode #registroClock { color: #0d9488 !important; font-weight: 700; }
@@ -1046,6 +1078,10 @@
       <div class="topbar-sig-label">DESARROLLADO POR:</div>
       <div class="topbar-sig-name">Rodrigo Garcia</div>
       <div class="topbar-sig-role">Systems Analyst &amp; Developer-QA</div>
+    </div>
+    <div id="supabase-status" class="sb-status sb-checking" title="Verificando conexión...">
+      <span class="sb-dot"></span>
+      <span class="sb-text">Verificando...</span>
     </div>
     <div class="theme-switch" onclick="toggleTheme()" title="Cambiar modo">
       <div class="switch-track">
@@ -1441,6 +1477,33 @@ if (localConfig.sbUrl) config.sbUrl = localConfig.sbUrl;
 if (localConfig.sbKey) config.sbKey = localConfig.sbKey;
 let chartAreas = null, chartHoras = null;
 
+// ====== VERIFICAR CONEXIÓN SUPABASE ======
+async function checkSupabaseConnection() {
+  const el = document.getElementById('supabase-status');
+  if (!el || !config.sbUrl || !config.sbKey) {
+    if (el) { el.className = 'sb-status sb-error'; el.title = 'Sin configuración'; el.querySelector('.sb-text').textContent = 'Offline'; }
+    return;
+  }
+  try {
+    const res = await fetch(`${config.sbUrl}/rest/v1/registros_temperatura?limit=1`, {
+      headers: { 'apikey': config.sbKey, 'Authorization': `Bearer ${config.sbKey}` }
+    });
+    if (res.ok) {
+      el.className = 'sb-status sb-connected';
+      el.title = 'Conectado al servidor';
+      el.querySelector('.sb-text').textContent = 'Conectado';
+    } else {
+      el.className = 'sb-status sb-error';
+      el.title = 'Error de conexión';
+      el.querySelector('.sb-text').textContent = 'Sin conexión';
+    }
+  } catch(e) {
+    el.className = 'sb-status sb-error';
+    el.title = 'Sin conexión al servidor';
+    el.querySelector('.sb-text').textContent = 'Sin conexión';
+  }
+}
+
 // ====== CARGAR DESDE SUPABASE ======
 async function cargarRegistrosSupabase() {
   if (!config.sbUrl || !config.sbKey) {
@@ -1740,6 +1803,7 @@ window.onload = async () => {
   // Inicializar con formato "Cámaras de Materia Prima" seleccionado
   selectFormato('mp');
   await cargarRegistrosSupabase();
+  checkSupabaseConnection();
 };
 
 // ====== TABS ======
