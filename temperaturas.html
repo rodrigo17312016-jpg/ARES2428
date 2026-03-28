@@ -1800,8 +1800,35 @@ window.onload = async () => {
   document.getElementById('turno').value = calcularTurno(horaInicial);
   if (config.sbUrl) document.getElementById('sbUrl').value = config.sbUrl;
   if (config.sbKey) document.getElementById('sbKey').value = config.sbKey;
-  // Inicializar con formato "Cámaras de Materia Prima" seleccionado
-  selectFormato('mp');
+  // Restaurar último formato usado o default "mp"
+  var lastFmt = localStorage.getItem('temp_last_formato') || 'mp';
+  selectFormato(lastFmt);
+
+  // Restaurar último operario
+  var lastOp = localStorage.getItem('temp_last_operario');
+  if (lastOp) {
+    var selOp = document.getElementById('operario');
+    for (var i = 0; i < selOp.options.length; i++) {
+      if (selOp.options[i].value === lastOp) { selOp.selectedIndex = i; break; }
+    }
+  }
+
+  // Restaurar últimas áreas seleccionadas
+  var lastAreas = JSON.parse(localStorage.getItem('temp_last_areas') || '[]');
+  if (lastAreas.length > 0) {
+    setTimeout(function() {
+      lastAreas.forEach(function(areaVal) {
+        var cb = document.querySelector('#areaCheckboxes input[type="checkbox"][value="' + areaVal + '"]');
+        if (cb) {
+          cb.checked = true;
+          cb.closest('.area-chip').classList.add('selected');
+        }
+      });
+      updateAreaCount();
+      renderMultiTempFields();
+    }, 100);
+  }
+
   await cargarRegistrosSupabase();
   checkSupabaseConnection();
 };
@@ -1943,12 +1970,32 @@ async function guardarRegistroMultiple() {
     showToast('✅', ok + ' registro' + (ok > 1 ? 's' : '') + ' guardado' + (ok > 1 ? 's' : ''), 'Almacenamiento local');
   }
 
-  // Reset: deseleccionar áreas, limpiar campos
-  document.querySelectorAll('#areaCheckboxes input[type="checkbox"]').forEach(function(cb) { cb.checked = false; });
-  document.querySelectorAll('.area-chip').forEach(function(c) { c.classList.remove('selected'); });
-  document.getElementById('multiTempFields').innerHTML = '';
+  // Guardar preferencias del inspector y áreas usadas para el próximo registro
+  localStorage.setItem('temp_last_operario', operario);
+  localStorage.setItem('temp_last_formato', currentFormato);
+  localStorage.setItem('temp_last_areas', JSON.stringify(areas));
+
+  // Reset: limpiar temperaturas y observaciones, pero RE-SELECCIONAR las mismas áreas
   document.getElementById('observaciones').value = '';
-  updateAreaCount();
+  // Re-generar las áreas del mismo formato y re-seleccionar las mismas
+  selectFormato(currentFormato);
+  // Re-marcar las mismas áreas que usó
+  setTimeout(function() {
+    areas.forEach(function(areaVal) {
+      var cb = document.querySelector('#areaCheckboxes input[type="checkbox"][value="' + areaVal + '"]');
+      if (cb) {
+        cb.checked = true;
+        cb.closest('.area-chip').classList.add('selected');
+      }
+    });
+    updateAreaCount();
+    renderMultiTempFields();
+  }, 50);
+
+  // Actualizar hora al momento actual
+  var nowH = new Date();
+  var horaActual = nowH.toLocaleTimeString('es-PE', {timeZone:'America/Lima', hour:'2-digit', minute:'2-digit', hour12:false});
+  document.getElementById('hora').value = horaActual;
 
   if (!config.sbUrl || !config.sbKey) {
     renderTablaHoy();
